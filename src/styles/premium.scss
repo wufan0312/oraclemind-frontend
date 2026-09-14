@@ -1,0 +1,300 @@
+// ===== 付费墙 / 权益说明（PaywallModal + PremiumUnlockButton） =====
+// 注：付费墙被 tarot / horoscope 两页共用，样式在 layout.tsx 全局加载，
+// 避免只在一页 import 导致另一页裸奔（与 DateTimePicker / AIInterpretation 同款处理）。
+
+.premium-unlock-btn {
+  &.unlocked {
+    border-color: rgba(63, 174, 106, 0.45) !important;
+    color: #3fae6a !important;
+  }
+}
+
+.paywall {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+// ---- 免费权益（先说清什么不要钱） ----
+.paywall-free {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: rgba(63, 174, 106, 0.08);
+  border: 1px solid rgba(63, 174, 106, 0.28);
+}
+
+.paywall-free-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3fae6a;
+  margin-bottom: 8px;
+}
+
+.paywall-free-list {
+  margin: 0;
+  padding-left: 18px;
+
+  li {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+}
+
+// ---- 套餐卡 ----
+.paywall-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paywall-plan {
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover { border-color: var(--border-active); }
+
+  &.active {
+    border-color: rgba(124, 92, 255, 0.5);
+    background: rgba(124, 92, 255, 0.08);
+  }
+}
+
+.paywall-plan-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.paywall-plan-icon { font-size: 17px; }
+
+.paywall-plan-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.paywall-plan-price {
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
+.paywall-plan-tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.paywall-plan-perks {
+  margin: 0;
+  padding-left: 16px;
+
+  li {
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+}
+
+// ---- 按钮 ----
+.paywall-btn {
+  width: 100%;
+  font-size: 14px;
+  padding: 11px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  &.primary {
+    background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+    color: #fff;
+    border-color: transparent;
+    font-weight: 600;
+  }
+
+  &.ghost { background: transparent; }
+}
+
+// ---- stub 占位卡（支付通道未配置） ----
+.paywall-stub {
+  text-align: center;
+  padding: 16px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px dashed var(--border-active);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paywall-stub-icon { font-size: 26px; }
+
+.paywall-stub-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.paywall-stub-body {
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+
+  strong { color: #3fae6a; }
+}
+
+// ---- 真实渠道支付卡 ----
+.paywall-pay {
+  text-align: center;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paywall-pay-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.paywall-pay-code {
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+  word-break: break-all;
+  max-height: 90px;
+  overflow-y: auto;
+}
+
+.paywall-pay-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+// ---- 个人微信收款码支付卡 ----
+.paywall-qr {
+  text-align: center;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paywall-qr-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+
+  strong { color: var(--accent-gold); font-size: 16px; }
+}
+
+.paywall-qr-box {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+}
+
+.paywall-qr-img {
+  width: 190px;
+  height: 190px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 6px;
+}
+
+.paywall-qr-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.paywall-qr-check-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.paywall-qr-check-code {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--bg-panel);
+  border: 1px dashed var(--border-active);
+  color: var(--accent-cyan);
+}
+
+.paywall-qr-steps {
+  margin: 0;
+  padding-left: 20px;
+  text-align: left;
+
+  li {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+}
+
+.paywall-qr-hint {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+// ---- 已解锁 ----
+.paywall-unlocked {
+  text-align: center;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.paywall-unlocked-icon { font-size: 32px; }
+
+.paywall-unlocked-text {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.paywall-err {
+  font-size: 12px;
+  color: #e05c5c;
+  text-align: center;
+}
+
+.paywall-note {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  text-align: center;
+}

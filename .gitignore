@@ -1,0 +1,46 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# 本地验证与一次性脚本（不推仓库）
+.verify/
+.scripts/
+
+# 临时构建垃圾目录
+.next_trash_*/
+# 注：dev 启动失败回滚时会留下形如 .next.old-1788957217 的目录（时间戳后缀），
+# 旧规则只覆盖 .next_trash_*/，漏掉了它，导致 GB 级残留被误纳入版本控制。
+.next.old-*/
+
+# 本地环境变量兜底：.env*.local 已被忽略，这里补齐 .env / .env.production 等明文配置
+.env
+.env.production
+.env.development
+!.env.example

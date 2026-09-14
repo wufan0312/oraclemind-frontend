@@ -1,0 +1,289 @@
+/* ================================================================
+ * LightFollowUp 轻量追问入口
+ * 全站统一的「结果区 AI 追问」组件样式。
+ * 依赖 components.scss 提供的 .chat-suggest-chip / .chat-pill /
+ * .field-pill / .chat-send-btn 等基础交互原子。
+ * ================================================================ */
+
+.lfu {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px dashed var(--border-active, var(--border));
+  border-radius: var(--radius-lg, 14px);
+  background: rgba(124, 92, 255, 0.04);
+
+  .lfu-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .lfu-head-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto; // 把清空按钮推到最右，与标题/副标题分离
+  }
+
+  .lfu-clear-btn {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--primary-light);
+    }
+  }
+
+  .lfu-icon {
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lfu-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .lfu-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .lfu-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .lfu-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .lfu-chip {
+    // 复用 .chat-suggest-chip 基础，这里仅补交互态
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .lfu-input-row {
+    margin-bottom: 4px;
+  }
+
+  .lfu-charcount {
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 2px 2px 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lfu-list {
+    position: relative;
+    max-height: 320px;
+    overflow-y: auto;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 2px;
+  }
+
+  .lfu-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    .lfu-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.25), rgba(92, 225, 230, 0.18));
+      border: 1px solid rgba(124, 92, 255, 0.35);
+      box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.08);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      &.is-user {
+        background: rgba(124, 92, 255, 0.14);
+        border-color: rgba(124, 92, 255, 0.28);
+      }
+    }
+
+    .lfu-msg-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .lfu-bubble {
+      position: relative;
+      max-width: 78%; // 与首页对话气泡同宽，避免信息框铺满整行
+    }
+
+    .lfu-text {
+      // 视觉 token 对齐首页 .ai-chat-bubble
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-main);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(124, 92, 255, 0.04));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 18px;
+      word-break: break-word;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+
+      p { margin: 0 0 6px; }
+      p:last-child { margin-bottom: 0; }
+      ul, ol { margin: 4px 0; padding-left: 18px; }
+      code {
+        background: rgba(124, 92, 255, 0.12);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 12.5px;
+      }
+
+      &.is-streaming {
+        box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.3), 0 0 14px rgba(124, 92, 255, 0.2);
+        animation: lfuStreamGlow 1.4s ease-in-out infinite;
+      }
+    }
+
+    &.is-user {
+      flex-direction: row-reverse;
+
+      .lfu-msg-body {
+        align-items: flex-end;
+      }
+
+      .lfu-text {
+        // 对齐首页 .ai-chat-msg.user .ai-chat-bubble
+        background: linear-gradient(135deg, rgba(124, 92, 255, 0.28), rgba(92, 225, 230, 0.14));
+        border-color: rgba(124, 92, 255, 0.35);
+        color: #fff;
+      }
+    }
+  }
+
+  .lfu-copy {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.18s, color 0.18s, border-color 0.18s;
+    backdrop-filter: blur(2px);
+
+    .lfu-msg:hover & {
+      opacity: 1;
+    }
+
+    &:hover {
+      color: var(--primary-light);
+      border-color: var(--primary-light);
+    }
+
+    &.is-copied {
+      opacity: 1;
+      color: var(--accent-green, #4ade80);
+      border-color: rgba(74, 222, 128, 0.4);
+    }
+  }
+
+  .lfu-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 14px;
+
+    .lfu-typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      opacity: 0.5;
+      animation: lfuTyping 1.2s ease-in-out infinite;
+
+      &:nth-child(2) { animation-delay: 0.18s; }
+      &:nth-child(3) { animation-delay: 0.36s; }
+    }
+  }
+
+  .lfu-stop {
+    background: rgba(255, 107, 107, 0.14);
+    border-color: rgba(255, 107, 107, 0.4);
+    color: #ff6b6b;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 107, 107, 0.24);
+      border-color: #ff6b6b;
+    }
+  }
+
+  .lfu-tobottom {
+    position: sticky;
+    bottom: 4px;
+    align-self: center;
+    margin-top: 2px;
+    font-size: 11.5px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+
+    &:hover {
+      color: var(--primary-light);
+      border-color: var(--primary-light);
+    }
+  }
+}
+
+@keyframes lfuTyping {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30%           { opacity: 1; transform: translateY(-3px); }
+}
+
+@keyframes lfuStreamGlow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.3), 0 0 10px rgba(124, 92, 255, 0.16); }
+  50%      { box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.45), 0 0 18px rgba(124, 92, 255, 0.32); }
+}

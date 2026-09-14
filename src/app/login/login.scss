@@ -1,0 +1,229 @@
+// ============================================================================
+// 玄镜 OracleMind · 登录 / 注册页样式
+// 暗色紫青主题，与全站设计语言一致
+// ============================================================================
+
+@use '../../styles/tokens.scss' as *;
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px;
+  position: relative;
+  overflow: hidden;
+  background: #{$color-bg-dark};
+
+  // 背景光晕
+  .login-bg-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(124, 92, 255, 0.15) 0%, transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 80px;
+      background: radial-gradient(circle, rgba(92, 225, 230, 0.08) 0%, transparent 60%);
+      border-radius: 50%;
+    }
+  }
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  background: #{$color-bg-panel};
+  border: 1px solid #{$color-border};
+  border-radius: #{$radius-lg};
+  padding: 40px 36px 32px;
+  box-shadow: #{$shadow-card}, 0 0 60px rgba(124, 92, 255, 0.1);
+}
+
+// ---- 精灵 + 标题 ----
+.login-header {
+  text-align: center;
+  margin-bottom: 28px;
+
+  .login-spirit {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 12px rgba(124, 92, 255, 0.3));
+  }
+
+  .login-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #{$color-text-primary};
+    margin: 0 0 4px;
+    background: linear-gradient(135deg, #{$color-primary-light}, #{$color-accent-cyan});
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .login-subtitle {
+    font-size: 13px;
+    color: #{$color-text-secondary};
+    margin: 0;
+  }
+}
+
+// ---- 模式切换 ----
+.login-tabs {
+  display: flex;
+  gap: 4px;
+  background: #{$color-bg-dark};
+  border-radius: #{$radius};
+  padding: 4px;
+  margin-bottom: 24px;
+
+  .login-tab {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    background: transparent;
+    color: #{$color-text-secondary};
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: #{$transition};
+
+    &.active {
+      background: #{$color-primary};
+      color: #{$color-text-primary};
+      box-shadow: 0 2px 8px rgba(124, 92, 255, 0.3);
+    }
+
+    &:hover:not(.active) {
+      color: #{$color-text-primary};
+      background: #{$color-bg-hover};
+    }
+  }
+}
+
+// ---- 表单 ----
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-label {
+  font-size: 13px;
+  color: #{$color-text-secondary};
+  font-weight: 500;
+}
+
+.login-input {
+  padding: 12px 16px;
+  background: #{$color-bg-dark};
+  border: 1px solid #{$color-border};
+  border-radius: #{$radius};
+  color: #{$color-text-primary};
+  font-size: 14px;
+  outline: none;
+  transition: #{$transition};
+
+  &::placeholder {
+    color: #{$color-text-muted};
+  }
+
+  &:focus {
+    border-color: #{$color-primary};
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.12);
+  }
+}
+
+// ---- 错误 ----
+.login-error {
+  padding: 10px 14px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 8px;
+  color: #{$color-danger};
+  font-size: 13px;
+  text-align: center;
+}
+
+// ---- 被守卫拦下来的提示（来自 ?redirect= 的受保护页） ----
+.login-notice {
+  padding: 10px 14px;
+  background: rgba(92, 225, 230, 0.08);
+  border: 1px solid rgba(92, 225, 230, 0.3);
+  border-radius: 8px;
+  color: #{$color-accent-cyan};
+  font-size: 13px;
+  text-align: center;
+}
+
+// ---- 提交按钮 ----
+.login-submit {
+  margin-top: 4px;
+  padding: 14px;
+  border: none;
+  border-radius: #{$radius};
+  background: linear-gradient(135deg, #{$color-primary}, #{$color-primary-light});
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: #{$transition};
+  box-shadow: 0 4px 16px rgba(124, 92, 255, 0.3);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124, 92, 255, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ---- 切换提示 ----
+.login-hint {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #{$color-text-secondary};
+
+  .login-switch {
+    margin-left: 6px;
+    border: none;
+    background: transparent;
+    color: #{$color-accent-cyan};
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

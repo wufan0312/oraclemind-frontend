@@ -1,0 +1,1162 @@
+// ============================================================================
+// 玄镜 OracleMind · 风水页样式 (Fengshui)
+// ============================================================================
+@use './tokens' as *;
+
+// ===== 风水主布局：喜忌档案 + 九宫飞星 =====
+.fengshui-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+// ===== 章节标题 =====
+.fs-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 22px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 8px;
+  }
+}
+
+// ===== 风水应用清单 =====
+.fs-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.fs-tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.fs-tip-ico {
+  font-size: 18px;
+}
+
+.fs-tip-name {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.fs-tip-val {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.fs-tip-bad {
+  border-color: rgba(255, 107, 107, 0.35);
+  background: rgba(255, 107, 107, 0.05);
+
+  .fs-tip-val {
+    color: #ff6b6b;
+  }
+}
+
+// ===== 九宫飞星图 =====
+// 左侧九宫格 + 右侧说明文字 两栏布局
+.star-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 20px;
+  align-items: center;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.star-mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.star-mode-help {
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--accent-gold);
+  }
+}
+
+.star-intro {
+  display: none;
+  background: rgba(124, 92, 255, 0.06);
+  border: 1px dashed rgba(124, 92, 255, 0.3);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+
+  &.open {
+    display: block;
+  }
+
+  p {
+    margin-bottom: 6px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.star-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.bagua-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.bagua-cell {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  &.highlight {
+    border-color: var(--accent-gold);
+    background: rgba(212, 168, 83, 0.08);
+  }
+
+  &.selected {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 2px rgba(212, 168, 83, 0.25);
+  }
+
+  &.dim {
+    opacity: 0.22;
+    pointer-events: none;
+  }
+}
+
+.bagua-symbol {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.bagua-name {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.star-tip {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// ===== 星曜详解 =====
+.star-detail {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  background: var(--bg-card);
+  font-size: 13px;
+}
+
+.star-detail-empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.star-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.star-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.star-detail-meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
+.star-detail-advice {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  background: rgba(212, 168, 83, 0.06);
+  border-left: 3px solid var(--accent-gold);
+  padding: 10px 12px;
+  border-radius: 0 8px 8px 0;
+}
+
+// ===== AI 家居布局建议 · 房间卡片 =====
+.room-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    border-color: var(--accent-gold);
+    background: rgba(212, 168, 83, 0.06);
+    box-shadow: 0 0 0 2px rgba(212, 168, 83, 0.15);
+  }
+}
+
+.room-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(124, 92, 255, 0.1);
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+// ===== 响应式 =====
+@media (max-width: 1200px) {
+  .fengshui-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================================================================
+ * 行内样式迁移层（style → class，与原型视觉一一对应）
+ * ================================================================ */
+
+// ---- 九宫飞星 ----
+.fs-star-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.fs-star-pos {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.fs-star-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+// ---- 页签行 ----
+.fs-tabs-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+// ---- 布局建议 / 分区 ----
+.fs-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.fs-detail-cell {
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: 10px;
+}
+
+.fs-cell-title {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.fs-tags-row {
+  margin-bottom: 6px;
+}
+
+.tag-mr {
+  margin-right: 6px;
+}
+
+.fs-cell-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+// ---- 办公室分区 ----
+.fs-room-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fs-room-ico {
+  font-size: 20px;
+}
+
+.fs-room-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.fs-room-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+// ---- 纵向列表 ----
+.fs-col-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ---- 吉日速查 ----
+.fs-date-row {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.fs-date-meta {
+  min-width: 96px;
+}
+
+.fs-date-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.fs-date-tag {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.fs-date-body {
+  flex: 1;
+  min-width: 200px;
+}
+
+.fs-yi-row {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.fs-yi-label {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.fs-yi-text {
+  color: var(--text-secondary);
+}
+
+.fs-ji-row {
+  font-size: 12px;
+}
+
+.fs-ji-label {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.fs-ji-text {
+  color: var(--text-secondary);
+}
+
+// ---- 时辰吉凶 ----
+.fs-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.fs-slot-cell {
+  padding: 10px;
+  background: var(--bg-card);
+  border-radius: 8px;
+}
+
+.fs-slot-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.fs-slot-name {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+// ---- 开运好物 ----
+.fs-goods-row {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  background: var(--bg-card);
+  border-radius: 8px;
+}
+
+.fs-goods-ico {
+  font-size: 28px;
+}
+
+.fs-goods-body {
+  flex: 1;
+}
+
+.fs-goods-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.fs-goods-pos {
+  font-size: 12px;
+  color: var(--accent-gold);
+  margin-top: 2px;
+}
+
+.fs-goods-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+// ---- 跨页联动 ----
+.fs-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+// ================================================================
+// v2 新增样式：流年切换器 / 星曜详解卡 / 八宅明镜 / 形煞自查 / 择日引擎 / AI 四维
+// ================================================================
+
+// ---- 流年切换器 ----
+.fs-year-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.fs-year-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.fs-year-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fs-year-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(124, 92, 255, 0.06);
+  }
+}
+
+.fs-year-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 60px;
+  text-align: center;
+}
+
+.fs-year-reset {
+  font-size: 11px;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+  }
+}
+
+.fs-year-center {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+// ---- 九宫飞星可点击格 ----
+.fs-star-clickable .fs-star-cell {
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 12px;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: var(--star-color, var(--primary)) !important;
+  }
+
+  &.fs-star-selected {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 2px rgba(212, 168, 83, 0.25);
+    background: rgba(212, 168, 83, 0.06) !important;
+  }
+}
+
+.fs-star-name {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 2px 0;
+}
+
+.fs-star-title {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.fs-star-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  display: inline-block;
+  width: fit-content;
+  margin-top: 2px;
+
+  &.fs-star-吉 { background: rgba(74, 222, 128, 0.12); color: #4ade80; }
+  &.fs-star-凶 { background: rgba(255, 107, 107, 0.12); color: #ff6b6b; }
+  &.fs-star-平 { background: rgba(160, 160, 184, 0.12); color: #a0a0b8; }
+}
+
+// ---- 星曜详解卡扩展（接入已有 .star-detail） ----
+.star-detail-full {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.star-detail-pos {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.fs-star-big-ico {
+  font-size: 20px;
+  margin-right: 4px;
+}
+
+.star-detail-goods {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.fs-goods-mini-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.fs-goods-mini-list {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.fs-goods-mini-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .fs-goods-ico {
+    font-size: 24px;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// ---- AI 四维切换器 ----
+.fs-dim-switcher {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.fs-dim-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+
+  &:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  &.fs-dim-active {
+    border-color: var(--accent-gold);
+    background: rgba(212, 168, 83, 0.08);
+    box-shadow: 0 0 0 2px rgba(212, 168, 83, 0.2);
+  }
+}
+
+.fs-dim-ico {
+  font-size: 24px;
+}
+
+.fs-dim-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.fs-dim-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+// ---- 八宅明镜 ----
+.fs-bazhai-ming {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  background: rgba(212, 168, 83, 0.06);
+  border: 1px solid rgba(212, 168, 83, 0.2);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.fs-bazhai-gua-big {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.fs-bazhai-trigram {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.fs-bazhai-name {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.fs-bazhai-info {
+  flex: 1;
+}
+
+.fs-bazhai-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.fs-bazhai-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  padding: 12px;
+  background: var(--bg-card);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.fs-bazhai-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.fs-bazhai-cell {
+  padding: 12px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+  transition: var(--transition);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.fs-bazhai-dir {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.fs-bazhai-star {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.fs-bazhai-level {
+  font-size: 10px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: 6px;
+
+  &.fs-bazhai-吉 { background: rgba(74, 222, 128, 0.1); }
+  &.fs-bazhai-凶 { background: rgba(255, 107, 107, 0.1); }
+}
+
+.fs-bazhai-meaning {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.fs-bazhai-advice {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+// ---- 吉凶热力图 ----
+.fs-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fs-heat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fs-heat-dir {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 50px;
+  text-align: right;
+}
+
+.fs-heat-bar {
+  flex: 1;
+  height: 18px;
+  background: var(--bg-card);
+  border-radius: 9px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.fs-heat-fill {
+  height: 100%;
+  border-radius: 9px 0 0 9px;
+  transition: width 0.5s ease;
+  opacity: 0.75;
+}
+
+.fs-heat-label {
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 50px;
+}
+
+// ---- 择日引擎 ----
+.fs-today-banner {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 16px;
+  background: rgba(124, 92, 255, 0.06);
+  border: 1px solid rgba(124, 92, 255, 0.2);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.fs-today-date {
+  min-width: 120px;
+}
+
+.fs-today-gan {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.fs-today-jc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.fs-today-yiji {
+  flex: 1;
+  min-width: 200px;
+}
+
+.fs-cat-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.fs-cat-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  &.fs-cat-active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+}
+
+.fs-date-match {
+  font-size: 11px;
+  color: #4ade80;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.fs-date-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+// ---- 形煞自查 ----
+.fs-xingsha-intro {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(255, 107, 107, 0.04);
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 107, 107, 0.2);
+}
+
+.fs-xingsha-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fs-xingsha-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  background: var(--bg-card);
+  transition: var(--transition);
+
+  &.fs-xingsha-hit {
+    border-color: rgba(255, 107, 107, 0.4);
+    background: rgba(255, 107, 107, 0.03);
+  }
+}
+
+.fs-xingsha-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 8px;
+}
+
+.fs-xingsha-check {
+  font-size: 18px;
+}
+
+.fs-xingsha-ico {
+  font-size: 20px;
+}
+
+.fs-xingsha-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.fs-xingsha-sev {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+
+  &.fs-sev-轻 { background: rgba(160, 160, 184, 0.15); color: #a0a0b8; }
+  &.fs-sev-中 { background: rgba(212, 168, 83, 0.15); color: #d4a853; }
+  &.fs-sev-重 { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
+}
+
+.fs-xingsha-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.fs-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+}
+
+.fs-xingsha-effect {
+  font-size: 11px;
+  color: #ff6b6b;
+  margin-bottom: 8px;
+}
+
+.fs-xingsha-cures {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.fs-cure-card {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+
+  &.fs-cure-基础 { background: rgba(160, 160, 184, 0.06); }
+  &.fs-cure-进阶 { background: rgba(124, 92, 255, 0.06); }
+  &.fs-cure-专业 { background: rgba(212, 168, 83, 0.06); border-color: rgba(212, 168, 83, 0.3); }
+}
+
+.fs-cure-level {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin-bottom: 4px;
+}
+
+.fs-cure-method {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.fs-cure-items {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+// ===== 流式输出光标 =====
+.fs-cursor {
+  display: inline-block;
+  color: var(--primary);
+  font-weight: 100;
+  animation: fs-blink 0.8s steps(2) infinite;
+  margin-left: 1px;
+}
+
+@keyframes fs-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+// ===== AI 免责声明 =====
+.fs-disclaimer {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+// ===== 罗盘定向组件（修复 P1 罗盘缺失）=====
+.fs-compass-card {
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid #241c43;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #232342, var(--bg-panel));
+}
+.fs-compass-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.fs-compass-ico { font-size: 20px; }
+.fs-compass-title { font-size: 16px; margin: 0; color: var(--accent-gold, #b8893a); }
+.fs-compass-tip { font-size: 13px; color: #6b5d44; line-height: 1.6; margin: 6px 0 14px; }
+.fs-compass-tip b { color: var(--accent-gold, #b8893a); }
+.fs-compass-dial { position: relative; width: 200px; height: 200px; margin: 0 auto; }
+.fs-compass-svg { width: 200px; height: 200px; display: block; }
+.fs-compass-ring { fill: rgba(255, 255, 255, 0.5); stroke: rgba(184, 137, 58, 0.5); stroke-width: 1.5; }
+.fs-compass-ring2 { fill: none; stroke: rgba(184, 137, 58, 0.3); stroke-width: 1; }
+.fs-compass-tick { stroke: rgba(120, 90, 40, 0.5); stroke-width: 1; }
+.fs-compass-dir { font-size: 12px; fill: #7a6233; font-weight: 600; }
+.fs-compass-needle { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+.fs-compass-needle-n, .fs-compass-needle-s {
+  position: absolute; left: -2px; width: 4px; height: 62px; border-radius: 2px;
+}
+.fs-compass-needle-n { top: -92px; background: linear-gradient(180deg, #e0533f, #c0392b); }
+.fs-compass-needle-s { top: 30px; background: linear-gradient(180deg, #4a4a4a, #2c2c2c); }
+.fs-compass-center {
+  position: absolute; left: 50%; top: 50%; width: 10px; height: 10px;
+  margin: -5px 0 0 -5px; border-radius: 50%; background: var(--accent-gold, #b8893a);
+}
+.fs-compass-range { width: 100%; margin: 14px 0 8px; accent-color: var(--accent-gold, #b8893a); }
+.fs-compass-btns { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.fs-compass-btn {
+  padding: 5px 10px; border: 1px solid rgba(184, 137, 58, 0.4);
+  border-radius: 8px; background: #fff; color: #6b5d44; font-size: 12px; cursor: pointer;
+}
+.fs-compass-btn.active { background: var(--accent-gold, #b8893a); color: #fff; border-color: transparent; }

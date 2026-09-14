@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9b7bff"/>
+      <stop offset="1" stop-color="#4621b8"/>
+    </linearGradient>
+    <linearGradient id="sym" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ece9ff"/>
+    </linearGradient>
+    <radialGradient id="gloss" cx="0.32" cy="0.22" r="0.85">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#1a0b3a" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="12" fill="url(#bg)" filter="url(#ds)"/>
+  <rect x="4" y="4" width="40" height="40" rx="12" fill="url(#gloss)"/>
+  <rect x="5" y="5" width="38" height="38" rx="11" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+  <circle cx="24" cy="24" r="13" fill="url(#sym)"/>
+  <path d="M24 11 a13 13 0 1 0 0 26 a6.5 6.5 0 1 1 0-13 a6.5 6.5 0 1 0 0-13" fill="#4621b8"/>
+  <circle cx="24" cy="17.5" r="3.4" fill="#4621b8"/>
+  <circle cx="24" cy="30.5" r="3.4" fill="url(#sym)"/>
+</svg>

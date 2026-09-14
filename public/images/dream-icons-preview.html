@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>解梦页 · 小标题图标预览</title>
+<style>
+  :root { --bg:#120b2e; --card:#1e1547; --txt:#e9e3ff; --sub:#a99fd6; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; background:radial-gradient(1200px 600px at 50% -10%, #2d1b69, var(--bg)); color:var(--txt); font-family:"PingFang SC","Microsoft YaHei",sans-serif; display:flex; flex-direction:column; align-items:center; padding:40px 16px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  p.sub { color:var(--sub); margin:0 0 28px; font-size:14px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:18px; width:min(760px,100%); }
+  .card { background:var(--card); border:1px solid rgba(124,92,255,.25); border-radius:16px; padding:22px 14px; display:flex; flex-direction:column; align-items:center; gap:12px; transition:transform .2s, box-shadow .2s; }
+  .card:hover { transform:translateY(-4px); box-shadow:0 10px 30px rgba(124,92,255,.3); }
+  .card img { width:48px; height:48px; }
+  .card .name { font-size:14px; font-weight:600; }
+  .card .fn { font-size:12px; color:var(--sub); }
+  .footer { margin-top:30px; color:var(--sub); font-size:12px; }
+</style>
+</head>
+<body>
+  <h1>周公解梦 · 小标题图标</h1>
+  <p class="sub">3D 彩色磁贴风格（与卜卦页 / 首页底部导航一致）· 24×24 · 渐变 + 高光</p>
+  <div class="grid">
+    <div class="card"><img src="/images/dream-icons/history.svg" alt=""/><div class="name">历史对话</div><div class="fn">history.svg</div></div>
+    <div class="card"><img src="/images/dream-icons/knowledge.svg" alt=""/><div class="name">关于梦的小知识</div><div class="fn">knowledge.svg</div></div>
+    <div class="card"><img src="/images/dream-icons/energy.svg" alt=""/><div class="name">今日梦境能量</div><div class="fn">energy.svg</div></div>
+    <div class="card"><img src="/images/dream-icons/diary.svg" alt=""/><div class="name">梦境日记 · 趋势洞察</div><div class="fn">diary.svg</div></div>
+    <div class="card"><img src="/images/dream-icons/deeper.svg" alt=""/><div class="name">解梦想更深入？</div><div class="fn">deeper.svg</div></div>
+    <div class="card"><img src="/images/dream-icons/community.svg" alt=""/><div class="name">社区 · 互助解梦</div><div class="fn">community.svg</div></div>
+  </div>
+  <div class="footer">玄镜 OracleMind · 解梦页小标题图标集</div>
+</body>
+</html>

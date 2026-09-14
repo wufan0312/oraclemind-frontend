@@ -1,0 +1,81 @@
+// ============================================================================
+// 玄镜 OracleMind · 基础样式层 (Base / Reset)
+// ----------------------------------------------------------------------------
+// reset + 全局 body + 滚动条 + 通用工具类（与原型保持一致）
+// ============================================================================
+@use './tokens' as *;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-family;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 链接标签适配（原型拆分后补充）
+a.nav-link {
+  text-decoration: none;
+  display: inline-block;
+}
+a.nav-logo {
+  text-decoration: none;
+}
+a.feature-card {
+  text-decoration: none;
+  color: inherit;
+}
+
+// 按钮 / 输入统一字体
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+// ---- 滚动条 ----
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-hover);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+// ---- 通用工具类 ----
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+// 文本渐变
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-cyan) 50%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// 禁用选中
+.no-select {
+  user-select: none;
+}

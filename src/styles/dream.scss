@@ -1,0 +1,1822 @@
+// ============================================================================
+// 玄镜 OracleMind · 周公解梦页样式 (Dream)
+// ============================================================================
+@use './tokens' as *;
+
+// ===== 搜索区 =====
+.dream-search {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.dream-input-row {
+  display: flex;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+// 梦境分类胶囊
+.dream-categories {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+// ===== 近期背景 / 情绪输入（新增） =====
+.dream-context-row {
+  max-width: 600px;
+  margin: 14px auto 0;
+}
+
+.dream-context-input {
+  font-size: 13px;
+  padding: 10px 16px;
+  background: rgba(124, 92, 255, 0.04);
+  color: var(--text-muted);
+
+  &::placeholder {
+    color: var(--text-muted);
+    opacity: 0.75;
+  }
+}
+
+// ===== 分类浏览（新增：8 大分类 + 词条） =====
+.dream-browser {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 32px;
+}
+
+.dream-browser-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 14px;
+}
+
+.dream-browser-tab {
+  padding: 7px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary-light);
+  }
+
+  &.active {
+    background: rgba(124, 92, 255, 0.12);
+    border-color: var(--primary);
+    color: var(--primary-light);
+    font-weight: 600;
+  }
+}
+
+.dream-browser-body {
+  padding-top: 16px;
+}
+
+.dream-browser-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.dream-cat {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary-light);
+  }
+
+  &.active {
+    background: rgba(124, 92, 255, 0.12);
+    border-color: var(--primary);
+    color: var(--primary-light);
+    font-weight: 600;
+  }
+}
+
+// ===== 胶囊行（分类浏览轻量版） =====
+.dream-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  & + & {
+    margin-top: 12px;
+  }
+}
+
+.dream-cat-row-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+// ===== 梦境AI氛围图 =====
+.dream-vision-wrapper {
+  position: relative;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1035 0%, #120b2e 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.dream-vision {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  transition: opacity 0.6s ease-in-out;
+
+  &.hidden {
+    opacity: 0;
+  }
+}
+
+.dream-vision-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 28px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.dream-vision-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid rgba(124, 92, 255, 0.3);
+  border-top-color: #7c5cff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.dream-vision-caption {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+  z-index: 2;
+}
+
+.dream-vision-keyword {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.dream-vision-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 24px;
+  margin-bottom: 14px;
+  background: linear-gradient(160deg, rgba(124, 92, 255, 0.06), rgba(92, 225, 230, 0.03));
+  border: 1px dashed rgba(124, 92, 255, 0.35);
+  border-radius: 12px;
+  text-align: center;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary-light, #9b8cff);
+    background: linear-gradient(160deg, rgba(124, 92, 255, 0.1), rgba(92, 225, 230, 0.05));
+  }
+}
+
+.dream-vision-phantom {
+  width: 100%;
+  max-width: 400px;
+  height: 80px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #120b2e 0%, var(--bg-card) 100%);
+  opacity: 0.4;
+  box-shadow: inset 0 0 30px rgba(124, 92, 255, 0.15);
+}
+
+.dream-vision-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--primary, #7c5cff), var(--primary-light, #9b8cff));
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 16px rgba(124, 92, 255, 0.35);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124, 92, 255, 0.45);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.dream-vision-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// ===== 梦境趋势卡片 =====
+.dream-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dream-trend-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -8px;
+}
+
+.dream-trend-divider {
+  border: 0;
+  border-top: 1px dashed var(--border);
+  margin: 6px 0 2px;
+}
+
+.dream-trend-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.dream-trend-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dream-diary-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 18px 0;
+  text-align: center;
+}
+
+// —— 记录列表紧凑版：标题+日期一行，节省空间
+.dream-diary-entries-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dream-diary-entry-compact {
+  padding: 6px 10px;
+  min-height: 0;
+  background: var(--bg-muted);
+  border-radius: 8px;
+  transition: background 0.2s, border-color 0.2s;
+  border: 1px solid transparent;
+}
+
+.dream-diary-entry-compact:hover {
+  background: rgba(155, 140, 255, 0.12);
+  border-color: rgba(155, 140, 255, 0.25);
+}
+
+.dream-diary-entry-compact.active-session {
+  background: rgba(155, 140, 255, 0.18);
+  border-color: rgba(155, 140, 255, 0.5);
+}
+
+.dream-diary-text-compact {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dream-diary-title-inline {
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.dream-diary-meta-inline {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  opacity: 0.85;
+  padding: 0;
+  white-space: nowrap;
+}
+
+// —— 符号热力图（分类分布条）
+.dream-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dream-heat-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 28px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.dream-heat-label {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dream-heat-bar {
+  height: 8px;
+  background: var(--bg-muted);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dream-heat-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.dream-heat-count {
+  text-align: right;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+// —— 情绪曲线（堆叠柱）
+.dream-mood-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dream-mood-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.dream-mood-baseline {
+  stroke: var(--border, #3a3550);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+
+.dream-mood-line {
+  fill: none;
+  stroke: var(--primary, #7c5cff);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 3px rgba(124, 92, 255, 0.45));
+  vector-effect: non-scaling-stroke;
+}
+
+.dream-mood-dot {
+  stroke: var(--bg-card, #1a1730);
+  stroke-width: 1.5;
+  transition: r 0.15s ease;
+}
+
+.dream-mood-dot:hover {
+  r: 4.5;
+}
+
+.dream-mood-date {
+  font-size: 9px;
+  fill: var(--text-muted, #9a93b5);
+  font-family: inherit;
+}
+
+.dream-mood-legend {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.dot-s {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.dot-s-good { background: var(--good, #4ade80); }
+.dot-s-neu  { background: var(--primary-light, #9b8cff); }
+.dot-s-neg  { background: var(--bad, #f87171); }
+
+// ===== 双栏主布局 =====
+.dream-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+.dream-main,
+.dream-side {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ===== 解梦结果 =====
+.dream-result {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: none;
+  scroll-margin-top: 88px;
+
+  &.active {
+    display: block;
+  }
+}
+
+.dream-result-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.dream-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+// ===== 热门梦境卡片（保留，供后续扩展） =====
+.dream-hot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.dream-hot-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    background: rgba(124, 92, 255, 0.06);
+  }
+}
+
+.dream-hot-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.dream-hot-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dream-hot-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.dream-hot-arrow {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+// ===== 梦境日记 =====
+.dream-diary-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dream-diary-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 18px 0;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.dream-diary-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 10px;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+  }
+}
+
+.dream-diary-emoji {
+  font-size: 16px;
+}
+
+.dream-diary-title {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dream-diary-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary-light);
+  border: 1px solid rgba(124, 92, 255, 0.4);
+  border-radius: 8px;
+  padding: 1px 6px;
+  line-height: 1.4;
+}
+
+.dream-diary-badge-rep {
+  color: var(--accent-gold);
+  border-color: rgba(255, 217, 138, 0.4);
+}
+
+.dream-diary-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.dream-diary-del {
+  margin-left: auto;
+  flex-shrink: 0;
+  // width: 20px;
+  // height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--danger, #e5484d);
+    background: rgba(229, 72, 77, 0.1);
+  }
+}
+
+// ===== 搜索区提示 =====
+.dream-search-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+// ===== 解梦结果正文 =====
+.dream-result-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+
+  p {
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong {
+    color: var(--text-primary);
+  }
+}
+
+// ===== 相似梦境 =====
+.dream-related {
+  margin-top: 18px;
+}
+
+.dream-related-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.dream-categories-start {
+  justify-content: flex-start;
+  margin-top: 0;
+}
+
+// ===== AI 解读 · 视角徽章（补充全局 .ai-interp-header） =====
+.ai-interp-header-title {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ai-interp-persp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.14);
+  border: 1px solid rgba(124, 92, 255, 0.28);
+  color: var(--primary-light);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+// ===== 🔁 换个角度再看 · 视角胶囊栏 =====
+.dream-perspectives {
+  margin-top: 22px;
+  padding: 14px 14px 12px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(124,92,255,0.06), rgba(124,92,255,0.02));
+  border: 1px solid rgba(124, 92, 255, 0.12);
+}
+
+.dream-perspectives-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  span { font-size: 14px; }
+}
+
+.dream-perspectives-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dream-persp-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.18s ease;
+
+  &:hover:not(:disabled) {
+    color: var(--text-primary);
+    border-color: rgba(124, 92, 255, 0.32);
+    transform: translateY(-0.5px);
+  }
+  &:disabled { cursor: not-allowed; opacity: 0.75; }
+
+  &.active {
+    background: linear-gradient(135deg, rgba(124,92,255,0.26), rgba(167,139,250,0.22));
+    border-color: rgba(167,139,250,0.58);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 0 0 2px rgba(167,139,250,0.14), 0 3px 10px rgba(124,92,255,0.24);
+  }
+
+  &.cached:not(.active) {
+    border-color: rgba(124, 92, 255, 0.18);
+  }
+
+  &.loading {
+    color: var(--text-muted);
+    opacity: 0.9;
+  }
+}
+
+.dream-persp-badge {
+  font-size: 13.5px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dream-persp-name {
+  white-space: nowrap;
+}
+
+.dream-persp-spinner {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.8px solid rgba(167,139,250,0.26);
+  border-top-color: rgba(167,139,250,0.92);
+  animation: dream-persp-rot 0.72s linear infinite;
+  margin-left: 2px;
+}
+@keyframes dream-persp-rot { to { transform: rotate(360deg); } }
+
+.dream-persp-dot {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.18);
+}
+
+.dream-perspectives-hint {
+  margin-top: 9px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  opacity: 0.92;
+  line-height: 1.5;
+}
+
+// ===== 结果操作按钮 =====
+.dream-result-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+// ===== 今日梦境能量头部 =====
+.dream-energy-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dream-energy-emoji {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  overflow: visible;
+}
+
+.dream-energy-emoji svg {
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(124, 92, 255, 0.18));
+}
+
+.dream-energy-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.dream-energy-rate {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+// ===== 梦境日记 =====
+.dream-diary-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.dream-diary-input {
+  height: 90px;
+  resize: none;
+  margin-bottom: 12px;
+}
+
+// ===== 跨页联动 CTA 卡片 =====
+.dream-cta-card {
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.08), rgba(92, 225, 230, 0.04));
+  border-color: rgba(124, 92, 255, 0.2);
+}
+
+// ===== AI 解梦加载态 =====
+.dream-ai-loading {
+  text-align: center;
+  padding: 48px 24px;
+
+  .dream-ai-loading-icon {
+    font-size: 52px;
+    animation: dream-breathe 1.6s ease-in-out infinite;
+  }
+
+  .dream-ai-loading-title {
+    margin-top: 16px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .dream-ai-loading-sub {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+}
+
+@keyframes dream-breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.75; }
+}
+
+// ===== AI 降级提示 =====
+.dream-ai-fallback-hint {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.25);
+}
+
+// ===== 响应式 =====
+@media (max-width: 768px) {
+  .dream-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dream-categories {
+    gap: 6px;
+  }
+
+  .dream-cat {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+
+// ===== 流式打字机：正在生成 徽标 + 停止按钮 + 光标闪动 =====
+.ai-interp-streaming-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.14);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #30d17a;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 18px;
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #30d17a;
+    box-shadow: 0 0 0 0 rgba(48, 209, 122, 0.6);
+    animation: ai-streaming-pulse 1.4s infinite;
+  }
+}
+@keyframes ai-streaming-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(48, 209, 122, 0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(48, 209, 122, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(48, 209, 122, 0); }
+}
+
+.ai-interp-stop-btn {
+  margin: 0 auto;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ff6b6b;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all .15s ease;
+  &:hover {
+    background: rgba(239, 68, 68, 0.18);
+    color: #ff8080;
+  }
+  &:active { transform: translateY(0.5px); }
+}
+
+// 流式末端的▍光标（在文本末尾）
+@keyframes ai-streaming-caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.ai-interp-text {
+  :deep(.ai-stream-caret),
+  & > div {
+    /* 由于我们直接把 ▍拼进了文本，让它被加粗并闪动 */
+  }
+}
+// 精确命中▍（直接在文本最后追加的字符）：用 JSX 端已经输出，所以给它统一的闪动（通过 ::after 可能影响到已有符号，改为包裹 span 的方案就好；
+// 但为了省事儿，直接给 ai-interp-text 末尾追加一个 overlay 光标 + 在文字末尾的▍用颜色高亮）
+.ai-interp-text > div > p:last-child::after,
+.ai-interp-text > div::after {
+  // 不干扰原有内容，因为 ▍ 已直接追加进原文（含 cleanAiTplResidue 清理），下面保留默认颜色即可
+  content: "";
+}
+
+
+// ===== 今日梦境能量 2.0：能量罗盘 =====
+.dream-energy-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dream-energy-source {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: -6px 0 8px;
+  text-align: center;
+}
+
+.dream-energy-ring-wrap {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  margin: 4px 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: dreamEnergyPulse 3.6s ease-in-out infinite;
+}
+
+@keyframes dreamEnergyPulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(124, 92, 255, 0.25)); }
+  50% { filter: drop-shadow(0 0 18px rgba(124, 92, 255, 0.55)); }
+}
+
+.dream-energy-ring {
+  width: 170px;
+  height: 170px;
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 9;
+}
+
+.ring-fill {
+  fill: none;
+  stroke-width: 9;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dream-energy-ring-wrap.is-low .ring-fill { stroke: var(--accent-cyan); }
+.dream-energy-ring-wrap.is-mid .ring-fill { stroke: var(--primary); }
+.dream-energy-ring-wrap.is-high .ring-fill { stroke: var(--accent-gold); }
+
+.dream-energy-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.dream-energy-score {
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.dream-energy-score-unit {
+  font-size: 12px;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+}
+
+.dream-energy-score-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.dream-energy-ring-wrap.is-low .dream-energy-score-label { color: var(--accent-cyan); }
+.dream-energy-ring-wrap.is-mid .dream-energy-score-label { color: var(--primary); }
+.dream-energy-ring-wrap.is-high .dream-energy-score-label { color: var(--accent-gold); }
+
+.dream-energy-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 14px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.14), rgba(92, 225, 230, 0.06));
+  border: 1px solid rgba(124, 92, 255, 0.28);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dream-energy-type-emoji { font-size: 16px; }
+
+.dream-lucky-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.dream-lucky-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.dream-lucky-k {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.dream-lucky-v {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dream-lucky-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.dream-energy-oracle {
+  width: 100%;
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.1), rgba(124, 92, 255, 0.05));
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+// ===== 双栏下方整宽区：梦境日记趋势 =====
+.dream-bottom {
+  margin-top: 24px;
+}
+
+.dream-bottom .dream-trend {
+  // 整宽时约束内部内容宽度，避免热力图被拉得过长
+  .dream-heat-row {
+    max-width: 720px;
+  }
+  .dream-diary-entry {
+    max-width: 100%;
+  }
+}
+
+// ===== 左栏新增：梦境符号速查 =====
+.dream-symbol-lookup {
+  display: flex;
+  flex-direction: column;
+}
+
+.dream-symbol-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: -6px 0 12px;
+}
+
+.dream-symbol-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.dream-symbol-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-cyan);
+  }
+
+  &.active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.25);
+    background: linear-gradient(135deg, rgba(124, 92, 255, 0.12), rgba(92, 225, 230, 0.06));
+  }
+}
+
+.dream-symbol-ico {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.dream-symbol-name {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.dream-symbol-result {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.08), rgba(92, 225, 230, 0.04));
+  border-left: 3px solid var(--primary);
+  border-radius: 8px;
+  animation: dreamSymbolFade 0.25s ease;
+}
+
+.dream-symbol-result-ico {
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.dream-symbol-result-name {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.dream-symbol-result-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+@keyframes dreamSymbolFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .dream-symbol-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .dream-symbol-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 底部三栏横行：历史对话 · 深入解梦 · 社区互助 */
+.dream-footer-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.dream-footer-col {
+  min-height: 100%;
+}
+
+@media (max-width: 860px) {
+  .dream-footer-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ===== 语音录梦（VoiceRecordButton） =====
+.voice-record {
+  margin-top: 8px;
+}
+
+.voice-record-btn {
+  width: 100%;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-active);
+    color: var(--text-primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.listening {
+    background: rgba(224, 92, 92, 0.12);
+    border-color: rgba(224, 92, 92, 0.5);
+    color: #e05c5c;
+  }
+}
+
+.voice-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.voice-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e05c5c;
+  animation: voicePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes voicePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+.voice-interim {
+  color: var(--accent-cyan);
+  font-style: italic;
+}
+
+.voice-tip,
+.voice-err {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.voice-err { color: #e05c5c; }
+
+// ===== 清醒梦引导（LucidDreamGuide） =====
+.lucid-guide {
+  margin-top: 22px;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.lucid-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.lucid-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.lucid-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.lucid-tab {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &.active {
+    background: var(--accent-cyan);
+    color: #fff;
+    border-color: transparent;
+  }
+}
+
+.lucid-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lucid-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+// ---- 认识 ----
+.lucid-intro-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lucid-intro-item {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.lucid-intro-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-gold);
+  margin-bottom: 4px;
+}
+
+.lucid-intro-body {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.lucid-rc-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.lucid-rc {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.lucid-rc-icon { font-size: 16px; flex-shrink: 0; }
+
+.lucid-rc-action {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.lucid-rc-why {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.lucid-tips {
+  ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  li {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-muted);
+  }
+}
+
+// ---- 练习 ----
+.lucid-tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+.lucid-tech {
+  display: flex;
+  gap: 10px;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover { border-color: var(--border-active); }
+
+  &.active {
+    border-color: rgba(124, 92, 255, 0.5);
+    background: rgba(124, 92, 255, 0.08);
+  }
+}
+
+.lucid-tech-icon { font-size: 20px; flex-shrink: 0; }
+
+.lucid-tech-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lucid-tech-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lucid-tech-diff {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-weight: 400;
+
+  &.diff-easy { background: rgba(63, 174, 106, 0.16); color: #3fae6a; }
+  &.diff-mid { background: rgba(247, 210, 122, 0.18); color: var(--accent-gold); }
+  &.diff-hard { background: rgba(224, 92, 92, 0.15); color: #e05c5c; }
+}
+
+.lucid-tech-desc {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.lucid-tech-when {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.lucid-practice {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.lucid-practice-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.lucid-practice-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.lucid-practice-when { font-size: 11px; color: var(--text-muted); }
+
+.lucid-practice-count {
+  font-size: 12px;
+  color: var(--accent-cyan);
+  flex-shrink: 0;
+}
+
+.lucid-steps {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lucid-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: var(--bg-panel);
+  transition: var(--transition);
+
+  &.current {
+    border-color: rgba(124, 92, 255, 0.45);
+    background: rgba(124, 92, 255, 0.08);
+  }
+
+  &.done { opacity: 0.55; }
+}
+
+.lucid-step-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+
+  .lucid-step.current & {
+    background: var(--accent-cyan);
+    color: #fff;
+    border-color: transparent;
+  }
+}
+
+.lucid-step-text {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.lucid-practice-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.lucid-btn {
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  &.primary {
+    background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+    color: #fff;
+    border-color: transparent;
+    font-weight: 600;
+  }
+}
+
+// ---- 日志 ----
+.lucid-stats {
+  display: flex;
+  gap: 10px;
+}
+
+.lucid-stat {
+  flex: 1;
+  text-align: center;
+  padding: 10px 6px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.lucid-stat-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.lucid-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.lucid-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.lucid-form-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lucid-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  flex: 1;
+  min-width: 110px;
+
+  input,
+  select {
+    font-size: 12px;
+    padding: 7px 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    color: var(--text-primary);
+  }
+}
+
+.lucid-note {
+  resize: vertical;
+  min-height: 60px;
+  font-size: 12px;
+  padding: 9px 11px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-primary);
+}
+
+.lucid-save { align-self: flex-end; }
+
+.lucid-empty {
+  text-align: center;
+  padding: 22px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.lucid-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.lucid-log-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.lucid-log-badge {
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  flex-shrink: 0;
+
+  &.ok { background: rgba(63, 174, 106, 0.16); color: #3fae6a; }
+  &.no { background: rgba(224, 92, 92, 0.12); color: #e05c5c; }
+}
+
+.lucid-log-date { color: var(--text-muted); flex-shrink: 0; }
+.lucid-log-tech { color: var(--accent-cyan); flex-shrink: 0; }
+
+.lucid-log-note {
+  color: var(--text-secondary);
+  flex: 1;
+  min-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lucid-log-del {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  flex-shrink: 0;
+
+  &:hover { color: #e05c5c; }
+}
+
+.lucid-footer {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}

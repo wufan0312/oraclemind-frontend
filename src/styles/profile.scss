@@ -1,0 +1,244 @@
+// ===== 个人中心 /profile =====
+.profile-page {
+  padding: 28px 24px 60px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.profile-head {
+  margin-bottom: 22px;
+}
+
+.profile-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.profile-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.profile-toast {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: rgba(124, 92, 255, 0.12);
+  border: 1px solid rgba(124, 92, 255, 0.35);
+  color: var(--primary-light);
+  font-size: 13px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+
+.profile-card--wide {
+  grid-column: 1 / -1;
+}
+
+// 修行境界卡片直接复用首页 GrowthCard 作为 grid item：全宽 + 抹掉首页的顶部间距
+.profile-grid > .growth-card {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+.profile-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+
+// ---- 账号资料 ----
+.profile-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+  flex-shrink: 0;
+}
+
+.profile-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-username {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.profile-user-email,
+.profile-user-id {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.profile-logout {
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.profile-guest-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+
+  strong { color: var(--accent-gold); }
+}
+
+.profile-guest-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.profile-login-btn {
+  display: inline-block;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+  color: #fff;
+  text-decoration: none;
+}
+
+// ---- 占卜档案 ----
+.profile-birth-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+
+  &:last-of-type { border-bottom: none; }
+}
+
+.profile-birth-label {
+  width: 88px;
+  font-size: 13px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.profile-birth-val {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.profile-birth-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.profile-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+.profile-inline-link {
+  margin-left: 8px;
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+// ---- 数据与引导 ----
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.profile-action-btn {
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &.danger {
+    color: #e05c5c;
+    border-color: rgba(224, 92, 92, 0.4);
+  }
+}
+
+.profile-actions-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+// 会员与权益入口（跳转 /member）
+.profile-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.profile-member-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.profile-member-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--accent-gold);
+  border: 1px solid rgba(212, 168, 83, 0.5);
+  background: rgba(212, 168, 83, 0.08);
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--accent-gold);
+    background: rgba(212, 168, 83, 0.16);
+  }
+}

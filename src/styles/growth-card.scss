@@ -1,0 +1,208 @@
+// ===== 成长体系卡片（components/home/GrowthCard）=====
+// 2026-09-10 从 home.scss 抽出：该卡片同时用于「首页」与「个人中心 /profile」，
+// 留在 home.scss（仅首页 import）会导致个人中心无样式。
+// 由 layout.tsx 全局加载（与 DateTimePicker.scss / Cascader.scss / AIInterpretation.scss 同规约）。
+
+.growth-card {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.growth-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.growth-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.growth-link {
+  font-size: 12px;
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.growth-body {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.growth-level-badge {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.12);
+}
+
+.growth-level-num {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.growth-level-name {
+  font-size: 12px;
+  opacity: 0.92;
+}
+
+.growth-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.growth-xp-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.growth-xp-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.growth-xp-unit {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.growth-next {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.growth-progress {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.growth-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+  transition: width 0.4s ease;
+}
+
+.growth-foot-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.growth-checkin {
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: linear-gradient(90deg, var(--accent-gold), #f0b860);
+  color: #3a2a10;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &.done {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-weight: 400;
+    cursor: default;
+  }
+}
+
+.growth-gain {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
+.growth-modules {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+
+.growth-modules-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.growth-modules-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.growth-module {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.growth-module-icon { flex-shrink: 0; }
+
+.growth-module-label {
+  color: var(--text-secondary);
+  width: 62px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.growth-module-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  min-width: 24px;
+}
+
+.growth-module-bar-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+}
+
+.growth-module-count {
+  color: var(--accent-gold);
+  font-weight: 600;
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+}

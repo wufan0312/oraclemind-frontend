@@ -1,0 +1,2527 @@
+// ============================================================================
+// 玄镜 OracleMind · 星座页样式 (Horoscope)
+// ============================================================================
+@use './tokens' as *;
+
+// ===== 12 星座选择 =====
+.zodiac-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.zodiac-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    transform: scale(1.02);
+  }
+
+  &.active {
+    border-color: var(--primary);
+    background: rgba(124, 92, 255, 0.1);
+    box-shadow: 0 0 0 1px var(--primary);
+
+    .zodiac-symbol {
+      transform: scale(1.15);
+    }
+  }
+}
+
+.zodiac-symbol {
+  font-size: 32px;
+  margin-bottom: 8px;
+  transition: transform var(--transition);
+}
+
+.zodiac-name {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.zodiac-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// ===== 星盘行星交互 =====
+.planet {
+  cursor: pointer;
+
+  circle {
+    transition: transform var(--transition), opacity 0.2s;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+
+  &:hover circle {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+
+  text {
+    pointer-events: none;
+  }
+}
+
+.planet-read {
+  margin: 20px auto 0;
+  max-width: 500px;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  text-align: left;
+  transition: var(--transition);
+}
+
+.planet-read-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-gold);
+  margin-bottom: 6px;
+}
+
+.planet-read-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+// ===== 近期运势 =====
+.fortune-cell {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.fortune-tag {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.fortune-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.lucky-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  background: rgba(124, 92, 255, 0.06);
+  border: 1px solid rgba(124, 92, 255, 0.15);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.lucky-item {
+  text-align: center;
+
+  span {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  strong {
+    font-size: 14px;
+    color: var(--primary-light);
+  }
+}
+
+// ===== 星座小知识 =====
+.zodiac-fact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.zodiac-fact-item {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+
+  span {
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+}
+
+// ===== 本命星盘容器 =====
+.chart-container {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+}
+
+.natal-chart {
+  width: 360px;
+  height: 360px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(124, 92, 255, 0.3);
+  position: relative;
+}
+
+.chart-planet {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transform: translate(-50%, -50%);
+}
+
+// ===== 响应式 =====
+@media (max-width: 1200px) {
+  .zodiac-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .lucky-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ===== 行内样式迁移层（style → class）=====
+// 跨页联动 CTA
+.horo-cta-card {
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.12), rgba(92, 225, 230, 0.08));
+}
+
+.horo-cta-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.horo-cta-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.horo-cta-submit {
+  font-size: 13px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.horo-cta-ghost {
+  width: 100%;
+  font-size: 13px;
+}
+
+// ============================================================================
+// 专业本命盘占星 · 新增样式
+// ============================================================================
+
+// ===== 出生信息表单 =====
+.birth-form {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  align-items: end;
+}
+
+// ===== 复选框：暗色主题化（替换浏览器原始白色方块） =====
+// 必须放顶层用 form 容器后代选择器 —— 因为 .checkbox 实测嵌在 label > input 多层里，
+// 原嵌套在 .birth-field 下选择器命中不到，浏览器回退到默认白底外观。
+// natal 表单容器 .birth-form + 合盘表单容器 .syn-form，两者都列出来。
+.birth-form input.checkbox,
+.syn-form input.checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+
+  &:hover {
+    border-color: var(--primary-light);
+    background: var(--bg-panel);
+  }
+
+  &:checked {
+    background: linear-gradient(135deg, var(--primary), #6c4ce0);
+    border-color: var(--primary);
+  }
+
+  &:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0;
+    width: 4px;
+    height: 9px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(45deg) translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.30);
+  }
+}
+
+.birth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .label-box {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  input,
+  select {
+    width: 100%;
+    // padding: 10px 14px;
+    border-radius: 10px;
+    // border: 1px solid var(--border);
+    // 用 background-color（而非 background 简写），避免清空 .birth-select 的 background-image
+    // background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition);
+
+    &:focus {
+      // border-color: var(--primary);
+      // box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.15);
+    }
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+  }
+}
+
+
+.birth-submit {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+// Ant Design 风格表单布局调整
+.birth-form.antd-form {
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 24px;
+}
+
+.birth-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.form-error {
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.25);
+  font-size: 13px;
+  color: #ff6b6b;
+  line-height: 1.6;
+}
+
+.dirty-banner {
+  margin-top: 10px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-active, rgba(255, 184, 0, 0.4));
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+// ===== 星盘容器增强 =====
+.chart-container {
+  padding: 24px;
+}
+
+.chart-title-center {
+  justify-content: center;
+  text-align: center;
+}
+
+.chart-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.natal-chart-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+// 四轴 + 日月图例：悬浮在 SVG 右上角（取代原本 SVG 下方水平排列）
+.chart-legend {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  pointer-events: none;          // 不挡 SVG 上的交互（hover 等）
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: calc(100% - 24px);
+    padding: 8px 10px;
+    font-size: 11px;
+    gap: 2px 10px;
+  }
+
+  .lg-asc {
+    color: var(--accent-pink);
+    font-size: 14px;
+  }
+
+  .lg-mc {
+    color: var(--accent-gold);
+    font-size: 14px;
+  }
+}
+
+// ===== NatalChart SVG 星盘 =====
+.natal-chart-svg {
+  width: 460px;
+  height: 460px;
+  max-width: 100%;
+  display: block;
+}
+
+.nc-ring {
+  fill: none;
+  stroke: rgba(124, 92, 255, 0.25);
+  stroke-width: 1;
+}
+
+.nc-house-fill {
+  &.nc-even {
+    fill: rgba(124, 92, 255, 0.03);
+  }
+
+  &.nc-odd {
+    fill: rgba(92, 225, 230, 0.025);
+  }
+}
+
+.nc-sign-line {
+  stroke: rgba(124, 92, 255, 0.3);
+  stroke-width: 1;
+}
+
+.nc-house-line {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 0.8;
+}
+
+.nc-sign-glyph {
+  font-size: 13px;
+  fill: var(--primary-light);
+  font-family: 'Inter', sans-serif;
+}
+
+.nc-house-num {
+  font-size: 10px;
+  fill: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+.nc-planet-glyph {
+  font-size: 16px;
+  fill: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+}
+
+.nc-planet-deg {
+  font-size: 7px;
+  fill: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+.nc-retro {
+  .nc-planet-glyph {
+    fill: var(--accent-pink);
+  }
+}
+
+.nc-hub {
+  fill: rgba(124, 92, 255, 0.08);
+  stroke: rgba(124, 92, 255, 0.3);
+  stroke-width: 1;
+}
+
+.nc-hub-asc {
+  font-size: 9px;
+  fill: var(--accent-pink);
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+.nc-hub-sub {
+  font-size: 8px;
+  fill: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+.nc-angle-label {
+  font-size: 9px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+
+  &.nc-asc {
+    fill: var(--accent-pink);
+  }
+
+  &.nc-mc {
+    fill: var(--accent-gold);
+  }
+}
+
+// ===== 行星落座落宫表 =====
+.planet-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 16px;
+}
+
+.pt-head {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr 1fr;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+}
+
+.pt-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr 1fr;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: var(--transition);
+
+  &:hover {
+    background: var(--bg-card);
+  }
+}
+
+.pt-planet {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.pt-deg {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.pt-house {
+  color: var(--primary-light);
+  font-size: 12px;
+
+  .retro {
+    color: var(--accent-pink);
+    font-style: normal;
+    font-weight: 600;
+    margin-left: 2px;
+  }
+}
+
+// ===== 相位列表 =====
+.aspect-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 16px;
+}
+
+.aspect-item {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: var(--transition);
+
+  &:hover {
+    background: var(--bg-card);
+  }
+}
+
+.asp-p1,
+.asp-p2 {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.asp-type {
+  font-size: 11px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.12);
+  color: var(--primary-light);
+  white-space: nowrap;
+}
+
+.asp-orb {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  min-width: 40px;
+}
+
+.asp-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 16px;
+}
+
+// ===== Tab 切换栏 =====
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--text-primary);
+    background: rgba(124, 92, 255, 0.06);
+  }
+
+  &.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(124, 92, 255, 0.3);
+  }
+}
+
+.tab-icon {
+  font-size: 14px;
+}
+
+// ===== AI 解读区 =====
+.ai-loading {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interpret-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.interpret-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.is-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-light);
+}
+
+.is-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.adv-block {
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.06), rgba(92, 225, 230, 0.03));
+  border: 1px solid rgba(124, 92, 255, 0.15);
+  border-radius: 10px;
+
+  ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+
+    li {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.adv-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+// ===== 12 星座速选运势 =====
+.quick-horo-card {
+  margin-bottom: 24px;
+}
+
+.quick-horo-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.quick-horo-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.quick-horo-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// ===== 12 星座网格 =====
+.quick-sign-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.qs-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 6px 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    background: rgba(124, 92, 255, 0.1);
+    box-shadow: 0 0 0 1px var(--primary), 0 0 16px rgba(124, 92, 255, 0.25);
+  }
+}
+
+.qs-glyph {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.qs-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.qs-month {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+// 访客星座高亮
+.qs-btn.qs-visitor {
+  border-color: var(--accent-gold) !important;
+  box-shadow: 0 0 0 1px var(--accent-gold), 0 0 12px rgba(212, 168, 83, 0.3);
+
+  &.active {
+    box-shadow: 0 0 0 1px var(--primary), 0 0 16px rgba(124, 92, 255, 0.3);
+  }
+}
+
+.qs-badge {
+  position: absolute;
+  top: -8px;
+  right: -4px;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--accent-gold);
+  color: #1a1a2e;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+// ===== 选中星座详情面板 =====
+.visitor-sign-panel {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.06), rgba(92, 225, 230, 0.04));
+  border: 2px solid var(--accent-gold);
+  border-radius: 14px;
+}
+
+.vsp-glyph {
+  font-size: 48px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.vsp-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vsp-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vsp-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.vsp-keyword {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.vsp-element {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vsp-summary {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.vsp-stars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 18px;
+  padding: 6px 0;
+}
+
+.si-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.si-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.si-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1;
+}
+
+.si-stars {
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0;
+  display: inline-flex;
+  gap: 1px;
+}
+
+.si-on {
+  color: var(--accent-gold);
+}
+
+.si-off {
+  color: var(--text-muted);
+  opacity: 0.3;
+}
+
+.vsp-lucky {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vsl-item {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  b {
+    color: var(--accent-gold);
+    margin-left: 2px;
+  }
+}
+
+// ===== 配对合盘 =====
+.synastry-card {
+  margin-top: 24px;
+}
+
+.syn-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+
+  .syn-toggle-arrow {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: var(--transition);
+  }
+
+  &:hover .syn-toggle-arrow {
+    color: var(--primary);
+  }
+}
+
+.syn-collapsed-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.syn-form {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.syn-person {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.syn-person-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-light);
+}
+
+
+
+.syn-unknown-time {
+  font-size: 12px;
+  color: var(--text-muted);
+
+  input.checkbox {
+    margin-right: 6px;
+    display: inline-block;
+  }
+}
+
+.syn-person-info {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.syn-person-sign {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+.syn-arrow {
+  align-self: center;
+  font-size: 22px;
+  padding-top: 8px;
+}
+
+.syn-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.syn-submit {
+  margin-top: 16px;
+}
+
+.syn-result {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  grid-template-areas:
+    'score pair'
+    'score aspects'
+    'full full';
+  gap: 16px 24px;
+  margin-top: 20px;
+}
+
+.syn-score-wrap {
+  grid-area: score;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.syn-score-ring {
+  position: relative;
+  width: 104px;
+  height: 104px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+.syn-score-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.syn-score-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.syn-pair {
+  grid-area: pair;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.syn-pair-side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.sps-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin-bottom: 2px;
+}
+
+.syn-aspects {
+  grid-area: aspects;
+}
+
+.syn-aspects-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.syn-aspects-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.syn-asp {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+
+  &.good {
+    border-color: rgba(92, 225, 230, 0.4);
+    background: rgba(92, 225, 230, 0.08);
+    color: var(--accent-cyan);
+  }
+
+  &.hard {
+    border-color: rgba(242, 135, 111, 0.4);
+    background: rgba(242, 135, 111, 0.08);
+    color: #f2876f;
+  }
+}
+
+.syn-result > .interpret-body {
+  grid-area: full;
+}
+
+// ===== 幸运指南面板 =====
+.lucky-panel {
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(242, 200, 90, 0.08), rgba(124, 92, 255, 0.05));
+  border: 1px solid rgba(242, 200, 90, 0.25);
+  border-radius: 10px;
+}
+
+.lucky-panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-gold);
+  margin-bottom: 10px;
+}
+
+.lucky-panel-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+}
+
+.lp-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lp-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.lp-nums {
+  display: flex;
+  gap: 6px;
+
+  em {
+    font-style: normal;
+    min-width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-gold);
+    background: rgba(242, 200, 90, 0.1);
+    border: 1px solid rgba(242, 200, 90, 0.35);
+    border-radius: 8px;
+  }
+}
+
+.lp-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+// ===== 星座页响应式 =====
+@media (max-width: 1200px) {
+  .birth-form,
+  .birth-form.antd-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .syn-form {
+    grid-template-columns: 1fr;
+
+    .syn-arrow {
+      text-align: center;
+      padding: 0;
+    }
+  }
+
+  .syn-result {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'score'
+      'pair'
+      'aspects'
+      'full';
+  }
+
+  .syn-score-wrap {
+    flex-direction: row;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  // 左右布局在小屏变上下
+  .natal-lr-layout .natal-lr-body {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  // 星盘下方两栏在小屏变上下
+  .natal-cols {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .birth-form,
+  .birth-form.antd-form {
+    // grid-template-columns: 1fr;
+  }
+
+  // 小屏日历面板宽度
+  .antd-dp-panel {
+    width: 260px;
+  }
+
+  .antd-tp-panel {
+    width: 180px;
+  }
+
+  .cascader-dropdown {
+    min-width: 100%;
+  }
+
+  .cascader-column {
+    min-width: 50%;
+  }
+
+  .natal-chart-svg {
+    width: 360px;
+    height: 360px;
+  }
+
+  .tab-btn {
+    font-size: 11px;
+    padding: 6px 4px;
+  }
+
+  .tab-icon {
+    display: none;
+  }
+
+  .pt-head,
+  .pt-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pt-head span:nth-child(3),
+  .pt-row .pt-deg,
+  .pt-row .pt-house {
+    display: none;
+  }
+
+  // 用户星座面板小屏
+  .visitor-sign-panel {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .vsp-glyph {
+    font-size: 36px;
+  }
+
+  .vsp-stars {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .vsp-wiki-row,
+  .vsp-wiki-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .syn-pair {
+    grid-template-columns: 1fr;
+  }
+
+  .syn-score-wrap {
+    flex-direction: column;
+  }
+
+  .lucky-panel-items {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+// ============================================================================
+// 星座页 V2 新增样式
+// ============================================================================
+
+// ===== 用户星座百科信息 =====
+.vsp-wiki {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vsp-wiki-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vsp-wiki-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-light);
+  margin-bottom: 6px;
+}
+
+.vsp-wiki-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.vsp-wiki-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.vsp-wiki-half {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vsp-wiki-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vsp-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+
+  &.good {
+    border-color: rgba(92, 225, 230, 0.4);
+    color: var(--accent-cyan);
+    background: rgba(92, 225, 230, 0.06);
+  }
+
+  &.weak {
+    border-color: rgba(242, 135, 111, 0.4);
+    color: #f2876f;
+    background: rgba(242, 135, 111, 0.06);
+  }
+
+  &.match {
+    border-color: rgba(124, 92, 255, 0.45);
+    color: var(--primary-light);
+    background: rgba(124, 92, 255, 0.08);
+  }
+}
+
+.vsp-wiki-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.vsp-wiki-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.vsp-wk-k {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+// ===== 需求 3: 本命星盘综合模块 + 左右布局 =====
+.natal-combined-card {
+  margin-bottom: 24px;
+}
+
+// ===== 本命盘 / 太阳返照 视图 tab 切换（与顶部 mode-nav 同款胶囊分段器，缩小版） =====
+.chart-view-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  padding: 4px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: fit-content;
+}
+.cv-tab {
+  position: relative;
+  padding: 8px 18px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: var(--transition);
+  font-family: inherit;
+}
+.cv-tab:hover {
+  color: var(--text-primary);
+  background: rgba(124, 92, 255, 0.1);
+}
+.cv-tab.active {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.35);
+}
+.cv-tab.active::after {
+  content: none;   // 去掉旧版下划线，激活态由渐变胶囊表达
+}
+
+// 本命盘 / 返照盘 左右布局（此前 .natal-lr-body 无基础样式，左右从未真正生效）
+.natal-lr-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.natal-lr-left {
+  min-width: 0;
+}
+.natal-lr-right {
+  min-width: 0;
+}
+
+// ===== 视图头部：tab 居左，导出按钮居右上角 =====
+.chart-view-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.chart-view-header .chart-view-tabs {
+  flex: 1 1 auto;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+.chart-view-header .chart-export-top {
+  flex: 0 0 auto;
+  margin-top: 0;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+}
+
+// ===== 星盘居中置顶 + 下方两栏 =====
+.chart-chart-top {
+  position: relative;          // 给内部悬浮图例提供定位锚点
+  margin-bottom: 40px;
+}
+.natal-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.natal-cols-left {
+  min-width: 0;
+}
+.natal-cols-right {
+  min-width: 0;
+
+  > :first-child {
+    margin-top: 0;
+  }
+}
+
+// 返照盘未生成时的生成面板
+.sr-generate-panel {
+  padding: 32px 24px;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.sr-gen-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.sr-gen-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin: 0 auto 18px;
+  max-width: 480px;
+}
+.sr-generate-panel .sr-row {
+  justify-content: center;
+  margin-top: 0;
+}
+
+// ===== 本命盘增强：宫制/四轴/元素/庙旺落陷/小行星/导出/日间盘 =====
+
+.chart-sub {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+.chart-legend .lg-ic { color: var(--accent-cyan); }
+.chart-legend .lg-dsc { color: var(--accent-pink, #e08ab8); }
+
+// 四象元素分布
+.element-bar {
+  display: flex;
+  width: 100%;
+  height: 22px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.element-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #fff;
+  min-width: 0;
+}
+.element-legend {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.element-dot { font-weight: 600; }
+
+// 庙旺落陷角标
+.dignity {
+  margin-left: 4px;
+  font-style: normal;
+  font-size: 10px;
+  padding: 0 4px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+.dignity-ruler { background: rgba(212,165,55,0.18); color: #d4a537; }
+.dignity-exalt { background: rgba(92,225,140,0.16); color: var(--accent-green, #5ce18c); }
+.dignity-detriment { background: rgba(150,150,150,0.16); color: var(--text-muted); }
+.dignity-fall { background: rgba(255,107,107,0.16); color: #ff6b6b; }
+
+// 小行星行
+.pt-row-extra { opacity: 0.92; }
+
+// 导出 / 太阳返照按钮
+.chart-export-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  justify-content: flex-end;
+}
+.chart-export-btn { font-size: 13px; }
+
+.sr-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.sr-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.sr-select {
+  min-width: 100px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.15);
+  }
+}
+
+.sr-submit {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(124, 92, 255, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.sr-hint {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+// 日间盘降级
+.natal-day-chart { padding: 8px 0; }
+.day-chart-banner {
+  background: rgba(124,92,255,0.08);
+  border: 1px dashed var(--border-active, var(--border));
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+// 真实天象
+.transit-panel {
+  margin-top: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 12px);
+  padding: 14px 16px;
+}
+.transit-panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.transit-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.transit-item {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+.transit-soft { background: rgba(92,225,230,0.1); color: var(--text-secondary); }
+.transit-hard { background: rgba(242,135,111,0.12); color: #f2876f; }
+.transit-orb { margin-left: 4px; opacity: 0.7; font-style: normal; }
+
+// 组合盘
+.syn-composite {
+  margin-top: 16px;
+  /* 跨满两列：grid 默认会把没设 grid-area 的元素 auto-place 到 col 1 (130px) 或 col 2 (1fr)，
+     导致组合盘缩在右半区、跟下面 .interpret-body（grid-area:full）左边缘错位。
+     这里跟 .interpret-body 一样跨满整行，左边缘才与上面整行内容对齐。 */
+  grid-column: 1 / -1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 12px);
+  padding: 14px 16px;
+}
+.syn-composite-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-pink, #e08ab8);
+  margin-bottom: 10px;
+}
+.syn-composite-body { display: flex; flex-wrap: wrap; gap: 10px; }
+.sc-item {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(224,138,184,0.1);
+  color: var(--text-primary);
+}
+.syn-composite-aspects { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sc-asp {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(124,92,255,0.1);
+  color: var(--text-secondary);
+}
+
+// 太阳返照盘
+.sr-card { margin-bottom: 24px; }
+.sr-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+.sr-time {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-gold);
+  white-space: nowrap;
+}
+.sr-note {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.sr-chart-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 16px;
+}
+.sr-sub-section {
+  margin-top: 16px;
+}
+.sr-report-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sr-rep-p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+
+  b {
+    display: inline-block;
+    min-width: 64px;
+    margin-right: 8px;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+}
+.sr-rep-advice {
+  margin: 4px 0 0;
+  padding-left: 20px;
+
+  li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+}
+.report-loading {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+// 表单：出生时间未知 + 宫制
+.birth-time-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.birth-time-input { flex: 1; min-width: 0; }
+.birth-time-unknown {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.birth-unknown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// SVG 四轴角标配色
+.nc-angle-label.nc-ic { fill: var(--accent-cyan); }
+.nc-angle-label.nc-dsc { fill: var(--accent-pink, #e08ab8); }
+
+
+
+// ===== 流式输出样式 =====
+.stream-cursor {
+  display: inline-block;
+  color: var(--primary);
+  animation: stream-blink 0.8s steps(2, start) infinite;
+  font-weight: 100;
+}
+
+@keyframes stream-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.stream-dots {
+  display: inline-flex;
+  gap: 2px;
+
+  span {
+    animation: stream-dot 1.4s ease-in-out infinite;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes stream-dot {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+.stream-placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+  min-height: 20px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.stream-pending {
+  opacity: 0.5;
+}
+
+.combined-sub-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.combined-sub-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== 十二宫位表 ===== */
+.house-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  padding-bottom: 16px;
+}
+
+.ht-head,
+.ht-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 84px 64px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.ht-head {
+  font-size: 12px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.ht-row:hover {
+  background: var(--bg-card);
+}
+
+.ht-row:nth-child(even of .ht-row) {
+  background: var(--bg-card);
+}
+
+.ht-row {
+  background: transparent;
+}
+
+.ht-num {
+  font-weight: 600;
+  color: var(--accent-cyan, var(--primary-light));
+}
+
+.ht-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ht-info b {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ht-theme {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.ht-sign {
+  color: var(--text-secondary);
+}
+
+.ht-cusp {
+  text-align: right;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-summary {
+  margin: 0;
+  padding: 4px 0;
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  white-space: pre-wrap;        // 保留后端的 \n —— 每行一项，不再被折叠成一坨
+  word-break: break-word;
+  letter-spacing: 0.1px;
+}
+
+.chart-summary .cs-line {
+  display: inline;
+}
+
+.chart-summary .cs-note {
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.10);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: normal;
+  letter-spacing: 0.2px;
+  vertical-align: middle;
+}
+
+.cs-toggle {
+  margin-top: 6px;
+}
+
+.aspect-title {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 6px;
+  padding: 4px 6px;
+
+  &:hover .aspect-toggle {
+    border-color: var(--primary);
+    color: var(--primary-light);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+.aspect-toggle {
+  margin-left: auto;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--primary);
+    color: var(--primary-light);
+    background: rgba(124, 92, 255, 0.08);
+  }
+}
+
+// 悬浮在 SVG 右上角（与 .chart-legend 配套，避让其下方）。
+// 从原本"位于 .natal-cols-right 内的卡片块"改造为悬浮 chip 卡，与左栏 SVG 视图统一视觉层级。
+.chart-signs-row {
+  position: absolute;
+  top: 155px;                         // 避让 .chart-legend（其高约 135px，含 padding）
+  right: 12px;
+  z-index: 5;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  max-width: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0.7;
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    top: auto;
+    bottom: 12px;
+    max-width: calc(100% - 24px);
+    padding: 8px 10px;
+    gap: 2px 6px;
+  }
+}
+
+.chart-signs-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+
+  @media (max-width: 768px) {
+    margin-right: 4px;
+  }
+}
+
+.chart-signs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chart-sign-chip {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  background: var(--bg-card);            // 由 inline style 的同色 12% 透明叠加
+  color: var(--text-primary);            // 文字恒亮，所有 luckyColor 都可读
+  font-weight: 500;
+  transition: transform var(--transition, 0.2s), box-shadow var(--transition, 0.2s);
+}
+
+.chart-sign-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(124, 92, 255, 0.18);
+}
+
+// ===== 需求 5: AI 本命盘解读独立模块 =====
+.ai-interpret-card {
+  margin-bottom: 24px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.ai-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ai-card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ai-tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;          // 内层标题已去掉，actions 直接靠右
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.ai-tab-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.regen-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+// ===== 解读来源徽章（AI 生成 / 本地降级） =====
+// 后端 meta 一直返回这些状态，此前前端只渲染了组件、没写样式，
+// 徽章退化为一行裸文字，LLM 降级时用户毫无察觉。
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+
+  &.ai {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  &.cached {
+    border-color: var(--text-muted);
+    color: var(--text-muted);
+  }
+
+  &.degraded {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.08);
+    cursor: help;
+  }
+}
+
+.ai-interpret-card .tab-bar {
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tab-content {
+  min-height: 200px;
+}
+
+// ===== 需求 6: 配对直接显示 + 新布局 =====
+.synastry-card {
+  margin-top: 0;
+  margin-bottom: 24px;
+
+  // 不再折叠，直接显示
+  .syn-toggle {
+    cursor: default;
+    .syn-toggle-arrow {
+      display: none;
+    }
+  }
+}
+
+.syn-form {
+  &.antd-form {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: start;
+    margin-top: 16px;
+  }
+}
+
+.syn-picker-group {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: nowrap;
+
+  .antd-dp,
+  .antd-tp,
+  .cascader-wrap {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+  }
+}
+
+// ===== 新增响应式 =====
+@media (max-width: 1200px) {
+  .quick-sign-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .vsp-wiki-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .syn-form.antd-form {
+    grid-template-columns: 1fr;
+
+    .syn-arrow {
+      text-align: center;
+      padding: 0;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .quick-sign-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .qs-month {
+    font-size: 9px;
+  }
+
+  .qs-badge {
+    font-size: 8px;
+    padding: 1px 5px;
+  }
+
+  .vsp-wiki-row {
+    grid-template-columns: 1fr;
+  }
+
+  .vsp-wiki-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cascader-dropdown {
+    min-width: 100%;
+  }
+
+  .cascader-column {
+    min-width: 50%;
+  }
+
+  .ai-interpret-card .tab-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+
+    .tab-btn {
+      flex-shrink: 0;
+    }
+  }
+}
+
+/* ===== 顶部模式导航（重设计 2026-08-31 / 卡片式 + 底边小色条 2026-08-31） ===== */
+.mode-nav {
+  display: flex;
+  gap: 4px;
+  margin: 20px 0 28px;
+  padding: 5px;
+  background: var(--bg-dark);          // 比页面深一档的「凹槽」底，让整组 tab 读作一个整体
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+}
+
+.mode-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 10px;                 // 容器 14px - padding 5px ≈ 内 pill 圆角，视觉同心
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.mode-tab:hover {
+  color: var(--text-primary);
+  background: rgba(124, 92, 255, 0.1);
+}
+
+.mode-tab.active {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.35);  // 与主 CTA 按钮同款渐变 + 光晕，风格呼应
+}
+
+.mode-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ===== 模式面板 + 分区 ===== */
+.mode-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.horo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+// ============================================================================
+// 星盘明细手风琴（十大星体 / 主要相位 / 小行星虚点 / 十二宫位 统一收口）
+// ============================================================================
+.astro-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acc-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+
+  &.open {
+    border-color: var(--border-active, var(--primary));
+  }
+}
+
+.acc-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--primary);
+    background: var(--bg-hover, rgba(124, 92, 255, 0.06));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+}
+
+.acc-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.acc-chevron {
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+  transform: rotate(-90deg);
+}
+
+.acc-item.open .acc-chevron {
+  transform: rotate(0deg);
+}
+
+// grid-template-rows 过渡实现高度自适应展开/收起（无需预估 max-height）
+.acc-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s ease;
+}
+
+.acc-item.open .acc-body {
+  grid-template-rows: 1fr;
+}
+
+.acc-body-inner {
+  overflow: hidden;
+  min-height: 0;
+  padding: 2px 16px 0;
+}

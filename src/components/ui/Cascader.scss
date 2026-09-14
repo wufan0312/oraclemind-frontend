@@ -1,0 +1,137 @@
+// ============================================================================
+// 玄镜 OracleMind · Cascader 级联选择器（components/ui 全局样式）
+// 原样式散落在 horoscope.scss，仅 horoscope 页生效，违背「ui 组件样式全局加载」铁律；
+// 现下沉到此文件由 layout 全局 import，bugua / horoscope 等各页均可直接使用。
+// 注意：本文件只用 CSS 变量（var(--xxx)，由 tokens.scss 的 :root 全局定义），
+// 不用 SCSS $ 变量，故无需 @use tokens（tokens.scss 在 src/styles/，相对路径 './tokens' 会解析失败）。
+// ============================================================================
+
+.cascader-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.cascader-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 42px;
+
+  &:hover {
+    border-color: rgba(124, 92, 255, 0.5);
+  }
+
+  &.cascader-input-active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.15);
+  }
+}
+
+.cascader-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cascader-placeholder {
+  color: var(--text-muted);
+}
+
+.cascader-arrow {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+
+  &.cascader-arrow-up {
+    transform: rotate(180deg);
+  }
+}
+
+.cascader-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  display: flex;
+  gap: 1px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  max-height: 260px;
+
+  // 单级下拉（如宫制）：与输入框等宽，避免像双列那样撑开
+  &.cascader-dropdown-single {
+    width: 100%;
+
+    .cascader-column {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .cascader-option {
+      white-space: normal;
+    }
+  }
+}
+
+.cascader-column {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-width: 120px;
+  max-height: 260px;
+  background: var(--bg-card);
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(124, 92, 255, 0.3);
+    border-radius: 3px;
+  }
+}
+
+.cascader-option {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(124, 92, 255, 0.08);
+    color: var(--text-primary);
+  }
+
+  &.cascader-option-active {
+    background: rgba(124, 92, 255, 0.06);
+    color: var(--primary-light);
+  }
+
+  &.cascader-option-selected {
+    color: var(--primary-light);
+    font-weight: 600;
+
+    &::after {
+      content: ' ✓';
+      font-size: 11px;
+    }
+  }
+}

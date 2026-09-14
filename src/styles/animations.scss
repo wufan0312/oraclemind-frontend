@@ -1,0 +1,148 @@
+// ============================================================================
+// 玄镜 OracleMind · 动画层 (Animations)
+// ----------------------------------------------------------------------------
+// 提取自原型 styles.css 的全部 @keyframes，集中管理，页面/组件共享。
+// ============================================================================
+
+// ---- 通用淡入 ----
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ---- 卜卦 · 魔法光带 / 面板辉光 ----
+@keyframes magicFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes glowPulseA {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.14); }
+}
+@keyframes glowPulseB {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%      { opacity: 0.9;  transform: scale(1.16); }
+}
+@keyframes panelGlow {
+  0%, 100% {
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.4),
+      0 0 45px rgba(124, 92, 255, 0.22),
+      0 0 90px rgba(124, 92, 255, 0.12),
+      0 0 130px rgba(92, 225, 230, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.4),
+      0 0 60px rgba(124, 92, 255, 0.35),
+      0 0 120px rgba(124, 92, 255, 0.18),
+      0 0 170px rgba(92, 225, 230, 0.14);
+  }
+}
+
+// ---- 精灵 ----
+@keyframes spiritFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes auraPulse {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 1;   transform: translateX(-50%) scale(1.2); }
+}
+@keyframes particleFloat {
+  0%, 100% { opacity: 0.2; transform: translateY(0) scale(1); }
+  50%      { opacity: 1;   transform: translateY(-12px) scale(1.5); }
+}
+@keyframes glowBreath {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 1;   transform: translateX(-50%) scale(1.1); }
+}
+// ---- 精灵 · 脚下的魔法八卦阵 ----
+@keyframes baguaPulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 9px rgba(167, 139, 250, 0.85))
+      drop-shadow(0 0 20px rgba(92, 225, 230, 0.50))
+      drop-shadow(0 0 42px rgba(124, 92, 255, 0.30))
+      drop-shadow(0 4px 9px rgba(0, 0, 0, 0.35));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 13px rgba(167, 139, 250, 1.0))
+      drop-shadow(0 0 28px rgba(92, 225, 230, 0.68))
+      drop-shadow(0 0 56px rgba(124, 92, 255, 0.42))
+      drop-shadow(0 4px 9px rgba(0, 0, 0, 0.35));
+  }
+}
+@keyframes bubbleFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes typingDot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30%           { opacity: 1;   transform: translateY(-4px); }
+}
+
+// ---- 塔罗 ----
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes shuffleShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px) rotate(-3deg); }
+  40%      { transform: translateX(6px) rotate(3deg); }
+  60%      { transform: translateX(-4px) rotate(-2deg); }
+  80%      { transform: translateX(4px) rotate(2deg); }
+}
+
+// ---- 疗愈 · 呼吸 ----
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50%      { transform: scale(1.3); opacity: 1; }
+}
+
+// ---- 疗愈 · 聊天 ----
+@keyframes chatTypingDot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30%           { opacity: 1;   transform: translateY(-5px); }
+}
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+// ---- 疗愈 · 欢迎区 ----
+@keyframes welcomeGlowPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 1; }
+}
+
+// ---- 疗愈 · 修行等级 ----
+@keyframes realmPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.96); }
+  50%      { opacity: 1;   transform: scale(1.04); }
+}
+@keyframes realmSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes realmFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes xpShimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes onlinePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+// ---- 供养 ----
+@keyframes offeringPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0); }
+  25%  { box-shadow: 0 0 0 6px rgba(212, 168, 83, 0.35); }
+  60%  { box-shadow: 0 0 0 2px rgba(212, 168, 83, 0.12); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0); }
+}

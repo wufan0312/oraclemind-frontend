@@ -1,0 +1,2615 @@
+@use './tokens' as *;
+
+:root {
+  --bg-dark: #0f0f1a;
+  --bg-panel: #1a1a2e;
+  --bg-card: #232342;
+  --bg-hover: #2a2a4a;
+  --primary: #7c5cff;
+  --primary-light: #a78bfa;
+  --accent-cyan: #5ce1e6;
+  --accent-gold: #d4a853;
+  --accent-pink: #ff6b9d;
+  --accent-green: #4ade80;
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6b6b85;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(124, 92, 255, 0.4);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 40px rgba(124, 92, 255, 0.15);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* —— 顶部模式切换：与星座页 .mode-nav / .mode-tab 统一为分段胶囊风格 ——
+ * 随文档流排布，不做吸顶浮动：滚动时整体上移离开视口，
+ * 避免覆盖在下方卡片/表单之上造成「浮层压内容」的割裂感 */
+.ming-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 4px 0 24px;
+  padding: 5px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.ming-tab {
+  flex: 1 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-tab .title-icon {
+  width: 1.15em;
+  height: 1.15em;
+}
+.ming-tab:hover {
+  color: var(--text-primary);
+  background: rgba(124, 92, 255, 0.1);
+}
+.ming-tab.active {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.35);
+}
+
+/* 窄屏：5 个 tab 改为可换行，避免挤压 */
+@media (max-width: 640px) {
+  .ming-tabs {
+    flex-wrap: wrap;
+  }
+  .ming-tab {
+    flex: 1 1 32%;
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+}
+.ming-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.ming-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.ming-input {
+  /* flex: 1 1; */
+  /* max-width: 120px; */
+}
+
+.ming-select {
+  width: auto;
+  min-width: 96px;
+  flex: 0 0 auto;
+}
+
+.ming-btn {
+  width: auto;
+  padding: 12px 28px;
+  flex: 0 0 auto;
+}
+
+/* 字典选字：描边幽灵按钮，区别于主操作 */
+.ming-btn-ghost {
+  background: transparent !important;
+  border: 1px solid var(--primary);
+  color: var(--primary-light);
+  box-shadow: none;
+}
+.ming-btn-ghost:hover {
+  background: rgba(124, 92, 255, 0.12) !important;
+}
+
+.ming-form-hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.ming-btn-wide {
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* ============================================================================
+ * 表单布局重构：把平铺字段收进分组卡片，按「基础信息 → 模式/选项 → 操作」分层
+ * ==========================================================================*/
+.ming-form-card {
+  padding: 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.ming-form-group {
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ming-form-group + .ming-form-group {
+  margin-top: 14px;
+}
+
+.ming-form-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.ming-form-group-title::before {
+  content: '';
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--primary-light), var(--primary));
+}
+
+.ming-form-grid-2,
+.ming-form-grid-3,
+.ming-form-grid-4 {
+  display: grid;
+  gap: 12px;
+}
+.ming-form-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.ming-form-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.ming-form-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+.ming-form-col-full { grid-column: 1 / -1; }
+
+.ming-form-actions {
+  margin-top: 16px;
+}
+.ming-form-actions .btn-submit {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* 模式切换条：占满整行，三段等分 */
+.ming-mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  margin-top: 0;
+}
+
+/* 复选框分组：横向换行，避免上下紧贴 */
+.ming-check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+}
+.ming-check-group .ming-bazi-toggle {
+  margin-top: 0;
+}
+
+/* 生肖宜忌提示在分组内出现 */
+.ming-form-group .ming-block,
+.ming-form-group .ming-forbid-card {
+  margin-top: 12px;
+}
+.ming-form-group .ming-block:first-of-type {
+  margin-top: 0;
+}
+
+@media (max-width: 720px) {
+  .ming-form-grid-2,
+  .ming-form-grid-3,
+  .ming-form-grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .ming-form-card {
+    padding: 14px;
+  }
+  .ming-form-group {
+    padding: 12px;
+  }
+}
+
+.ming-err {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--danger, #ff6b6b);
+}
+
+.dream-search-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 10px 0 0;
+  line-height: 1.6;
+}
+
+.ming-disclaimer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+.ming-warn {
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--warn, #ff8e53);
+}
+
+/* —— 测字 —— */
+.ming-cezi-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.ming-cezi-char {
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-light, #a78bfa), var(--accent-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(124, 92, 255, 0.3));
+}
+
+.ming-cezi-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ming-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+}
+.ming-badge.muted {
+  color: var(--text-muted) !important;
+}
+
+.ming-block {
+  margin-top: 14px;
+}
+
+.ming-block-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.ming-block-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+/* —— 评分条 —— */
+.ming-score-bar {
+  flex: 1 1;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.ming-score-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ming-score-head {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 4px;
+}
+
+.ming-score-num {
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+}
+.ming-score-num span {
+  font-size: 16px;
+  margin-left: 4px;
+  color: var(--text-secondary);
+}
+
+.ming-score-cap {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* —— 五格 —— */
+.ming-grid-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 10px;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.ming-grid-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ming-grid-name {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ming-grid-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.ming-grid-k {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ming-comments {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ming-comment {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.ming-comment-label {
+  flex: 0 0 auto;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 36px;
+}
+
+.ming-comment-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* —— 合婚 —— */
+.ming-partner-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 16px;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.ming-partner {
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* 卡头：紫色小圆点 + 标题，与表单区拉出层次 */
+.ming-partner-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+
+  &::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.16);
+  }
+}
+
+/* 卡内 2×2 栅格：称呼｜性别 ／ 出生日期｜时辰
+   两行右缘对齐，避免「孤独下拉框独霸一行 + 右侧大片空白」的参差感。
+   注意：仅作用于合婚卡内，不影响查字等其他 .ming-row */
+.ming-partner .ming-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 104px;
+  grid-gap: 10px 12px;
+  gap: 10px 12px;
+  margin-top: 0;
+
+  > .form-input,
+  > .ming-select,
+  > .antd-dp {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+  }
+
+  /* 统一行高：.field-pill(10px padding) 与 .form-input(12px padding) 混用会差 2px */
+  > .field-pill {
+    height: 44px;
+    padding: 0 14px;
+  }
+
+  > .antd-dp > .antd-dp-input {
+    height: 44px;
+  }
+}
+
+.ming-sub-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 12px;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.ming-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ming-sub-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ming-sub-score {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.ming-rel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ming-rel {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  grid-gap: 10px;
+  gap: 10px;
+  font-size: 13px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.ming-rel span {
+  color: var(--text-muted);
+}
+.ming-rel b {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.ming-rel i {
+  font-style: normal;
+  font-weight: 600;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .ming-grid-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .ming-sub-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ming-partner-row {
+    grid-template-columns: 1fr;
+  }
+  .ming-name-grid {
+    grid-template-columns: 1fr;
+  }
+  .ming-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  /* 极窄屏：卡内 2×2 收成单列，避免日期框被挤到只剩几十像素 */
+  .ming-partner .ming-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* —— 起名 · 模式切换 —— */
+.ming-mode-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.ming-mode-tab {
+  padding: 7px 20px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-mode-tab:hover {
+  color: var(--primary-light);
+}
+.ming-mode-tab.active {
+  background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(124, 92, 255, 0.3);
+}
+
+.ming-bazi-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.ming-bazi-toggle input[type=checkbox] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* —— 起名候选卡 —— */
+.ming-name-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 12px;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ming-name-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: var(--transition);
+}
+.ming-name-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(124, 92, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.ming-name-full {
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-light, #a78bfa), var(--accent-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ming-name-chars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ming-name-reason {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* 候选卡：逐字字义（展开解读） */
+.ming-name-chars-mean {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 8px;
+  margin-top: 2px;
+}
+.ming-char-mean {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary, #c9c9e0);
+  padding: 2px 9px;
+  background: rgba(124, 92, 255, 0.1);
+  border: 1px solid rgba(124, 92, 255, 0.2);
+  border-radius: 9px;
+  white-space: nowrap;
+}
+
+/* 候选卡：音形义 mini 解读（展开解读） */
+.ming-name-yxy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.ming-yxy-mini {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-muted, #9a9ab5);
+  padding: 3px 10px;
+  background: var(--bg-panel, #1b1b33);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* —— 诗词起名卡 —— */
+.ming-poetry-card {
+  border-color: rgba(212, 168, 83, 0.25);
+}
+.ming-poetry-card:hover {
+  border-color: var(--accent-gold, #d4a853);
+  box-shadow: 0 4px 16px rgba(212, 168, 83, 0.12);
+}
+
+.ming-poetry-src {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ming-poetry-quote {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.ming-poetry-cite {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* —— 起名字典 —— */
+.ming-dict-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.ming-dict-char {
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-gold, #d4a853), var(--primary-light, #a78bfa));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(212, 168, 83, 0.3));
+}
+
+.ming-dict-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ming-dict-famous {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* —— 姓名详批 —— */
+.ming-detail-section {
+  margin-top: 18px;
+}
+
+.ming-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-gap: 12px;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.ming-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: var(--transition);
+}
+.ming-detail-card:hover {
+  border-color: var(--primary);
+}
+
+.ming-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ming-detail-icon {
+  font-size: 18px;
+}
+
+.ming-detail-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ming-detail-text {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* 音形义三维分析 */
+.ming-yxy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 12px;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.ming-yxy-card {
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: var(--transition);
+}
+.ming-yxy-card:hover {
+  border-color: var(--accent-gold, #d4a853);
+}
+
+.ming-yxy-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ming-yxy-icon {
+  font-size: 18px;
+}
+
+.ming-yxy-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1 1;
+}
+
+.ming-yxy-score {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+}
+
+.ming-yxy-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* 生肖禁忌字根卡片 */
+.ming-forbid-card {
+  border-left: 3px solid var(--danger, #ff6b6b);
+  background: rgba(255, 107, 107, 0.04);
+}
+
+/* 双胞胎起名 */
+.ming-twin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-gap: 14px;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.ming-twin-card {
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: var(--transition);
+}
+.ming-twin-card:hover {
+  border-color: var(--accent-gold, #d4a853);
+  transform: translateY(-2px);
+}
+
+.ming-twin-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ming-twin-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 2px;
+}
+
+.ming-twin-vs {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.ming-twin-py {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.ming-twin-theme {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.ming-twin-reason {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* 重名率查询卡片 */
+.ming-dup-card {
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ming-dup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ming-dup-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ming-dup-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent-gold, #d4a853);
+  font-family: var(--font-mono, monospace);
+  line-height: 1;
+}
+
+.ming-dup-unit {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ming-dup-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.ming-dup-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ============================================================================
+ * 测字起名 · 新增可视化与卡片样式
+ * ==========================================================================*/
+/* —— 页面容器与八卦纹样背景 —— */
+.ming-page-wrap {
+  position: relative;
+}
+
+/* 八卦纹样背景：收敛为右下角低透明淡纹，不再满屏铺开，消除「乱」的视觉噪声 */
+.ming-bagua-bg {
+  position: fixed;
+  right: -56px;
+  bottom: -56px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-content: flex-end;
+  gap: 26px;
+  max-width: 340px;
+  max-height: 340px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+  opacity: 0.05;
+  font-size: 88px;
+  line-height: 1;
+  color: var(--primary-light, #a78bfa);
+}
+.ming-bagua-bg span {
+  font-family: "Segoe UI Symbol", "Apple Symbols", serif;
+}
+
+/* 内容层置于八卦水印之上（水印是 z-index:0 的 fixed 层，会盖住非定位元素） */
+.ming-page-wrap > *:not(.ming-bagua-bg) {
+  position: relative;
+  z-index: 1;
+}
+
+/* —— 引导卡片：统一为带主色辉光的 hero 卡片，与全站卡片语言一致 —— */
+.ming-intro-card {
+  position: relative;
+  padding: 22px 24px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.1), rgba(92, 225, 230, 0.04)), var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.ming-intro-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ming-intro-glyph {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 22px;
+  background: rgba(124, 92, 255, 0.14);
+  border: 1px solid rgba(124, 92, 255, 0.28);
+}
+
+.ming-intro-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ming-intro-sub {
+  margin-top: 3px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.ming-intro-tips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+
+/* —— 历史记录条 —— */
+.ming-history-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 9px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ming-history-label {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.ming-history-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  /* 必须显式 hidden：overflow-x:auto 会把 overflow-y 的计算值也变成 auto，
+     高度差 1px（窄窗口/页面缩放/小数取整）就会冒出竖向滚动条，
+     竖向滚动条再挤压宽度 → 又带出横向滚动条（Windows 经典双滚动条级联）。 */
+  overflow-y: hidden;
+  /* 给横向滚动条留出 6px 位置，避免它压住 chip 底边（滚动条画在 padding 区）。 */
+  padding-bottom: 6px;
+  /* 不要写 scrollbar-width: thin —— 它会让 Chrome/Edge 忽略全局 ::-webkit-scrollbar
+     主题样式，退回原生滚动条（悬停展开成灰色带箭头长条），与深色主题不一致。 */
+}
+
+.ming-history-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 12px 5px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-history-chip .ming-history-char {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(139, 92, 246, 0.16);
+  color: var(--primary-light, #a78bfa);
+  font-size: 14px;
+}
+.ming-history-chip .ming-history-sum {
+  padding-left: 9px;
+  border-left: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.ming-history-chip:hover {
+  border-color: var(--primary);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+/* —— 五行色环 —— */
+.ming-element-ring {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 6px;
+}
+
+.ming-element-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0.35;
+  transition: var(--transition);
+}
+.ming-element-dot.active {
+  opacity: 1;
+  transform: scale(1.18);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+}
+
+/* —— 卦象图示 —— */
+.ming-trigram-display {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 10px 0 4px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ming-trigram-sym {
+  font-size: 44px;
+  line-height: 1;
+  color: var(--primary-light, #a78bfa);
+  filter: drop-shadow(0 2px 8px rgba(124, 92, 255, 0.25));
+}
+
+.ming-trigram-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ming-trigram-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-left: auto;
+  text-align: right;
+  max-width: 60%;
+}
+
+/* —— 同五行佳字 / 字感延伸 —— */
+.ming-extend-card {
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ming-extend-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.ming-extend-chip {
+  font-size: 13px;
+}
+
+/* —— 五格卡片笔画可视化 —— */
+.ming-grid-stroke {
+  width: 100%;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.ming-grid-stroke-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* —— 宜忌 / 相处建议 / 起名小贴士卡片 —— */
+.ming-yiji-card,
+.ming-advice-card,
+.ming-tip-card {
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  border-left: 3px solid var(--primary);
+}
+
+.ming-advice-card {
+  border-left-color: var(--accent-pink, #ff6b9d);
+}
+
+.ming-tip-card {
+  border-left-color: var(--accent-gold, #d4a853);
+}
+
+/* —— 雷达图 —— */
+.ming-radar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 14px 0 6px;
+  padding: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ming-radar {
+  display: block;
+  margin: 6px auto 0;
+  max-width: 100%;
+  height: auto;
+}
+
+/* —— AI 解读面板 —— */
+.ming-ai-panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.08), rgba(92, 225, 230, 0.04));
+  border: 1px solid rgba(124, 92, 255, 0.25);
+  border-radius: 14px;
+}
+.ming-ai-panel p {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+}
+.ming-ai-panel strong {
+  color: var(--text-primary);
+}
+.ming-ai-panel ul {
+  margin: 6px 0 8px;
+  padding-left: 20px;
+}
+.ming-ai-panel ul li {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+.ming-ai-panel blockquote {
+  margin: 6px 0;
+  padding: 6px 12px;
+  border-left: 3px solid var(--accent-gold, #d4a853);
+  color: var(--text-muted);
+  font-style: italic;
+}
+.ming-ai-panel h1, .ming-ai-panel h2, .ming-ai-panel h3, .ming-ai-panel h4 {
+  color: var(--text-primary);
+  margin: 8px 0 6px;
+}
+
+.ming-ai-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-light, #a78bfa);
+  margin-bottom: 8px;
+}
+
+.ming-ai-body {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+.ming-ai-body p {
+  margin: 0 0 9px;
+}
+.ming-ai-body p:last-child {
+  margin-bottom: 0;
+}
+.ming-ai-body p:has(> strong:only-child) {
+  margin: 18px 0 8px;
+  padding-left: 10px;
+  border-left: 3px solid var(--primary, #8b5cf6);
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.ming-ai-body p:has(> strong:only-child):first-child {
+  margin-top: 0;
+}
+.ming-ai-body strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.ming-ai-body ul,
+.ming-ai-body ol {
+  margin: 2px 0 12px;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.ming-ai-body li::marker {
+  color: var(--primary-light, #a78bfa);
+}
+.ming-ai-body blockquote {
+  margin: 10px 0;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent-cyan, #66e6f2);
+  border-radius: 8px;
+  color: var(--text-muted);
+}
+.ming-ai-body em {
+  color: var(--text-muted);
+  font-style: normal;
+  font-size: 13px;
+}
+.ming-ai-body code {
+  padding: 1px 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--accent-cyan, #66e6f2);
+}
+.ming-ai-body .md-table {
+  margin: 10px 0;
+  border-collapse: collapse;
+}
+.ming-ai-body .md-table th,
+.ming-ai-body .md-table td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  font-size: 13.5px;
+  text-align: left;
+}
+.ming-ai-body .md-table th {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.ming-ai-loading {
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+.ming-ai-loading::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+}
+.ming-ai-loading {
+  animation: ming-ai-blink 1.2s steps(4) infinite;
+}
+
+.ming-ai-fallback {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+@keyframes ming-ai-blink {
+  0%, 100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+/* —— 知识卡片 —— */
+.ming-knowledge-section {
+  margin-top: 28px;
+}
+
+.ming-knowledge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-gap: 12px;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.ming-knowledge-card {
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: var(--transition);
+}
+.ming-knowledge-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.ming-knowledge-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-light, #a78bfa);
+  margin-bottom: 6px;
+}
+
+.ming-knowledge-body {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 720px) {
+  .ming-trigram-desc {
+    max-width: 100%;
+    margin-left: 0;
+  }
+  .ming-knowledge-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* —— AI 解读卡头：标题 + 操作按钮同排 —— */
+.ming-ai-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.ming-ai-head .ming-ai-title {
+  margin-bottom: 0;
+}
+.ming-ai-head .ming-ai-ops {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ming-ai-head .ming-ai-tip {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.ming-ai-head .ming-ai-op {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-ai-head .ming-ai-op:hover {
+  border-color: var(--primary);
+  color: var(--primary-light, #a78bfa);
+}
+
+.ming-ai-caret {
+  display: inline-block;
+  width: 7px;
+  height: 15px;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 2px;
+  background: var(--primary-light, #a78bfa);
+  animation: ming-ai-blink 1s steps(2) infinite;
+}
+
+/* —— 结果操作条：导出 / 复制 / 海报 —— */
+.ming-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ming-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-action-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary-light, #a78bfa);
+  transform: translateY(-1px);
+}
+
+.ming-share-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* —— 海报弹层 —— */
+.poster-loading {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 18px 0;
+  text-align: center;
+}
+
+.poster-preview {
+  text-align: center;
+}
+
+.poster-img {
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.poster-fallback-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 12px 0;
+  text-align: center;
+}
+
+.poster-share-text {
+  margin-top: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  white-space: pre-wrap;
+}
+
+/* —— 结果区标题旁的「历史 N」入口 —— */
+.ming-history-entry {
+  margin-left: auto;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-history-entry:hover {
+  border-color: var(--primary);
+  color: var(--primary-light, #a78bfa);
+}
+
+/* —— 历史弹层列表 —— */
+.ming-history-empty {
+  padding: 20px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ming-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.ming-history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px 6px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+.ming-history-item:hover {
+  border-color: var(--primary);
+}
+.ming-history-item .ming-history-main {
+  flex: 1 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.ming-history-item .ming-history-char {
+  flex: 0 0 auto;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.ming-history-item .ming-history-sum {
+  flex: 1 1;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ming-history-item .ming-history-time {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.ming-history-item .ming-history-del {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-history-item .ming-history-del:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.ming-history-footer {
+  margin-top: 12px;
+  text-align: right;
+}
+
+/* —— 骨架屏 —— */
+.ming-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  margin-top: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.ming-skeleton-line {
+  height: 13px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+  background-size: 200% 100%;
+  animation: ming-skeleton-shine 1.2s ease-in-out infinite;
+}
+
+.ming-skeleton-tip {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+@keyframes ming-skeleton-shine {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+/* ============================================================================
+ * 汉字文化延展（测字 / 字典 / 起名共用）
+ * ==========================================================================*/
+.ming-culture-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ming-culture-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ming-culture-key {
+  flex: 0 0 44px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.ming-culture-val {
+  flex: 1 1;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.ming-culture-allusion {
+  font-style: italic;
+  color: var(--accent-gold, #d4a853);
+}
+
+/* 入名宜忌 */
+.ming-namefit-card .ming-badge {
+  font-weight: 600;
+}
+
+/* 整体运势签 */
+.ming-omen {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 14px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.12), rgba(92, 225, 230, 0.08));
+}
+
+.ming-omen-level {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #2b1e05;
+  background: linear-gradient(135deg, var(--accent-gold, #d4a853), #f0d090);
+}
+
+.ming-omen-text {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* 候选名拼音 */
+.ming-name-py {
+  margin-top: 2px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .ming-omen {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .ming-culture-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+/* 页面级常驻对话（小玄起名顾问） */
+.ming-page-chat {
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 14px);
+}
+
+/* ============================================================================
+ * 一键示例行（对标 numerology 的 「试试：」）
+ * ==========================================================================*/
+.ming-samples-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ming-sample-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ming-sample {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: var(--transition, 0.2s);
+}
+.ming-sample:hover {
+  color: var(--primary-light, #a78bfa);
+  border-color: var(--primary-light, #a78bfa);
+}
+
+/* ============================================================================
+ * 跨模块联动条（「接着做：」+ 跳转按钮）
+ * ==========================================================================*/
+.ming-jump-row {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ming-jump-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ming-jump-tip {
+  font-size: 12px;
+  color: var(--accent-gold, #d4a853);
+}
+
+.ming-jump-btn {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition, 0.2s);
+}
+.ming-jump-btn:hover:not(:disabled) {
+  color: var(--primary-light, #a78bfa);
+  border-color: var(--primary-light, #a78bfa);
+}
+.ming-jump-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ming-jump-btn {
+  /* 低分 / 冲克时给主按钮一点强调，引导用户走下一步 */
+}
+.ming-jump-btn.emphasis {
+  color: #2b1e05;
+  background: linear-gradient(135deg, var(--accent-gold, #d4a853), #f0d090);
+  border-color: transparent;
+}
+.ming-jump-btn.emphasis:hover:not(:disabled) {
+  color: #2b1e05;
+  filter: brightness(1.05);
+}
+
+/* ============================================================================
+ * 五格 role（每格代表什么运势）
+ * ==========================================================================*/
+.ming-grid-role {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+/* ============================================================================
+ * 八字五行补缺可视化
+ * ==========================================================================*/
+.ming-bazi-card {
+  border-color: rgba(212, 168, 83, 0.35);
+  background: linear-gradient(180deg, rgba(212, 168, 83, 0.07), var(--bg-card));
+}
+
+.ming-bazi-dist {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.ming-bazi-item {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+  /* 所缺五行：虚线边框 + 浅底，一眼看出要补什么 */
+}
+.ming-bazi-item.lacking {
+  border-style: dashed;
+  animation: ming-bazi-pulse 2s ease-in-out infinite;
+}
+
+.ming-bazi-fix {
+  color: var(--accent-gold, #d4a853) !important;
+  border-color: var(--accent-gold, #d4a853);
+}
+
+@keyframes ming-bazi-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+/* ============================================================================
+ * 候选名卡片内的「测这个名字」
+ * ==========================================================================*/
+.ming-name-test {
+  margin-top: 8px;
+  padding: 0;
+  font-size: 12px;
+  color: var(--primary-light, #a78bfa);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.ming-name-test:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .ming-samples-row,
+  .ming-jump-row {
+    gap: 6px;
+  }
+  .ming-sample,
+  .ming-jump-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+}
+/* ============================================================================
+ * M22：候选名筛选条（单 / 双字 + 五行）
+ * ==========================================================================*/
+.ming-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ming-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.ming-filter-chip {
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-filter-chip:hover {
+  color: var(--text-primary);
+}
+.ming-filter-chip.active {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--primary);
+}
+
+/* ============================================================================
+ * M25 / M26：候选名卡片 —— 收藏 ♡ / 对比 ☑
+ * ==========================================================================*/
+.ming-name-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ming-name-score {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.18), rgba(212, 168, 83, 0.06));
+  border: 1px solid rgba(212, 168, 83, 0.35);
+}
+
+.ming-name-score-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-gold, #d4a853);
+  font-family: var(--font-mono, monospace);
+  line-height: 1;
+}
+
+.ming-name-score-unit {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.ming-name-fav {
+  flex-shrink: 0;
+  padding: 0 4px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.ming-name-fav:hover {
+  color: var(--accent-pink);
+  transform: scale(1.15);
+}
+
+.ming-name-card.is-fav {
+  border-color: var(--accent-pink);
+}
+.ming-name-card.is-fav .ming-name-fav {
+  color: var(--accent-pink);
+}
+
+.ming-name-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.ming-name-cmp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.ming-name-cmp input {
+  cursor: pointer;
+}
+
+.ming-empty-hint {
+  grid-column: 1/-1;
+  padding: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+/* 收藏 / 对比入口条 */
+.ming-fav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+/* ============================================================================
+ * M25：我的收藏弹层
+ * ==========================================================================*/
+.ming-fav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.ming-fav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ming-fav-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ming-fav-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ming-fav-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ming-fav-ops {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+/* ============================================================================
+ * M26：名字对比表
+ * ==========================================================================*/
+.ming-compare {
+  overflow-x: auto;
+}
+
+.ming-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.ming-compare-table th,
+.ming-compare-table td {
+  padding: 10px 8px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+.ming-compare-table th {
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+}
+.ming-compare-table td {
+  color: var(--text-secondary);
+}
+
+.ming-compare-scroll {
+  overflow-x: auto;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.ming-compare-detail {
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* ============================================================================
+ * M28：结果区二级分组子卡片
+ * ==========================================================================*/
+.ming-section {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.ming-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ming-section-idx {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-gold, #d4a853);
+  background: var(--bg-panel);
+  border: 1px solid var(--accent-gold, #d4a853);
+  border-radius: 50%;
+}
+
+.ming-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ming-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ============================================================================
+ * M29：嫁娶吉日
+ * ==========================================================================*/
+.ming-lucky-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ming-lucky-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.ming-lucky-date {
+  min-width: 72px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-gold, #d4a853);
+}
+
+.ming-lucky-gz {
+  min-width: 80px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ming-lucky-yi {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ming-lucky-note {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .ming-filter-group {
+    gap: 4px;
+  }
+  .ming-filter-chip {
+    padding: 4px 9px;
+    font-size: 11px;
+  }
+  .ming-fav-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ming-lucky-item {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[13].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[13].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[13].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[13].use[5]!./src/components/ai-chat/LightFollowUp.scss ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+@charset "UTF-8";
+/* ================================================================
+ * LightFollowUp 轻量追问入口
+ * 全站统一的「结果区 AI 追问」组件样式。
+ * 依赖 components.scss 提供的 .chat-suggest-chip / .chat-pill /
+ * .field-pill / .chat-send-btn 等基础交互原子。
+ * ================================================================ */
+.lfu {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px dashed var(--border-active, var(--border));
+  border-radius: var(--radius-lg, 14px);
+  background: rgba(124, 92, 255, 0.04);
+}
+.lfu .lfu-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.lfu .lfu-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.lfu .lfu-clear-btn {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.lfu .lfu-clear-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--primary-light);
+}
+.lfu .lfu-icon {
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.lfu .lfu-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.lfu .lfu-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.lfu .lfu-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.lfu .lfu-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.lfu .lfu-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.lfu .lfu-input-row {
+  margin-bottom: 4px;
+}
+.lfu .lfu-charcount {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 2px 2px 0;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+.lfu .lfu-list {
+  position: relative;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 2px;
+}
+.lfu .lfu-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.lfu .lfu-msg .lfu-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.25), rgba(92, 225, 230, 0.18));
+  border: 1px solid rgba(124, 92, 255, 0.35);
+  box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.08);
+}
+.lfu .lfu-msg .lfu-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.lfu .lfu-msg .lfu-avatar.is-user {
+  background: rgba(124, 92, 255, 0.14);
+  border-color: rgba(124, 92, 255, 0.28);
+}
+.lfu .lfu-msg .lfu-msg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1 1;
+}
+.lfu .lfu-msg .lfu-bubble {
+  position: relative;
+  max-width: 78%;
+}
+.lfu .lfu-msg .lfu-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-main);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(124, 92, 255, 0.04));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 18px;
+  word-break: break-word;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+.lfu .lfu-msg .lfu-text p {
+  margin: 0 0 6px;
+}
+.lfu .lfu-msg .lfu-text p:last-child {
+  margin-bottom: 0;
+}
+.lfu .lfu-msg .lfu-text ul, .lfu .lfu-msg .lfu-text ol {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+.lfu .lfu-msg .lfu-text code {
+  background: rgba(124, 92, 255, 0.12);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12.5px;
+}
+.lfu .lfu-msg .lfu-text.is-streaming {
+  box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.3), 0 0 14px rgba(124, 92, 255, 0.2);
+  animation: lfuStreamGlow 1.4s ease-in-out infinite;
+}
+.lfu .lfu-msg.is-user {
+  flex-direction: row-reverse;
+}
+.lfu .lfu-msg.is-user .lfu-msg-body {
+  align-items: flex-end;
+}
+.lfu .lfu-msg.is-user .lfu-text {
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.28), rgba(92, 225, 230, 0.14));
+  border-color: rgba(124, 92, 255, 0.35);
+  color: #fff;
+}
+.lfu .lfu-copy {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.18s, color 0.18s, border-color 0.18s;
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+}
+.lfu-msg:hover .lfu .lfu-copy {
+  opacity: 1;
+}
+.lfu .lfu-copy:hover {
+  color: var(--primary-light);
+  border-color: var(--primary-light);
+}
+.lfu .lfu-copy.is-copied {
+  opacity: 1;
+  color: var(--accent-green, #4ade80);
+  border-color: rgba(74, 222, 128, 0.4);
+}
+.lfu .lfu-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 14px;
+}
+.lfu .lfu-typing .lfu-typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  opacity: 0.5;
+  animation: lfuTyping 1.2s ease-in-out infinite;
+}
+.lfu .lfu-typing .lfu-typing-dot:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.lfu .lfu-typing .lfu-typing-dot:nth-child(3) {
+  animation-delay: 0.36s;
+}
+.lfu .lfu-stop {
+  background: rgba(255, 107, 107, 0.14);
+  border-color: rgba(255, 107, 107, 0.4);
+  color: #ff6b6b;
+}
+.lfu .lfu-stop:hover:not(:disabled) {
+  background: rgba(255, 107, 107, 0.24);
+  border-color: #ff6b6b;
+}
+.lfu .lfu-tobottom {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 4px;
+  align-self: center;
+  margin-top: 2px;
+  font-size: 11.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+.lfu .lfu-tobottom:hover {
+  color: var(--primary-light);
+  border-color: var(--primary-light);
+}
+
+@keyframes lfuTyping {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@keyframes lfuStreamGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.3), 0 0 10px rgba(124, 92, 255, 0.16);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.45), 0 0 18px rgba(124, 92, 255, 0.32);
+  }
+}
+
+/* ============================================================================
+ * 字典弹窗：起名辅助工具，不再作为独立 Tab
+ * ==========================================================================*/
+.ming-zidian-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  /* 同上：去掉 scrollbar-width:thin，改用全局 ::-webkit-scrollbar 的 6px 主题滚动条 */
+}
+
+.ming-zidian-search {
+  padding-bottom: 8px;
+}
+
+.ming-zidian-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+

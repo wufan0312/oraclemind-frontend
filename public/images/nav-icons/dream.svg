@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f86ff"/>
+      <stop offset="1" stop-color="#15225c"/>
+    </linearGradient>
+    <linearGradient id="sym" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dce8ff"/>
+    </linearGradient>
+    <radialGradient id="gloss" cx="0.32" cy="0.22" r="0.85">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#0a1430" flood-opacity="0.45"/>
+    </filter>
+    <mask id="moon">
+      <circle cx="22" cy="23" r="13" fill="#fff"/>
+      <circle cx="28" cy="18" r="11" fill="#000"/>
+    </mask>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="12" fill="url(#bg)" filter="url(#ds)"/>
+  <rect x="4" y="4" width="40" height="40" rx="12" fill="url(#gloss)"/>
+  <rect x="5" y="5" width="38" height="38" rx="11" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1"/>
+  <circle cx="22" cy="23" r="13" fill="url(#sym)" mask="url(#moon)"/>
+  <path d="M36 12 L37 15 L40 16 L37 17 L36 20 L35 17 L32 16 L35 15 Z" fill="#ffd86b"/>
+  <path d="M13 17 L13.8 19.4 L16.2 20.2 L13.8 21 L13 23.4 L12.2 21 L9.8 20.2 L12.2 19.4 Z" fill="#ffe9a8"/>
+  <path d="M34 33 L34.7 35.1 L36.8 35.8 L34.7 36.5 L34 38.6 L33.3 36.5 L31.2 35.8 L33.3 35.1 Z" fill="#ffd86b"/>
+</svg>

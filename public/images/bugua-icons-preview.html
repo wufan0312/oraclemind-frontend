@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>卜卦页小标题图标 · 3D 彩色预览</title>
+<style>
+  :root { --bg:#0e0b1e; --panel:#181430; --txt:#e9e6f5; --sub:#9b95c0; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #2a1d4d, var(--bg)); color:var(--txt); padding:32px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:var(--sub); font-size:13px; margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; max-width:1000px; }
+  .cell { background:var(--panel); border:1px solid rgba(124,92,255,.25); border-radius:14px; padding:18px 12px; text-align:center;
+    transition:transform .2s, box-shadow .2s; }
+  .cell:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(92,225,230,.25); }
+  .cell img { width:48px; height:48px; margin-bottom:10px; filter:drop-shadow(0 4px 10px rgba(0,0,0,.4)); }
+  .cn { font-size:14px; font-weight:600; }
+  .en { font-size:11px; color:var(--sub); margin-top:2px; }
+  .tag { display:inline-block; margin-top:8px; font-size:10px; padding:2px 8px; border-radius:10px; background:rgba(124,92,255,.18); color:#c4b5fd; }
+</style>
+</head>
+<body>
+  <h1>卜卦页 · 小标题 3D 彩色图标</h1>
+  <div class="sub">18 个语义图标 · 圆角磁贴 + 同色系渐变，延续首页底部导航风格 · 已接入 oraclemind 卜卦页</div>
+  <div class="grid" id="grid"></div>
+<script>
+  const items = [
+    ['bazi','八字四柱','模块标签/卡片','四爻线'],
+    ['wuxing','五行能量','模块标签/卡片','五色点环'],
+    ['ziwei','紫微斗数','模块标签/卡片','星盘'],
+    ['liuyao','六爻起卦','模块标签/卡片','六爻线'],
+    ['meihua','梅花易数','模块标签/卡片','五瓣梅'],
+    ['qimen','奇门遁甲','模块标签/卡片','九宫格'],
+    ['summary','综合运势','模块标签','六角星'],
+    ['shishen','十神格局','卡片','十字符'],
+    ['dayun','大运流年','卡片','循环箭头'],
+    ['wuxingCycle','五行生克','卡片','相生相克环'],
+    ['yongshen','用神喜忌','卡片','天平'],
+    ['trait','命格特质','卡片','四芒星'],
+    ['guaxiang','卦象解读','卡片','三爻'],
+    ['tiyong','体用分析','卡片','上下卦'],
+    ['compass','行动指南','卡片','指南针'],
+    ['consensus','七术数共识','卡片','汇聚'],
+    ['shortcut','快捷操作','侧边栏','闪电'],
+    ['community','社区热议','侧边栏','气泡']
+  ];
+  const grid = document.getElementById('grid');
+  items.forEach(([f,cn,where,sym])=>{
+    const d = document.createElement('div');
+    d.className='cell';
+    d.innerHTML = `<img src="./${f}.svg" alt="${cn}"><div class="cn">${cn}</div><div class="en">${sym}</div><span class="tag">${where}</span>`;
+    grid.appendChild(d);
+  });
+</script>
+</body>
+</html>

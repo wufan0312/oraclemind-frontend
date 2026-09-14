@@ -1,0 +1,2152 @@
+// ============================================================================
+// 玄镜 OracleMind · 数字密码页样式 (Numerology)
+// ============================================================================
+@use './tokens' as *;
+
+// ===== 输入 + 说明 单一圆角面板 =====
+.num-top-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.num-top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+
+  // 表单切换为 horoscope 的 birth-form 风格（去 .form-section 自己的 panel 样式）
+  // —— numerology 路由按 page.tsx 局部 import 加载 SCSS，不依赖 horoscope.scss，
+  // 这里把 .birth-form/.birth-field/.birth-submit/.form-error 的核心样式自闭合兜底。
+  .num-form,
+  .birth-form {
+    display: grid;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    // 关键：grid items 之间必须有间距，否则每个字段块紧挨着（horoscope 是 row-gap 16px / col-gap 16px）
+    row-gap: 16px;
+    column-gap: 16px;
+    // 数字密码只需 2 列：年 + 月同行，日单独满宽
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  // 标题字段：跨满宽，顶部对齐（不被 align-items:end 拉到底部）
+  .num-field-title {
+    grid-column: 1 / -1;
+    align-self: start;
+
+    label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  }
+
+  // .birth-field 在 horoscope.scss 是 flex column + 8px gap，numerology 这里兜底
+  .num-field-solar,
+  .num-field-name,
+  .birth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+  }
+
+  // 出生日期单独满宽（与 horoscope 的 .birth-field 在 .birth-form 中表现一致）
+  .num-field-solar {
+    grid-column: 1 / -1;
+  }
+
+  // 在 .birth-form 内的 .form-input 跟星座的 .birth-field input 视觉一致
+  // （form-input 默认 font-size 15 / padding 12-16 / margin-bottom 20 / focus 无 box-shadow）
+  .num-form .form-input,
+  .birth-form .form-input {
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-bottom: 0;
+
+    &:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.15);
+    }
+  }
+
+  // .birth-submit 兜底（horoscope.scss 里有 flex column + 8px gap + grid-column 1/-1）
+  .num-submit,
+  .birth-submit {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  // 提交区：按钮和样例行之间多留点间距
+  .num-form .birth-submit {
+    gap: 10px;
+  }
+
+  .num-intro {
+    margin-bottom: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+  }
+
+  .num-intro-body {
+    border-top-color: var(--border);
+  }
+}
+
+// 窄屏：表单单列堆叠
+@media (max-width: 720px) {
+  .num-top-grid .num-form {
+    grid-template-columns: 1fr;
+  }
+
+  .num-top-grid .num-field-solar {
+    grid-column: 1;
+  }
+}
+
+// ===== 生命灵数介绍（可折叠） =====
+.num-intro {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.num-intro-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--primary-light);
+  }
+}
+
+.num-intro-body {
+  padding: 14px 20px 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  border-top: 1px dashed var(--border);
+
+  p {
+    margin-bottom: 8px;
+  }
+
+  strong {
+    color: var(--text-primary);
+  }
+}
+
+// ===== 计算结果区 =====
+.numerology-result {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+// 生命灵数主面板
+.num-result-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .life-path-number {
+    background: linear-gradient(135deg, rgba(124, 92, 255, 0.12), rgba(92, 225, 230, 0.06));
+    border: 1px solid rgba(124, 92, 255, 0.25);
+    border-radius: 14px;
+    padding: 32px 24px;
+    text-align: center;
+  }
+}
+
+.life-path-number {
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.1), rgba(92, 225, 230, 0.05));
+  border: 1px solid rgba(124, 92, 255, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+}
+
+.life-path-big {
+  font-size: 96px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.life-path-label {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.life-path-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+// ===== 九宫格能量分布 =====
+.grid-9 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.grid-cell {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+
+  &.active {
+    border-color: var(--primary);
+    background: rgba(124, 92, 255, 0.08);
+  }
+
+  &.missing {
+    border-style: dashed;
+    opacity: 0.5;
+  }
+
+  &.selected {
+    border-color: var(--primary);
+    background: rgba(124, 92, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.18);
+  }
+
+  &.missing.selected {
+    border-style: dashed;
+  }
+}
+
+.grid-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.grid-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+// 洛书网格 + 天赋连线容器
+.grid-9-wrap {
+  position: relative;
+}
+
+// 天赋连线 SVG（绝对覆盖在网格之上，不拦截点击）
+.grid-9-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.talent-line {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.22);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.25s;
+
+  &.line-active {
+    stroke: var(--accent-cyan);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 2px rgba(92, 225, 230, 0.65));
+  }
+}
+
+// 天赋连线图例
+.num-lines-legend {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.num-line-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(92, 225, 230, 0.07);
+  border: 1px solid rgba(92, 225, 230, 0.25);
+}
+
+.num-line-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.num-line-mean {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.num-lines-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+}
+
+// ===== 数字详解 =====
+.num-detail-box {
+  padding: 0;
+}
+
+.num-detail-head {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.num-detail-badge {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+}
+
+.num-detail-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.num-detail-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.num-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.num-detail-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+
+  .k {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .v {
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+}
+
+.num-detail-desc {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+
+  strong {
+    color: var(--accent-gold);
+  }
+}
+
+.num-year-tag {
+  font-size: 11px;
+  color: var(--accent-gold);
+  margin-top: 4px;
+}
+
+// ===== 响应式 =====
+@media (max-width: 1200px) {
+  .numerology-result {
+    grid-template-columns: 1fr;
+  }
+
+  .num-detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ===== 行内样式迁移层（style → class）=====
+// 错误提示：来自 horoscope.scss 的 .form-error（红底描边 + #ff6b6b 文字），numerology 自包含兜底
+.form-error {
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.25);
+  font-size: 13px;
+  color: #ff6b6b;
+  line-height: 1.6;
+}
+
+// 试试：样例行
+.num-samples-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.num-sample-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// 展开/收起
+.num-intro-toggle {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+// 天赋/课题/生日数 chips
+.num-chips-row {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.num-chip {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.num-chip-talent {
+  background: rgba(124, 92, 255, 0.15);
+  color: var(--primary-light);
+}
+
+.num-chip-lesson {
+  background: rgba(92, 225, 230, 0.15);
+  color: var(--accent-cyan);
+}
+
+.num-chip-birthday {
+  background: rgba(212, 168, 83, 0.15);
+  color: var(--accent-gold);
+}
+
+// 标题后缀说明
+.rc-title-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+// 颜色疗愈（跨两列）
+.num-detail-item-wide {
+  grid-column: span 2;
+}
+
+// 九宫格填满剩余高度
+.grid-9-fill {
+  flex: 1;
+}
+
+// 缺数提示
+.num-missing-note {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+// 流年 tab 切换 + 右侧解说（左右布局）
+.num-years-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+  gap: 20px;
+  min-width: 0;
+}
+
+// 左侧年份 tab（竖排）
+.num-year-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.num-year-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    border-color: var(--primary);
+    background: rgba(124, 92, 255, 0.1);
+    box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.35);
+  }
+
+  // 流日：今天这一格用青色描边标出（流年用「· 今年」文字区分）
+  &.today {
+    border-color: var(--accent-cyan);
+  }
+}
+
+.num-year-tab-yr {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 64px;
+  white-space: nowrap;
+}
+
+.num-year-tab-num {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-light);
+  min-width: 18px;
+  text-align: center;
+}
+
+.num-year-tab-tag {
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 右侧解说区
+.num-year-detail {
+  min-width: 0;
+  border: 1px solid rgba(124, 92, 255, 0.25);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.06), rgba(92, 225, 230, 0.04));
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.num-year-detail-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.num-year-detail-year {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.num-year-detail-num {
+  font-size: 13px;
+  color: var(--accent-cyan);
+  background: rgba(92, 225, 230, 0.08);
+  border: 1px solid rgba(92, 225, 230, 0.25);
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.num-year-detail-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-light);
+}
+
+.num-year-detail-brief {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent-cyan);
+  line-height: 1.7;
+  padding: 6px 12px;
+  background: rgba(92, 225, 230, 0.07);
+  border-left: 3px solid var(--accent-cyan);
+  border-radius: 0 8px 8px 0;
+}
+
+.num-year-detail-desc {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+// 多维度解说区
+.num-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.num-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.num-guide-block {
+  background: rgba(10, 12, 24, 0.45);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  min-width: 0;
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+}
+
+.num-guide-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+
+  &.warn {
+    color: #ff6b6b;
+  }
+}
+
+.num-guide-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    position: relative;
+    padding-left: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+
+    &::before {
+      content: '+';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--primary-light);
+      font-weight: 700;
+    }
+  }
+
+  &.warn li::before {
+    content: '!';
+    color: #ff6b6b;
+  }
+}
+
+@media (max-width: 900px) {
+  .num-guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .num-years-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .num-year-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .num-year-tab {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+// 今日数字能量提示
+.num-tip {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+// 内容模块网格：今日数字能量 / 数字小知识 / 跨页联动 —— 一行三列
+// 注意：.tarot-side-grid 原定义于 tarot.scss，但 numerology 路由未 import 它，
+// 故在此自包含兜底，避免三个模块纵向堆叠（与 tarot 页面视觉一致）。
+.tarot-side-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+  align-items: start;
+
+  // 三栏等高分栏（跨页联动 CTA 可能比两侧矮），视觉更整齐
+  > * {
+    height: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 1100px) {
+  .tarot-side-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .tarot-side-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================================================
+// 本地测算历史（N2）：结果区入口条 + 弹层列表
+// ============================================================================
+.num-history-strip {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    background: var(--bg-hover);
+
+    .num-history-strip-cta { color: var(--primary); }
+  }
+
+  .num-history-strip-main {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .num-history-strip-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .num-history-strip-cta {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: var(--transition);
+  }
+}
+
+.num-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.num-history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px 6px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+  }
+
+  .num-history-main {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    &:hover .num-history-title { color: var(--primary); }
+  }
+
+  .num-history-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: var(--transition);
+  }
+
+  .num-history-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .num-history-ago {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .num-history-del {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+    }
+  }
+}
+
+// AI 深度解读卡片（重设计：结构化分节 → 压缩纵向空间 + 提升视觉密度）
+// 旧版是「全宽通栏 + 纯文本长流」，9 个小节纵向堆叠，行长过长又空。
+// 新版：概述作通栏强调卡，其余小节进 2 列卡片网格，操作按钮收进卡头右侧。
+
+.num-ai-card {
+  grid-column: 1 / -1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 4px;
+}
+
+// 卡头：标题 + 操作按钮同排（按钮不再单独占一行）
+.num-ai-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+
+  .result-card-title {
+    margin-bottom: 0;
+  }
+}
+
+// 概述卡（通栏强调）：渐变底 + 左侧双色条
+.num-ai-lead {
+  position: relative;
+  padding: 12px 14px 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(157, 127, 255, 0.12), rgba(92, 225, 230, 0.06));
+  border: 1px solid rgba(157, 127, 255, 0.25);
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--text-primary);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, var(--primary), var(--accent-cyan));
+  }
+
+  p { margin: 0; }
+  strong { color: var(--primary-light); font-weight: 600; }
+}
+
+// 小节卡片网格（2 列）—— 纵向高度约为旧版单列堆叠的一半
+.num-ai-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.num-ai-item {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(157, 127, 255, 0.4);
+  }
+}
+
+.num-ai-item-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.num-ai-item-icon {
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.num-ai-item-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-light);
+  letter-spacing: 0.3px;
+}
+
+.num-ai-item-body {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+
+  p { margin: 0 0 8px; }
+  p:last-child { margin-bottom: 0; }
+
+  ul, ol {
+    margin: 0;
+    padding-left: 18px;
+  }
+  li { margin-bottom: 4px; line-height: 1.65; }
+  li:last-child { margin-bottom: 0; }
+
+  strong { color: var(--primary-light); font-weight: 600; }
+
+  // 兜底：模型若输出真标题 / 引用 / 代码
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 10px 0 6px;
+  }
+  blockquote {
+    margin: 6px 0;
+    padding: 6px 10px;
+    border-left: 2px solid var(--primary);
+    background: rgba(157, 127, 255, 0.06);
+    border-radius: 0 4px 4px 0;
+  }
+  code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 12.5px;
+    color: var(--accent-cyan);
+  }
+}
+
+// 窄屏：小节网格降为单列，卡头改为纵向（按钮另起一行）
+@media (max-width: 760px) {
+  .num-ai-grid {
+    grid-template-columns: 1fr;
+  }
+  .num-ai-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .num-ai-lead {
+    font-size: 14px;
+  }
+}
+
+// 云端存档恢复提示条（照搬 bugua .restored-bar）
+.restored-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(92, 225, 230, 0.08);
+  border: 1px solid rgba(92, 225, 230, 0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+
+  button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--accent-cyan);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover {
+      border-color: var(--accent-cyan);
+    }
+  }
+}
+
+// 「小玄说数」正文容器 —— 具体分节样式见 .num-ai-lead / .num-ai-grid / .num-ai-item
+// 此处仅作兜底基准（旧版整段渲染的 p/strong 规则已下沉到各分节内，避免样式外溢）
+.num-ai-body {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+
+// ============================================================================
+// 模式切换（本命解读 / 数字配对）
+// ============================================================================
+.num-mode-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 5px;
+  background: var(--bg-dark);          // 凹槽底，与 horoscope/ming 胶囊分段器统一
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: fit-content;
+}
+
+.num-mode-btn {
+  padding: 8px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover { color: var(--text-primary); background: var(--bg-hover); }
+
+  &.active {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(124, 92, 255, 0.35);  // 与 horoscope/ming 的胶囊分段器统一
+  }
+}
+
+// ===== 姓名字段 =====
+.num-field-name { grid-column: 1 / -1; }
+
+.num-name-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: var(--transition);
+
+  &::placeholder { color: var(--text-muted); }
+  &:focus { outline: none; border-color: var(--primary); }
+}
+
+// ===== 大师数标识 =====
+.master-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  vertical-align: middle;
+}
+
+// ============================================================================
+// 核心数字（P1-4）
+// ============================================================================
+.num-core-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.num-core-item {
+  padding: 16px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover { border-color: var(--primary); background: var(--bg-hover); }
+}
+
+.num-core-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.num-core-num {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--primary-light);
+}
+
+.num-core-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin: 2px 0 8px;
+}
+
+.num-core-hint {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.num-core-empty {
+  padding: 16px;
+  margin-bottom: 20px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+
+  strong { color: var(--accent-gold); }
+}
+
+.num-core-warn {
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-pink);
+  border-radius: var(--radius);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+// ===== 挑战数 =====
+.num-challenge-block { margin-top: 4px; }
+
+.num-challenge-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.num-challenge-item {
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.num-challenge-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.num-challenge-num {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-panel);
+  border: 1px solid var(--accent-pink);
+  color: var(--accent-pink);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.num-challenge-label {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.num-challenge-stage {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.num-challenge-name {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.num-challenge-desc {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+// ============================================================================
+// 数字配对 / 合盘（P2-1）
+// ============================================================================
+.num-synastry-head {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 8px 0 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.num-synastry-score {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.num-synastry-score-num {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-gold);
+}
+
+.num-synastry-score-unit {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.num-synastry-headline {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.num-synastry-pair {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.num-synastry-x { color: var(--accent-pink); }
+
+.num-synastry-dims {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.num-sync-dim {
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.num-sync-dim-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.num-sync-dim-label { font-size: 13px; color: var(--text-primary); }
+
+.num-sync-dim-score {
+  font-size: 12px;
+  color: var(--accent-cyan);
+}
+
+.num-sync-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.num-sync-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.6s ease;
+}
+
+.num-sync-dim-desc {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.num-synastry-lists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.num-sync-list { .num-guide-label { margin-bottom: 8px; } }
+
+// ============================================================================
+// AI 操作区（换个说法 / 导出报告）
+// ============================================================================
+// 操作按钮组：已从卡片底部移到卡头右侧（与标题同排），去掉顶部分隔线与上边距
+.num-ai-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.num-ai-btn {
+  padding: 5px 11px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+
+  &:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--text-primary);
+    background: var(--bg-hover);
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// 分享海报（G1）：弹层内展示「图片 + 文字描述」，类名与 tarot / bugua 保持一致
+.poster-loading {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.poster-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.poster-img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+  margin: 0 auto;
+}
+
+.poster-fallback-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.poster-share-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 16px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  > * {
+    display: block;
+    margin-bottom: 6px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.num-share-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+// ============================================================================
+// 响应式
+// ============================================================================
+@media (max-width: 1200px) {
+  .num-core-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .num-synastry-dims { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .num-top-grid { grid-template-columns: 1fr; }
+  .numerology-result { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .num-core-grid { grid-template-columns: 1fr; }
+  .num-challenge-list { grid-template-columns: 1fr; }
+  .num-synastry-lists { grid-template-columns: 1fr; }
+  .num-synastry-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .num-synastry-score-num { font-size: 44px; }
+  .num-mode-nav { width: 100%; }
+  .num-mode-btn { flex: 1; padding: 8px 12px; }
+}
+
+// ============================================================================
+// 公历/农历输入提示
+// ============================================================================
+.num-date-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+
+  strong { color: var(--accent-gold); font-weight: 600; }
+}
+
+// ============================================================================
+// 灵码（核心数字组合码）
+// ============================================================================
+.num-lingcode-card {
+  .ling-str-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .ling-str {
+    font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--primary-light);
+    line-height: 1.2;
+  }
+
+  .ling-challenge {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .ling-parts {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .ling-part {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover { border-color: var(--primary); background: var(--bg-hover); }
+  }
+
+  .ling-part-locked {
+    cursor: default;
+    border-style: dashed;
+    opacity: 0.6;
+
+    &:hover { border-color: var(--border); background: var(--bg-card); }
+  }
+
+  .ling-abbr {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent-gold);
+  }
+
+  .ling-val {
+    font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-primary);
+  }
+
+  .ling-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .ling-locked-tip {
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    background: var(--bg-card);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+
+    strong { color: var(--accent-gold); }
+  }
+
+  .ling-readings {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ling-readings li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .ling-read-icon { flex-shrink: 0; font-size: 15px; line-height: 1.6; }
+
+  .ling-read-text {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+
+  .ling-partner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .ling-partner-label {
+    color: var(--text-muted);
+  }
+
+  .ling-partner-code {
+    font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent-cyan);
+  }
+}
+
+@media (max-width: 900px) {
+  .num-lingcode-card .ling-parts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .num-lingcode-card {
+    .ling-str { font-size: 22px; letter-spacing: 2px; }
+    .ling-parts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+}
+
+// ===== G2：流年 / 流月 / 流日 周期切换 =====
+.num-period-card {
+  .num-period-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    .rc-title-sub { font-weight: 400; margin-left: 6px; }
+  }
+  .num-period-toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    .num-period-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      &:hover { color: var(--text-primary); }
+      &.active { background: var(--primary); color: #fff; }
+    }
+  }
+  .num-period-empty { padding: 24px; text-align: center; color: var(--text-muted); }
+}
+
+// ===== G4：缺数颜色疗愈卡 =====
+.num-missing-note {
+  .num-missing-lead { margin: 0 0 12px; color: var(--text-secondary); line-height: 1.6; }
+  .num-color-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .num-color-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    .num-color-swatches { display: flex; gap: 6px; }
+    .num-color-swatch {
+      width: 40px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      transition: transform var(--transition);
+      &:hover { transform: scale(1.06); }
+      &:active { transform: scale(0.96); }
+    }
+    .num-color-meta { display: flex; flex-direction: column; }
+    .num-color-num { font-weight: 700; color: var(--text-primary); }
+    .num-color-hex { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+    .num-color-suggest { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  }
+}
+
+// ============================================================================
+// 天使数字查询卡（P2-1）
+// ============================================================================
+.angel-card {
+  // 通栏时三段能力横向并列
+  .angel-sections {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+
+    .angel-section {
+      margin-bottom: 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // 窄屏回落为单列堆叠
+  @media (max-width: 1100px) {
+    .angel-sections {
+      grid-template-columns: 1fr;
+      gap: 0;
+
+      .angel-section {
+        margin-bottom: 14px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // 每个功能区作为独立小节：轻卡片底 + 圆角 + 分隔
+  .angel-section {
+    padding: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .angel-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .angel-tip {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .angel-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+
+    .form-input {
+      flex: 1;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+    .antd-dp {
+      flex: 1;
+      min-width: 0;
+    }
+    .btn-submit {
+      flex-shrink: 0;
+      width: auto;
+      padding: 8px 18px;
+      font-size: 14px;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      // 结果区「AI 解读」用轻量描边样式
+      &.ghost {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary-light);
+        box-shadow: none;
+
+        &:hover:not(:disabled) {
+          background: rgba(124, 92, 255, 0.1);
+          box-shadow: 0 0 16px rgba(124, 92, 255, 0.25);
+        }
+      }
+    }
+  }
+
+  .angel-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+
+    .angel-chip {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+
+      &:hover {
+        border-color: var(--border-active);
+        color: var(--text-primary);
+      }
+      &.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+    }
+  }
+
+  .angel-result {
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    margin-top: 12px;
+
+    .angel-result-head {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+
+      .angel-key {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--accent-gold);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 1px;
+      }
+      .angel-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .angel-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        background: var(--bg-panel);
+
+        &.rep {
+          color: var(--accent-gold);
+          border-color: rgba(212, 168, 83, 0.35);
+          background: rgba(212, 168, 83, 0.1);
+        }
+        &.seq {
+          color: var(--accent-cyan);
+          border-color: rgba(92, 225, 230, 0.35);
+          background: rgba(92, 225, 230, 0.1);
+        }
+      }
+    }
+
+    .angel-core {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 10px;
+    }
+
+    .angel-advice {
+      background: rgba(124, 92, 255, 0.08);
+      border-left: 3px solid var(--primary);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 10px;
+
+      .angel-advice-label {
+        color: var(--primary-light);
+        font-weight: 600;
+        margin-right: 6px;
+      }
+    }
+
+    .angel-love,
+    .angel-career {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .angel-digits {
+      margin: 10px 0 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+
+      .angel-digit {
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+    }
+
+    .angel-ai {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+
+      p { margin: 0 0 8px; }
+      p:last-child { margin-bottom: 0; }
+      strong { color: var(--primary-light); }
+    }
+  }
+
+  // 序列分析结果
+  .angel-seq {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    .angel-seq-summary {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .angel-seq-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 10px;
+
+      th, td {
+        padding: 7px 8px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      th {
+        font-weight: 600;
+        color: var(--text-primary);
+        background: var(--bg-card);
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+    }
+
+    .angel-themes {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+  }
+
+  // 个人天使数结果
+  .angel-personal-result {
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+
+    .angel-key {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+    .angel-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .angel-core {
+      width: 100%;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-top: 4px;
+    }
+  }
+
+  // 错误提示
+  .angel-err {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #ff6b6b;
+    line-height: 1.5;
+  }
+
+  // 手账标签列表
+  .angel-journal-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+
+    .angel-journal-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .angel-x {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+
+      &:hover {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+      }
+    }
+  }
+}
+

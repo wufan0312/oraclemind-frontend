@@ -1,0 +1,427 @@
+// ===== 会员中心 /member =====
+// 设计基线：与 /profile 保持一致（同容器宽度、同卡片语言、同 CSS 变量），
+// 配色上用金色强调「会员/超值」，紫色保持全站主色。
+
+.member-page {
+  padding: 28px 24px 60px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.member-head {
+  margin-bottom: 22px;
+}
+
+.member-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+
+  svg {
+    color: var(--accent-gold);
+  }
+}
+
+.member-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ===== 当前状态条 ===== */
+.member-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(212, 168, 83, 0.32);
+  background: linear-gradient(120deg, rgba(212, 168, 83, 0.12), rgba(124, 92, 255, 0.08));
+}
+
+.member-status-main {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.member-status-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.member-status-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-secondary);
+
+  &.is-active {
+    color: var(--accent-gold);
+  }
+}
+
+.member-status-guest {
+  font-size: 12px;
+  color: var(--text-muted);
+
+  a {
+    color: var(--primary-light);
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.member-status-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.member-tag {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+
+  &.is-on {
+    color: var(--accent-gold);
+    border-color: rgba(212, 168, 83, 0.4);
+    background: rgba(212, 168, 83, 0.1);
+  }
+}
+
+/* ===== 通用卡片 ===== */
+.member-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.member-card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+
+  svg { color: var(--primary-light); }
+}
+
+.member-perk-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+
+    svg { color: var(--accent-green, #4ade80); flex: 0 0 auto; margin-top: 3px; }
+    span { flex: 1; }
+  }
+}
+
+/* ===== 分区（套餐） ===== */
+.member-section {
+  margin-bottom: 24px;
+}
+
+.member-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+
+  svg { color: var(--accent-gold); }
+}
+
+.member-section-hint {
+  margin-left: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.member-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.member-plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  &.is-featured {
+    border-color: rgba(212, 168, 83, 0.45);
+    background: linear-gradient(160deg, rgba(212, 168, 83, 0.1), var(--bg-panel) 60%);
+  }
+
+  &.is-unlocked {
+    border-color: rgba(74, 222, 128, 0.4);
+  }
+}
+
+.member-plan-ribbon {
+  position: absolute;
+  top: -9px;
+  right: 14px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3b2a08;
+  background: linear-gradient(90deg, #d4a853, #e8c97e);
+}
+
+.member-plan-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.member-plan-icon {
+  font-size: 24px;
+  line-height: 1.2;
+  flex: 0 0 auto;
+}
+
+.member-plan-heading {
+  min-width: 0;
+}
+
+.member-plan-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.member-plan-tagline {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+.member-plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.member-plan-currency {
+  font-size: 14px;
+  color: var(--accent-gold);
+}
+
+.member-plan-amount {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  line-height: 1;
+}
+
+.member-plan-unit {
+  margin-left: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.member-plan-perks {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+
+    svg { color: var(--primary-light); flex: 0 0 auto; margin-top: 3px; }
+    span { flex: 1; }
+  }
+}
+
+.member-plan-btn {
+  width: 100%;
+  padding: 9px 0;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  transition: var(--transition);
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  &.is-done {
+    background: rgba(74, 222, 128, 0.14);
+    color: var(--accent-green, #4ade80);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    cursor: default;
+    text-align: center;
+    padding: 8px 0;
+
+    &:hover { filter: none; }
+  }
+}
+
+/* ===== 权益记录 ===== */
+.member-record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member-record {
+  display: grid;
+  grid-template-columns: 24px minmax(90px, 1fr) minmax(120px, 1.2fr) minmax(120px, auto) 76px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  font-size: 12px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 24px 1fr 76px;
+    row-gap: 4px;
+
+    .member-record-no,
+    .member-record-time {
+      grid-column: 2 / 3;
+    }
+  }
+}
+
+.member-record-icon {
+  font-size: 16px;
+  text-align: center;
+}
+
+.member-record-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-record-no,
+.member-record-time {
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-record-state {
+  text-align: right;
+  color: var(--text-muted);
+
+  &.is-paid {
+    color: var(--accent-green, #4ade80);
+  }
+}
+
+.member-record.is-local {
+  border-style: dashed;
+}
+
+.member-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+/* ===== 常见问题 ===== */
+.member-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.member-faq-item {
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.member-faq-q {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.member-faq-a {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}

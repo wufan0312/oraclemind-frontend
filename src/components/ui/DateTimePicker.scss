@@ -1,0 +1,352 @@
+// ===== Ant Design 风格日历日期选择器 =====
+.antd-dp {
+  position: relative;
+  width: 100%;
+}
+
+.antd-dp-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  // 高度 / 圆角 / focus 光晕对齐 components.scss 的 .field-pill（10/14 padding · 14px 字号 · 10px 圆角 · 3px 紫色光晕）
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: default; // 内部是可编辑 input，容器本身不再表现为「整块可点」
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(124, 92, 255, 0.5);
+  }
+
+  &.antd-dp-focused {
+    border-color: none;
+    box-shadow: none;
+  }
+
+  // 键入内容无法解析 / 年份越界：红色错误态（失焦自动回滚）
+  &.antd-dp-invalid {
+    border-color: #ff6b6b;
+
+    &.antd-dp-focused {
+      border-color: #ff6b6b;
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+    }
+  }
+}
+
+// 可键入的输入框（替代原只读 .antd-dp-text）
+.antd-dp-field {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  cursor: text;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+// 清空按钮（有值时才出现）
+.antd-dp-clear {
+  flex-shrink: 0;
+  margin-left: 6px;
+  padding: 2px 3px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.12);
+  }
+}
+
+.antd-dp-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.antd-dp-placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.antd-dp-icon {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--primary-light);
+  }
+}
+
+.antd-dp-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  width: 280px;
+  padding: 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.antd-dp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 4px;
+}
+
+.antd-dp-nav {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: var(--transition);
+  font-family: inherit;
+
+  &:hover {
+    background: rgba(124, 92, 255, 0.1);
+    color: var(--primary);
+  }
+}
+
+.antd-dp-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  text-align: center;
+}
+
+.antd-dp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.antd-dp-wd {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+.antd-dp-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.antd-dp-day {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: var(--transition);
+  font-family: inherit;
+
+  &:hover:not(:disabled) {
+    background: rgba(124, 92, 255, 0.12);
+  }
+
+  &.antd-dp-empty,
+  &:disabled {
+    cursor: default;
+    color: transparent;
+    background: transparent;
+
+    &:hover {
+      background: transparent;
+    }
+  }
+
+  &.antd-dp-today {
+    font-weight: 700;
+    color: var(--primary);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+  }
+
+  &.antd-dp-selected {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+      background: var(--primary);
+    }
+  }
+}
+
+// ===== Ant Design 风格时间选择器 =====
+.antd-tp {
+  position: relative;
+  width: 100%;
+}
+
+.antd-tp-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 38px;
+
+  .antd-tp-disabled & {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:hover {
+    border-color: rgba(124, 92, 255, 0.5);
+  }
+
+  &.antd-tp-focused {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.15);
+  }
+}
+
+.antd-tp-text {
+  flex: 1;
+  min-width: 0;
+
+  &.antd-tp-placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.antd-tp-icon {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.antd-tp-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  width: 200px;
+  padding: 8px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.antd-tp-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.antd-tp-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.antd-tp-col-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4px 0;
+}
+
+.antd-tp-col-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 200px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(124, 92, 255, 0.3);
+    border-radius: 2px;
+  }
+}
+
+.antd-tp-opt {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  border-radius: 4px;
+  transition: var(--transition);
+  font-family: inherit;
+  text-align: center;
+
+  &:hover {
+    background: rgba(124, 92, 255, 0.1);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+  }
+}

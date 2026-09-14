@@ -1,0 +1,85 @@
+// ============================================================================
+// 玄镜 OracleMind · 设计令牌层 (Design Tokens)
+// ----------------------------------------------------------------------------
+// 来源：原型 styles.css :root CSS 变量系统（2392 行原型样式的唯一事实来源）
+// 本文件同时输出：
+//   1. CSS 自定义属性（:root）—— 页面/组件内联样式可直接引用 var(--xxx)
+//   2. Sass 变量 —— SCSS 样式文件通过 @use './tokens' as *; 使用 $xxx
+// 修改主题只需改本文件，视觉 100% 保真。
+// ============================================================================
+
+// ---- 字体 ----
+$font-family: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+// ---- 背景层级 ----
+$color-bg-dark: #0f0f1a;      // 页面底色
+$color-bg-panel: #1a1a2e;     // 面板底色
+$color-bg-card: #232342;      // 卡片底色
+$color-bg-hover: #2a2a4a;     // 悬浮底色
+
+// ---- 主色 / 强调色 ----
+$color-primary: #7c5cff;      // 主紫
+$color-primary-light: #a78bfa;// 亮紫
+$color-accent-cyan: #5ce1e6;  // 青
+$color-accent-gold: #d4a853;  // 金
+$color-accent-pink: #ff6b9d;  // 粉
+$color-accent-green: #4ade80; // 绿
+$color-danger: #ff6b6b;       // 红（凶/警示）
+$color-warn: #ff8e53;         // 橙
+$color-yellow: #ffd700;       // 明黄（冷知识标签）
+
+// ---- 文本层级 ----
+$color-text-primary: #f0f0f5;
+$color-text-secondary: #a0a0b8;
+$color-text-muted: #6b6b85;
+
+// ---- 边框 / 阴影 ----
+$color-border: rgba(255, 255, 255, 0.08);
+$color-border-active: rgba(124, 92, 255, 0.4);
+$shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+$shadow-glow: 0 0 40px rgba(124, 92, 255, 0.15);
+
+// ---- 圆角 ----
+$radius: 12px;
+$radius-lg: 16px;
+
+// ---- 过渡 ----
+$transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ---- 布局尺寸 ----
+$nav-height: 64px;
+$page-max-width: 1400px;
+$page-padding-x: 32px;
+$page-padding-top: 88px;
+
+// ---- z-index 层级 ----
+$z-nav: 1000;
+$z-modal: 2000;
+$z-toast: 3000;
+$z-levelup: 3001;
+
+// ============================================================================
+// CSS 自定义属性输出（与原型 :root 完全一致，内联样式兼容）
+// ============================================================================
+:root {
+  --bg-dark: #{$color-bg-dark};
+  --bg-panel: #{$color-bg-panel};
+  --bg-card: #{$color-bg-card};
+  --bg-hover: #{$color-bg-hover};
+  --primary: #{$color-primary};
+  --primary-light: #{$color-primary-light};
+  --accent-cyan: #{$color-accent-cyan};
+  --accent-gold: #{$color-accent-gold};
+  --accent-pink: #{$color-accent-pink};
+  --accent-green: #{$color-accent-green};
+  --text-primary: #{$color-text-primary};
+  --text-secondary: #{$color-text-secondary};
+  --text-muted: #{$color-text-muted};
+  --border: #{$color-border};
+  --border-active: #{$color-border-active};
+  --shadow-card: #{$shadow-card};
+  --shadow-glow: #{$shadow-glow};
+  --radius: #{$radius};
+  --radius-lg: #{$radius-lg};
+  --transition: #{$transition};
+}
