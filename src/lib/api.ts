@@ -6,8 +6,29 @@
 import type { NumDetail, NumCore } from '@/data/numerologyData';
 import { cachedRequest, REQ_CACHE_TTL } from './requestCache';
 
-/** 后端接口地址：.env.local 中 NEXT_PUBLIC_API_BASE 配置，默认本机后端 */
-export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000';
+/**
+ * 后端接口地址（oraclemind-backend）。
+ *
+ * 与下方 AI_BASE 同一坑：NEXT_PUBLIC_* 是**构建时内联**的，生产漏配该变量时旧写法
+ * （`|| 'http://localhost:8000'`）会把回环地址硬编码进产物，而代码跑在用户浏览器里，
+ * 于是线上全部请求打到「用户自己的 8000 端口」→ 连接被拒，且报错完全不指向配置缺失。
+ *
+ * 现策略：
+ *  - 显式配置 NEXT_PUBLIC_API_BASE → 一律采用（生产 / 自托管走这条）；
+ *  - 开发环境未配置 → 回落到 http://localhost:8000（本地一键起服务）；
+ *  - 生产环境未配置 → 回落到同源相对地址（由网关 / 反代转发），并告警一次提示补配置。
+ */
+const _API_BASE_ENV = (process.env.NEXT_PUBLIC_API_BASE ?? '').trim();
+const _IS_DEV_ENV = process.env.NODE_ENV === 'development';
+
+export const API_BASE = _API_BASE_ENV || (_IS_DEV_ENV ? 'http://localhost:8000' : '');
+
+if (!_API_BASE_ENV && !_IS_DEV_ENV && typeof window !== 'undefined') {
+  console.warn(
+    '[oraclemind] NEXT_PUBLIC_API_BASE 未配置，排盘/登录等请求将走同源地址。' +
+      '请在构建时注入该变量（指向 oraclemind-backend，本地默认 http://localhost:8000）。',
+  );
+}
 
 /** 数字命理排盘结果（与后端 NumerologyResponse 结构一致，字段 camelCase） */
 export interface NumerologyAPIResult {
@@ -1682,11 +1703,10 @@ export async function fetchPremiumEntitlements(visitorId?: string): Promise<Prem
  *  - 生产环境未配置 → 回落到同源相对地址（由网关 / 反代转发），并告警一次提示补配置。
  */
 const _AI_BASE_ENV = (process.env.NEXT_PUBLIC_AI_API_BASE ?? '').trim();
-const _IS_DEV = process.env.NODE_ENV === 'development';
 
-export const AI_BASE = _AI_BASE_ENV || (_IS_DEV ? 'http://localhost:8021' : '');
+export const AI_BASE = _AI_BASE_ENV || (_IS_DEV_ENV ? 'http://localhost:8021' : '');
 
-if (!_AI_BASE_ENV && !_IS_DEV && typeof window !== 'undefined') {
+if (!_AI_BASE_ENV && !_IS_DEV_ENV && typeof window !== 'undefined') {
   // 只在浏览器侧告警一次：SSR 日志里刷这条没有意义
   console.warn(
     '[oraclemind] NEXT_PUBLIC_AI_API_BASE 未配置，AI 解读将请求同源地址。' +
