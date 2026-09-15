@@ -16,16 +16,27 @@ import { cachedRequest, REQ_CACHE_TTL } from './requestCache';
  * 现策略：
  *  - 显式配置 NEXT_PUBLIC_API_BASE → 一律采用（生产 / 自托管走这条）；
  *  - 开发环境未配置 → 回落到 http://localhost:8000（本地一键起服务）；
- *  - 生产环境未配置 → 回落到同源相对地址（由网关 / 反代转发），并告警一次提示补配置。
+ *  - 生产环境未配置（或面板值为空串）→ 回落到 PROD_API_BASE 线上域名兜底。
  */
 const _API_BASE_ENV = (process.env.NEXT_PUBLIC_API_BASE ?? '').trim();
 const _IS_DEV_ENV = process.env.NODE_ENV === 'development';
 
-export const API_BASE = _API_BASE_ENV || (_IS_DEV_ENV ? 'http://localhost:8000' : '');
+/**
+ * 生产兜底地址。
+ *
+ * 存在理由：Vercel 面板里若存在同名变量但**值为空串**，dotenv 会因「键已存在」而跳过
+ * `.env.production` 的正确取值，导致构建期内联出空地址 → 线上请求打到前端自身同源。
+ * 这里把线上域名写成代码级默认值，env 仍然优先，但空串不再能把链路打穿。
+ * 服务换域名时改这里 + `.env.production` 两处即可。
+ */
+const PROD_API_BASE = 'https://oraclemind-backend.vercel.app';
+const PROD_AI_BASE = 'https://oraclemind-ai-eight.vercel.app';
+
+export const API_BASE = _API_BASE_ENV || (_IS_DEV_ENV ? 'http://localhost:8000' : PROD_API_BASE);
 
 if (!_API_BASE_ENV && !_IS_DEV_ENV && typeof window !== 'undefined') {
   console.warn(
-    '[oraclemind] NEXT_PUBLIC_API_BASE 未配置，排盘/登录等请求将走同源地址。' +
+    '[oraclemind] NEXT_PUBLIC_API_BASE 未配置，已回落到内置生产域名（若面板建了该变量请填值而非留空）。' +
       '请在构建时注入该变量（指向 oraclemind-backend，本地默认 http://localhost:8000）。',
   );
 }
@@ -1700,17 +1711,18 @@ export async function fetchPremiumEntitlements(visitorId?: string): Promise<Prem
  * 现策略：
  *  - 显式配置 NEXT_PUBLIC_AI_API_BASE → 一律采用（生产 / 自托管走这条）；
  *  - 开发环境未配置 → 回落到 http://localhost:8021（本地一键起服务，符合直觉）；
- *  - 生产环境未配置 → 回落到同源相对地址（由网关 / 反代转发），并告警一次提示补配置。
+ *  - 生产环境未配置（或面板值为空串）→ 回落到 PROD_AI_BASE 线上域名兜底。
  */
 const _AI_BASE_ENV = (process.env.NEXT_PUBLIC_AI_API_BASE ?? '').trim();
 
-export const AI_BASE = _AI_BASE_ENV || (_IS_DEV_ENV ? 'http://localhost:8021' : '');
+/** 生产兜底见文件顶部 PROD_AI_BASE（面板变量为空串时的保底，env 仍然优先） */
+export const AI_BASE = _AI_BASE_ENV || (_IS_DEV_ENV ? 'http://localhost:8021' : PROD_AI_BASE);
 
 if (!_AI_BASE_ENV && !_IS_DEV_ENV && typeof window !== 'undefined') {
   // 只在浏览器侧告警一次：SSR 日志里刷这条没有意义
   console.warn(
-    '[oraclemind] NEXT_PUBLIC_AI_API_BASE 未配置，AI 解读将请求同源地址。' +
-      '请在构建时注入该变量（指向 oraclemind-ai-py，本地默认 http://localhost:8021）。',
+    '[oraclemind] NEXT_PUBLIC_AI_API_BASE 未配置，已回落到内置生产域名' +
+      '（若面板建了该变量请填值而非留空）。目标应指向 oraclemind-ai-py，本地默认 http://localhost:8021。',
   );
 }
 
