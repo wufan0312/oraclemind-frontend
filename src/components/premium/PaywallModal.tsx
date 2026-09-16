@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Modal from '@/components/ui/Modal';
 import { useVisitor } from '@/components/visitor/VisitorProvider';
+import { useRegion } from '@/lib/useRegion';
 import { createDonation, fetchDonation, type DonationOrder } from '@/lib/api';
 import {
   PREMIUM_PLANS,
@@ -35,6 +36,7 @@ export default function PaywallModal({
   onUnlocked?: () => void;
 }) {
   const { visitorId } = useVisitor();
+  const { isCN } = useRegion();
   const [selected, setSelected] = useState<PremiumItemId>(item);
   const [unlocked, setUnlocked] = useState(false);
   const [order, setOrder] = useState<DonationOrder | null>(null);
@@ -137,7 +139,18 @@ export default function PaywallModal({
           </ul>
         </div>
 
-        {unlocked ? (
+        {isCN ? (
+          /* 境内合规版：不提供付费购买，仅保留免费能力说明 */
+          <div className="paywall-cn-notice">
+            <div className="paywall-cn-notice-icon">🆓</div>
+            <div className="paywall-cn-notice-title">该地区暂不支持付费解锁</div>
+            <div className="paywall-cn-notice-body">
+              根据当地规则，玄镜在此区域仅提供免费的文化体验与自省工具，不开放任何付费内容。
+              上方列出的所有基础占卜与 AI 解读均可免费使用。
+            </div>
+            <button className="paywall-btn primary" onClick={onClose}>了解，返回免费使用</button>
+          </div>
+        ) : unlocked ? (
           <div className="paywall-unlocked">
             <div className="paywall-unlocked-icon">✅</div>
             <div className="paywall-unlocked-text">已解锁「{plan.name}」，可直接查看完整内容</div>

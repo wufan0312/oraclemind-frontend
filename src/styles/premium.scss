@@ -298,3 +298,36 @@
   color: var(--text-muted);
   text-align: center;
 }
+
+// ===== 境内合规版提示（geo 分流：x-vercel-ip-country = CN 时展示）=====
+.paywall-cn-notice,
+.report-donate-cn,
+.deep-pay-cn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 16px;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+  border-radius: 12px;
+  background: var(--bg-soft, rgba(0, 0, 0, 0.02));
+  text-align: center;
+
+  &-icon,
+  .paywall-cn-notice-icon {
+    font-size: 28px;
+  }
+
+  &-title,
+  .paywall-cn-notice-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text, #1a1a1a);
+  }
+
+  &-body,
+  .paywall-cn-notice-body {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-muted, #666);
+  }
+}

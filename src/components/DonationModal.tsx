@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { createDonation, fetchDonation, type DonationOrder } from '@/lib/api';
+import { useRegion } from '@/lib/useRegion';
 import type { Offering } from '@/data/healingData';
 
 const POLL_INTERVAL = 3000;
@@ -29,6 +30,7 @@ export default function DonationModal({
   const [loading, setLoading] = useState(false);
   const [customAmount, setCustomAmount] = useState(19.9);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { isCN } = useRegion();
 
   const stop = () => {
     if (pollRef.current) {
@@ -87,7 +89,15 @@ export default function DonationModal({
 
   return (
     <Modal open={open} onClose={close} icon="🙏" title="随喜供养">
-      {!order ? (
+      {isCN ? (
+        /* 境内合规版：不提供任何付费/供养入口 */
+        <div className="report-donate report-donate-cn">
+          <div className="report-donate-tip">
+            根据当地规则，玄镜在此区域不开放付费或供养功能。所有解读与内容均可免费使用，欢迎体验。
+          </div>
+          <Button variant="ghost" onClick={close}>关闭</Button>
+        </div>
+      ) : !order ? (
         <div className="report-donate">
           <div className="report-donate-amount">
             供养：<strong className="tc-gold">{offering.name}</strong>

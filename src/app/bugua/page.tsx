@@ -63,6 +63,7 @@ import { pushTrajectory } from '@/lib/trajectory';
 import type { VisitorBirth } from '@/lib/visitor';
 import { useShare, shareOutToPoster } from '@/hooks/useShare';
 import ShareLoginGate from '@/components/share/ShareLoginGate';
+import { useRegion } from '@/lib/useRegion';
 
 import { BaziModule } from './modules/BaziModule';
 import { WuxingModule } from './modules/WuxingModule';
@@ -569,6 +570,7 @@ export default function BuguaPage() {
   const [deepOpen, setDeepOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [pricing, setPricing] = useState(PRICING.findIndex((p) => p.selected));
+  const { isCN } = useRegion();
   // 结果卡导出图片（生成海报）：复用 AI 服务 /api/v1/poster，与解梦页同款
   const [posterResult, setPosterResult] = useState<PosterResult | null>(null);
   const [posterLoading, setPosterLoading] = useState(false);
@@ -2057,23 +2059,31 @@ export default function BuguaPage() {
         onClose={() => setDeepOpen(false)}
         icon="🔓"
         title="解锁深度解读报告"
-        footer={<button className="modal-btn" onClick={confirmPayment}>确认开通 →</button>}
-        hint="支持微信/支付宝 · 7天无理由退款"
+        footer={isCN ? undefined : <button className="modal-btn" onClick={confirmPayment}>确认开通 →</button>}
+        hint={isCN ? undefined : '支持微信/支付宝 · 7天无理由退款'}
       >
-        解锁后你将获得：
-        <br />• 30页+完整命理深度分析
-        <br />• 流年逐月运势详解
-        <br />• 真人专家1v1答疑（30分钟）
-        <br />• 专属疗愈方案推荐
-        <div className="pricing-cards">
-          {PRICING.map((p, i) => (
-            <div key={i} className={'pricing-card' + (pricing === i ? ' selected' : '')} onClick={() => setPricing(i)}>
-              <div className="pricing-name">{p.name}</div>
-              <div className="pricing-price">{p.price}</div>
-              <div className="pricing-period">{p.period}</div>
+        {isCN ? (
+          <div className="deep-pay-cn">
+            根据当地规则，玄镜在此区域不开放付费深度报告。所有基础占卜与 AI 解读均可免费使用。
+          </div>
+        ) : (
+          <>
+            解锁后你将获得：
+            <br />• 30页+完整命理深度分析
+            <br />• 流年逐月运势详解
+            <br />• 真人专家1v1答疑（30分钟）
+            <br />• 专属疗愈方案推荐
+            <div className="pricing-cards">
+              {PRICING.map((p, i) => (
+                <div key={i} className={'pricing-card' + (pricing === i ? ' selected' : '')} onClick={() => setPricing(i)}>
+                  <div className="pricing-name">{p.name}</div>
+                  <div className="pricing-price">{p.price}</div>
+                  <div className="pricing-period">{p.period}</div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </Modal>
 
       {/* 分享弹窗 */}

@@ -23,6 +23,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 /** 认证 Cookie 名（后端 COOKIE_NAME，改动需同步） */
 const AUTH_COOKIE = 'om_auth';
 
+/** 地区 Cookie 名（由 Vercel 边缘头 x-vercel-ip-country 写入，前端 useRegion 读取） */
+const REGION_COOKIE = 'om_region';
+
 /** 需要登录才能访问的路由前缀（新增受保护页只改这里） */
 const PROTECTED_PREFIXES = ['/profile'];
 
@@ -33,11 +36,24 @@ function isProtected(pathname: string): boolean {
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+  const res = NextResponse.next();
 
-  if (!isProtected(pathname)) return NextResponse.next();
+  // 地区识别：把 Vercel 边缘注入的 x-vercel-ip-country 写入 Cookie，
+  // 供客户端组件判断境内/境外，切换合规版本（境内隐藏付费与分享裂变）。
+  // 本地开发无该头时不写，客户端默认非 CN（完整版可见）。
+  const country = request.headers.get('x-vercel-ip-country') || '';
+  if (country) {
+    res.cookies.set(REGION_COOKIE, country, {
+      path: '/',
+      maxAge: 60 * 30,
+      sameSite: 'lax',
+    });
+  }
+
+  if (!isProtected(pathname)) return res;
 
   // 已登录（Cookie 存在）→ 放行
-  if (request.cookies.get(AUTH_COOKIE)?.value) return NextResponse.next();
+  if (request.cookies.get(AUTH_COOKIE)?.value) return res;
 
   // 未登录 → 302 到登录页，记录来路用于登录后回跳
   const loginUrl = request.nextUrl.clone();
@@ -47,6 +63,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // 只对受保护路由生效（图片/静态资源/API 一律不经过中间件）
-  matcher: ['/profile', '/profile/:path*'],
+  // 所有页面路由均经过（写入地区 Cookie）；静态资源 / 图片 / API 跳过
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|images|api).*)'],
 };

@@ -1543,6 +1543,13 @@ export async function deleteAnnotation(id: number, visitorId?: string): Promise<
 
 /* ---------------- 随喜供养订单（#1） ---------------- */
 
+/** 读取 middleware 种下的地区 Cookie，作为下单请求的地区声明（后端据此做境内校验） */
+function clientRegionHeader(): Record<string, string> {
+  if (typeof document === 'undefined') return {};
+  const m = document.cookie.match(/(?:^|;\s*)om_region=([^;]+)/);
+  return m ? { 'X-Client-Region': m[1] } : {};
+}
+
 /** 创建供养订单 —— POST /api/v1/donations */
 export async function createDonation(input: {
   tier: string;
@@ -1552,7 +1559,7 @@ export async function createDonation(input: {
   const res = await fetch(`${API_BASE}/api/v1/donations`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...clientRegionHeader() },
     body: JSON.stringify(input),
   });
   if (!res.ok) {
@@ -1607,7 +1614,7 @@ export async function createPremiumOrder(input: {
   const res = await fetch(`${API_BASE}/api/v1/premium/orders`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...clientRegionHeader() },
     body: JSON.stringify(input),
   });
   if (!res.ok) {

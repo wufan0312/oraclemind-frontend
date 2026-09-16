@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { unreadCount } from '@/lib/notifications';
 import { useI18n } from '@/lib/i18n';
+import { useRegion } from '@/lib/useRegion';
 import LanguageSwitch from './LanguageSwitch';
 
 export interface NavItem {
@@ -50,6 +51,7 @@ export default function TopNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useI18n();
+  const { isCN } = useRegion();
   const { user, isAuthed, ready, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -114,12 +116,14 @@ export default function TopNav() {
         <Link href="/report" className={'nav-btn nav-report-btn' + (pathname === '/report' ? ' active' : '')}>
           {t('nav.report')}
         </Link>
+        {!isCN && (
           <Link
-          href="/member"
-          className={'nav-btn btn-primary nav-member-btn' + (pathname === '/member' ? ' active' : '')}
-        >
-          {t('nav.member')}
-        </Link>
+            href="/member"
+            className={'nav-btn btn-primary nav-member-btn' + (pathname === '/member' ? ' active' : '')}
+          >
+            {t('nav.member')}
+          </Link>
+        )}
         {ready && isAuthed && user ? (
           <div
             ref={menuRef}
