@@ -53,6 +53,7 @@ import {
 import { storage, registerLegacy } from '@/lib/storage';
 import { getCrossReadings, clearCrossReadings, pushCrossReading, type CrossReading } from '@/lib/crossReadings';
 import { printDocument } from '@/lib/print';
+import { solarToLunarParts } from '@/lib/lunar';
 import { mdToHtml, sanitizeAiText } from '@/lib/markdown';
 import LightFollowUp from '@/components/ai-chat/LightFollowUp';
 import { showToast } from '@/components/ui/Toast';
@@ -1134,7 +1135,10 @@ export default function ReportPage() {
     const [y, m, d] = effectiveBirth.date.split('-').map(Number);
     if (!y || !m || !d) return null;
     const local = computeLocalBazi({ date: effectiveBirth.date, time: effectiveBirth.time || '不详', gender: effectiveBirth.gender || '男' });
-    const num = digitalRoot(y + m + d);
+    // 生命灵数统一走农历口径：先转农历年月日再求和，与 numerology 页 / synastry 保持一致。
+    // ⚠️ 历史坑（2026-09-16 修复）：此处原用「公历 y+m+d」直算，导致报告卡与其他页的灵数不一致。
+    const lp = solarToLunarParts(effectiveBirth.date);
+    const num = lp ? digitalRoot(lp.ly + lp.lm + lp.ld) : digitalRoot(y + m + d);
     return {
       dayGan: local.dayGan,
       dayWx: GAN_WUXING[local.dayGan] || '',

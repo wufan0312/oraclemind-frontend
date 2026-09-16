@@ -20,6 +20,8 @@ export interface DatePickerProps {
   displayValue?: string;
   /** 自定义输入解析器：把用户键入的文本转成 YYYY-MM-DD；默认用公历 loose parser。农历模式可传入农历解析器。 */
   parseInput?: (text: string) => string | null;
+  /** 禁止展开日历面板（仅支持键入）。农历模式用它避免「点日历把公历误当农历」的歧义。 */
+  disablePanel?: boolean;
 }
 
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
@@ -53,7 +55,7 @@ function parseLooseDate(text: string): string | null {
   return null;
 }
 
-export function DatePicker({ value, onChange, minYear = 1940, maxYear, className, placeholder, displayValue, parseInput }: DatePickerProps) {
+export function DatePicker({ value, onChange, minYear = 1940, maxYear, className, placeholder, displayValue, parseInput, disablePanel }: DatePickerProps) {
   const max = maxYear ?? new Date().getFullYear();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -231,7 +233,7 @@ export function DatePicker({ value, onChange, minYear = 1940, maxYear, className
           type="text"
           value={draft}
           onChange={onInputChange}
-          onFocus={() => setOpen(true)}
+          onFocus={() => !disablePanel && setOpen(true)}
           onBlur={commitDraft}
           onKeyDown={onKeyDown}
           placeholder={placeholder || 'YYYY-MM-DD'}
@@ -252,6 +254,7 @@ export function DatePicker({ value, onChange, minYear = 1940, maxYear, className
           </button>
         )}
         {/* 图标点击：切换面板。用 onMouseDown + preventDefault 保住输入焦点、避免 blur 抢先提交 */}
+        {!disablePanel && (
         <span
           className="antd-dp-icon"
           onMouseDown={(e) => { e.preventDefault(); inputRef.current?.focus(); setOpen(!open); }}
@@ -265,6 +268,7 @@ export function DatePicker({ value, onChange, minYear = 1940, maxYear, className
             <circle cx="9.5" cy="9" r="0.8" fill="currentColor" />
           </svg>
         </span>
+        )}
       </div>
       {open && (
         <div className="antd-dp-panel">

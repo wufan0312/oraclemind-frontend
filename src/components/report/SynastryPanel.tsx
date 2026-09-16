@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { computeSynastry, type BirthProfile } from '@/lib/synastry';
 import SectionIcon from '@/components/ui/SectionIcon';
-import DatePicker, { TimePicker } from '@/components/ui/DateTimePicker';
+import { TimePicker } from '@/components/ui/DateTimePicker';
+// 出生日期统一入口（内建公历/农历双模式）
+import BirthDatePicker from '@/components/ui/BirthDatePicker';
 
 interface PersonState {
   name: string;
@@ -63,9 +65,9 @@ export default function SynastryPanel() {
                 />
                 
               </div>
-              <DatePicker
-                value={p.date}
-                onChange={(v) => setP({ ...p, date: v })}
+              <BirthDatePicker
+                value={{ date: p.date }}
+                onChange={(v) => setP({ ...p, date: v.date })}
                 placeholder="出生日期"
               />
               <TimePicker

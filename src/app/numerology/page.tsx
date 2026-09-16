@@ -3,9 +3,11 @@
 import '@/styles/numerology.scss';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Solar } from 'lunar-typescript';
+import { solarToLunarParts } from '@/lib/lunar';
 import CrossPageLink from '@/components/ui/CrossPageLink';
 import SectionIcon from '@/components/ui/SectionIcon';
-import { DatePicker } from '@/components/ui/DateTimePicker';
+// numerology 出生日期统一走 BirthDatePicker（内建公历/农历双模式）；旧 DatePicker 不再直接使用
+import BirthDatePicker from '@/components/ui/BirthDatePicker';
 import OmLoading from '@/components/ui/OmLoading';
 import { useVisitor } from '@/components/visitor/VisitorProvider';
 import { getVisitorBirth } from '@/lib/visitor';
@@ -253,21 +255,11 @@ export default function NumerologyPage() {
   const [incomingQ, setIncomingQ] = useState('');
 
   /**
-   * 公历 'YYYY-MM-DD' → 农历年月日（lunar-typescript）。
-   * 内部毕达哥拉斯计算（生命灵数/九宫格/流年）仍按农历年月日入参，
-   * 与历史原型 app.js 的 NUM_DATA 行为保持一致。
+   * 公历 'YYYY-MM-DD' → 农历年月日。
+   * 统一复用 @/lib/lunar 的单一实现（避免本页与 bugua/fengshui 各自重复实现导致口径漂移）。
+   * 内部毕达哥拉斯计算（生命灵数/九宫格/流年）仍按农历年月日入参，与历史原型 app.js 的 NUM_DATA 行为一致。
    */
-  const solarToLunar = (solar: string): { ly: number; lm: number; ld: number } | null => {
-    if (!solar) return null;
-    const [y, m, d] = solar.split('-').map(Number);
-    if (!y || !m || !d) return null;
-    try {
-      const lu = Solar.fromYmd(y, m, d).getLunar();
-      return { ly: lu.getYear(), lm: lu.getMonth(), ld: lu.getDay() };
-    } catch {
-      return null;
-    }
-  };
+  const solarToLunar = solarToLunarParts;
 
   /** 把当前公历生日写回访客档案（展开已有 birth，保留 province/city/gender/lat/lng/time） */
   const syncBirthToVisitor = (solar: string) => {
@@ -983,10 +975,10 @@ export default function NumerologyPage() {
             </div>
             <div className="birth-field num-field-solar">
               <label>{mode === 'natal' ? '出生日期' : '你的出生日期'}</label>
-              <div className="num-date-hint">请填写<strong>公历（阳历）</strong>生日，系统会自动换算成农历参与计算</div>
-              <DatePicker
-                value={solarDate}
-                onChange={(v) => { setSolarDate(v); userTouchedRef.current = true; syncBirthToVisitor(v); }}
+              <div className="num-date-hint">可填<strong>公历（阳历）</strong>或切换<strong>农历</strong>录入，生命灵数统一按<strong>农历</strong>计算</div>
+              <BirthDatePicker
+                value={{ date: solarDate }}
+                onChange={(v) => { setSolarDate(v.date); userTouchedRef.current = true; syncBirthToVisitor(v.date); }}
                 placeholder="选择公历日期"
                 minYear={1900}
                 maxYear={new Date().getFullYear()}
@@ -1007,10 +999,10 @@ export default function NumerologyPage() {
               <>
                 <div className="birth-field num-field-solar">
                   <label>对方出生日期</label>
-                  <div className="num-date-hint">同样填写<strong>公历（阳历）</strong>生日</div>
-                  <DatePicker
-                    value={partnerDate}
-                    onChange={(v) => { setPartnerDate(v); partnerTouchedRef.current = true; }}
+                  <div className="num-date-hint">同样可填公历或切换农历录入</div>
+                  <BirthDatePicker
+                    value={{ date: partnerDate }}
+                    onChange={(v) => { setPartnerDate(v.date); partnerTouchedRef.current = true; }}
                     placeholder="选择公历日期"
                     minYear={1900}
                     maxYear={new Date().getFullYear()}

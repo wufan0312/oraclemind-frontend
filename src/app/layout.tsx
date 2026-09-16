@@ -17,6 +17,8 @@ import '@/styles/components.scss';
 // 组件库 DateTimePicker 的样式：被 bugua / horoscope / numerology / ming 多页共用，需全局加载
 // （2026-09-08 从 horoscope.scss 抽出，避免拆分后仅 horoscope 有样式的局部化问题）
 import '@/components/ui/DateTimePicker.scss';
+// BirthDatePicker 出生日期录入（公历/农历）:全站出生日期统一入口,需全局加载
+import '@/components/ui/BirthDatePicker.scss';
 // Cascader 级联选择器：被 horoscope / bugua 多页共用，需全局加载
 // （2026-09-10 从 horoscope.scss 抽出，避免仅 horoscope 有样式的局部化问题）
 import '@/components/ui/Cascader.scss';

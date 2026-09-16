@@ -1,0 +1,45 @@
+// ===== 出生日期录入（公历 / 农历 双模式）=====
+// 外层负责对齐整列；内部 antd-dp 自带宽度 100%，此处只补模式切换条
+.birth-dp {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  &.birth-dp-disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+}
+
+.birth-dp-modes {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-subtle, rgba(124, 92, 255, 0.06));
+}
+
+.birth-dp-mode {
+  padding: 4px 14px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary, #6b6a75);
+  font-size: 12px;
+  line-height: 1.6;
+  cursor: pointer;
+  transition: var(--transition, all 0.2s ease);
+
+  &:hover:not(.active) {
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+}

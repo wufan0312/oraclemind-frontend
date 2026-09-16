@@ -21,11 +21,13 @@ export type { AIInterpretationProps } from './AIInterpretation';
 export type { CrossPageLinkProps, CrossPageLinkItem } from './CrossPageLink';
 
 export { DatePicker, TimePicker } from './DateTimePicker';
+export { default as BirthDatePicker } from './BirthDatePicker';
 export { default as RegionPicker } from './RegionPicker';
 export { default as Cascader } from './Cascader';
 export { default as Select } from './Select';
 export { StreamingText, StreamingSection, StreamingList } from './StreamingText';
 export type { DatePickerProps, TimePickerProps } from './DateTimePicker';
+export type { BirthDatePickerProps, BirthMode, BirthValue } from './BirthDatePicker';
 export type { RegionPickerProps } from './RegionPicker';
 export type { CascaderProps } from './Cascader';
 export type { SelectProps, SelectOption } from './Select';

@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { computeTrueSolarTime } from '@/lib/trueSolarTime';
 import { computeLocalBazi, type LocalBaziResult } from '@/data/baziDayun';
 import SectionIcon from '@/components/ui/SectionIcon';
-import DatePicker, { TimePicker } from '@/components/ui/DateTimePicker';
+import { TimePicker } from '@/components/ui/DateTimePicker';
+// 出生日期统一入口（内建公历/农历双模式）
+import BirthDatePicker from '@/components/ui/BirthDatePicker';
 import Cascader from '@/components/ui/Cascader';
 import { useVisitor } from '@/components/visitor/VisitorProvider';
 import { shichenToHHmm } from '@/lib/shichen';
@@ -79,9 +81,11 @@ export default function TrueSolarTimePanel() {
       <div className="tst-form">
         <label className="tst-field">
           <span>出生日期</span>
-          <DatePicker
-            value={date}
-            onChange={(v) => { setDate(v); setDone(false); }}
+          {/* 真太阳时校正基于太阳视位置的物理时差，必须用「公历」日历 + 北京时间（保持太阳历口径）。
+              校正后的日期再喂 computeLocalBazi，由八字算法自行转农历排日柱。 */}
+          <BirthDatePicker
+            value={{ date }}
+            onChange={(v) => { setDate(v.date); setDone(false); }}
             minYear={1900}
             maxYear={2100}
             placeholder="请选择出生日期"

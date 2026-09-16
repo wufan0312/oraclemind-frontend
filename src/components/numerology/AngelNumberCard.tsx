@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import SectionIcon from '@/components/ui/SectionIcon';
-import DatePicker from '@/components/ui/DateTimePicker';
+// 出生日期统一入口（内建公历/农历双模式，与全站一致）
+import BirthDatePicker from '@/components/ui/BirthDatePicker';
 import { mdToHtml } from '@/lib/markdown';
 import {
   ANGEL_DIGIT_MEANING,
@@ -307,9 +308,9 @@ export default function AngelNumberCard() {
       <div className="angel-section">
         <div className="angel-subtitle">🌟 我的个人天使数</div>
         <div className="angel-input-row">
-          <DatePicker
-            value={birth}
-            onChange={(v) => setBirth(v)}
+          <BirthDatePicker
+            value={{ date: birth }}
+            onChange={(v) => setBirth(v.date)}
             placeholder="出生日期 YYYY-MM-DD"
           />
           <button className="btn-submit" onClick={calcPersonal}>推算</button>

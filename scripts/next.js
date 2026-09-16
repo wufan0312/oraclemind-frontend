@@ -358,7 +358,8 @@ function runNext(command, args, daemon = false, port = DEFAULT_PORT) {
 
   // daemon 模式下 stdio 不能是 'inherit'：父进程退出后管道会断，子进程写日志会 EPIPE 崩溃。
   // 必须重定向到真实文件，并 unref 让子进程脱离父进程的生命周期。
-  const logFile = path.join(ROOT, '..', `oj_frontend_${port}.log`);
+  const LOG_DIR = path.join(ROOT, '..', 'outputs', 'logs');
+  const logFile = path.join(LOG_DIR, `oj_frontend_${port}.log`);
   let stdio = 'inherit';
   if (daemon) {
     fs.mkdirSync(path.dirname(logFile), { recursive: true });

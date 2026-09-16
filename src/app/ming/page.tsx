@@ -42,7 +42,8 @@ import { charToPinyin } from '@/data/pinyinData';
 import { findLuckyDates } from '@/data/fengshuiData';
 import CrossPageLink from '@/components/ui/CrossPageLink';
 import SectionIcon from '@/components/ui/SectionIcon';
-import { DatePicker } from '@/components/ui/DateTimePicker';
+// ming 出生日期统一走 BirthDatePicker（内建公历/农历双模式，与全站一致）；旧 DatePicker 不再直接使用
+import BirthDatePicker from '@/components/ui/BirthDatePicker';
 import OmLoading from '@/components/ui/OmLoading';
 import Modal from '@/components/ui/Modal';
 import { useVisitor } from '@/components/visitor/VisitorProvider';
@@ -1132,10 +1133,10 @@ function NamePanel({ active, history, onAdd, onRemove, onClearTab, onJump, onZid
         <div className="ming-form-group">
           <div className="ming-form-group-title">出生信息（可选）</div>
           <div className="ming-form-grid-2">
-            <DatePicker
-              value={date}
+            <BirthDatePicker
+              value={{ date }}
               onChange={(v) => {
-                setDate(v);
+                setDate(v.date);
                 if (res) void run(undefined, undefined, gender);
               }}
               placeholder="选择出生日期"
@@ -1567,7 +1568,7 @@ function HehunPanel({ active, history, onAdd, onRemove, onClearTab, onJump, seed
           <option value="男">男</option>
           <option value="女">女</option>
         </select>
-        <DatePicker value={p.date} onChange={(v) => setSide(side, { date: v })} placeholder="出生日期" />
+        <BirthDatePicker value={{ date: p.date }} onChange={(v) => setSide(side, { date: v.date })} placeholder="出生日期" />
         <select className="form-input ming-select field-pill" value={p.shichen} onChange={(e) => setSide(side, { shichen: e.target.value })}>
           {SHICHEN.map((s) => (
             <option key={s} value={s}>{s}</option>
@@ -2241,11 +2242,11 @@ function QimingPanel({ active, history, onAdd, onRemove, onClearTab, onJump, onZ
         <div className="ming-form-group">
           <div className="ming-form-group-title">出生信息（可选）</div>
           <div className="ming-form-grid-2">
-            <DatePicker
-              value={date}
+            <BirthDatePicker
+              value={{ date }}
               onChange={(v) => {
-                setDate(v);
-                if (hasResult && v) void run({ date: v });
+                setDate(v.date);
+                if (hasResult && v.date) void run({ date: v.date });
               }}
               placeholder="选择出生日期"
             />

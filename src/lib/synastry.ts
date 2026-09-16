@@ -5,6 +5,7 @@
 
 import { computeLocalBazi } from '@/data/baziDayun';
 import { digitalRoot } from '@/data/numerologyData';
+import { getShengxiao, solarToLunarParts } from '@/lib/lunar';
 
 export interface BirthProfile {
   name: string;
@@ -38,9 +39,24 @@ export interface SynastryResult {
 }
 
 // ---- 基础换算 ----
-const ZODIAC = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
-function shengxiao(year: number): string {
-  return ZODIAC[(((year - 4) % 12) + 12) % 12];
+// 生肖统一走农历年（@/lib/lunar 的 getShengxiao，基于 lunar-typescript 农历年生肖）。
+// ⚠️ 历史坑（2026-09-16 修复）：此处原用「公历年份 (year-4)%12」直接算生肖，
+//    在春节/立春之前出生的日期会算错生肖（例如 1987-01-20 公历仍属虎，而非兔）。
+function shengxiao(solarISO: string): string {
+  return getShengxiao(solarISO);
+}
+
+/**
+ * 生命灵数统一走农历年月日，口径与数字命理页（numerology）保持一致
+ * （该页 lifePath = digitalRoot(农历年 + 农历月 + 农历日)）。
+ * ⚠️ 历史坑（2026-09-16 修复）：此处原用「公历年月日」直接求和，与其他模块的农历口径不一致。
+ */
+function lifePathOf(solarISO: string): number {
+  const lp = solarToLunarParts(solarISO);
+  if (lp) return digitalRoot(lp.ly + lp.lm + lp.ld);
+  // 降级（非法日期）：沿用旧的公历求和，保证不抛出
+  const [y, m, d] = solarISO.split('-').map(Number);
+  return digitalRoot(y + m + d);
 }
 
 function getConstellation(date: string): string | null {
@@ -154,15 +170,16 @@ function gradeOf(total: number): string {
 
 /** 计算两人合参结果 */
 export function computeSynastry(a: BirthProfile, b: BirthProfile): SynastryResult {
-  const ya = Number(a.date.split('-')[0]);
-  const yb = Number(b.date.split('-')[0]);
-  const zodiacA = shengxiao(ya);
-  const zodiacB = shengxiao(yb);
+  // 生肖：农历年口径（getShengxiao 内部按农历年取生肖）
+  const zodiacA = shengxiao(a.date);
+  const zodiacB = shengxiao(b.date);
+  // 星座：西方占星，本质基于公历/太阳历，保留公历口径（勿改农历）
   const signA = getConstellation(a.date);
   const signB = getConstellation(b.date);
 
-  const lpA = digitalRoot(ya + Number(a.date.split('-')[1]) + Number(a.date.split('-')[2]));
-  const lpB = digitalRoot(yb + Number(b.date.split('-')[1]) + Number(b.date.split('-')[2]));
+  // 生命灵数：农历年月日口径，与 numerology 页一致
+  const lpA = lifePathOf(a.date);
+  const lpB = lifePathOf(b.date);
 
   const dayGanA = computeLocalBazi({ date: a.date, time: a.time || '子时', gender: a.gender || 'male' }).dayGan;
   const dayGanB = computeLocalBazi({ date: b.date, time: b.time || '子时', gender: b.gender || 'female' }).dayGan;

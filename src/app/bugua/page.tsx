@@ -5,6 +5,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lunar, Solar } from 'lunar-typescript';
 import { DatePicker } from '@/components/ui/DateTimePicker';
+import BirthDatePicker from '@/components/ui/BirthDatePicker';
+import type { BirthValue } from '@/components/ui/BirthDatePicker';
+// 农历换算统一复用单一实现（旧的本地重复实现已删除）
+import {
+  solarToLunarParts,
+  lunarToSolarISO as lunarToSolar,
+  formatLunarText,
+  formatSolarText,
+} from '@/lib/lunar';
 import OmLoading from '@/components/ui/OmLoading';
 import Modal from '@/components/ui/Modal';
 import CrossPageLink from '@/components/ui/CrossPageLink';
@@ -186,96 +195,13 @@ const BUGUA_TST_ENABLED_KEY = 'om_bugua_tst_enabled';
 const DEFAULT_BIRTH_PLACE = { province: '北京市', city: '东城区' };
 
 // ============================================================================
-// 农历生日录入 → 阳历换算工具（lunar-typescript）
+// 农历换算：统一复用 @/lib/lunar 的单一实现（全站与 fengshui / numerology / synastry 共享），
+// 避免各处重复实现导致历法口径漂移。
 // 约定：农历月以负数表示闰月（如 -8 = 闰八月）。用户填农历，系统换算阳历，两者同存。
+// 旧的本地实现（农历月下拉构造、闰月探测、农历文本解析器等）随三段式 select 下线已删除，
+// 农历录入统一由 BirthDatePicker 承担。
 // ============================================================================
-const LUNAR_YEAR_MIN = 1920;
-const LUNAR_YEAR_MAX = 2026;
-const LUNAR_MONTH_NAMES = ['', '正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '腊'];
 const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
-/** 农历月 → 中文名（闰月带「闰」前缀） */
-function lunarMonthName(m: number): string {
-  return m < 0 ? `闰${LUNAR_MONTH_NAMES[-m]}` : LUNAR_MONTH_NAMES[m];
-}
-/** 探测某农历年是否有闰月，返回闰月数字（无则 0）。尝试负月构造，捕获异常即无闰月。 */
-function leapMonthOf(year: number): number {
-  for (let m = 1; m <= 12; m++) {
-    try {
-      Lunar.fromYmd(year, -m, 1);
-      return m;
-    } catch {
-      /* 该月非闰月，继续 */
-    }
-  }
-  return 0;
-}
-/** 构造农历月份下拉选项（正月~腊月，若该年有闰月则插入「闰X月」） */
-function buildLunarMonths(year: number): { value: number; label: string }[] {
-  const months: { value: number; label: string }[] = [];
-  for (let m = 1; m <= 12; m++) months.push({ value: m, label: `${LUNAR_MONTH_NAMES[m]}月` });
-  const leap = leapMonthOf(year);
-  if (leap > 0) months.splice(leap, 0, { value: -leap, label: `闰${LUNAR_MONTH_NAMES[leap]}月` });
-  return months;
-}
-/** 农历 → 阳历，返回 YYYY-MM-DD；非法组合返回 null */
-function lunarToSolar(ly: number, lm: number, ld: number): string | null {
-  try {
-    const solar = Lunar.fromYmd(ly, lm, ld).getSolar();
-    return `${solar.getYear()}-${pad2(solar.getMonth())}-${pad2(solar.getDay())}`;
-  } catch {
-    return null;
-  }
-}
-/** 阳历 YYYY-MM-DD → 农历各分量 {ly, lm(负=闰月), ld} */
-function solarToLunarParts(solarStr: string): { ly: number; lm: number; ld: number } | null {
-  const [y, m, d] = solarStr.split('-').map(Number);
-  if (!y || !m || !d) return null;
-  try {
-    const lunar = Solar.fromYmd(y, m, d).getLunar();
-    return { ly: lunar.getYear(), lm: lunar.getMonth(), ld: lunar.getDay() };
-  } catch {
-    return null;
-  }
-}
-/** 农历日期展示格式：YYYY-MM-DD（闰月 month 为负，展示为 YYYY--MM-DD，如 1987--06-12） */
-function formatLunarText(ly: number, lm: number, ld: number): string {
-  const m = String(Math.abs(lm)).padStart(2, '0');
-  const d = String(ld).padStart(2, '0');
-  return `${ly}-${lm < 0 ? '-' : ''}${m}-${d}`;
-}
-/** 解析用户键入的农历日期文本 → 农历各分量 {ly, lm(负=闰月), ld}；无法识别返回 null。
- *  支持：1987年3月12日 | 1987年闰3月12日 | 1987-3-12 | 1987/03/12 | 19870312 */
-function parseLunarToParts(text: string): { ly: number; lm: number; ld: number } | null {
-  const s = (text ?? '').trim().replace(/\s+/g, '');
-  if (!s) return null;
-  // 中文格式：1987年3月12日 / 1987年闰3月12日
-  let m = /^(\d{4})年(闰)?(\d{1,2})月(\d{1,2})日?$/.exec(s);
-  if (m) return { ly: Number(m[1]), lm: Number(m[3]) * (m[2] ? -1 : 1), ld: Number(m[4]) };
-  // 分隔符格式：1987-3-12 / 1987/03/12 / 1987.3.12
-  m = /^(\d{4})\s*[-/.]\s*(\d{1,2})\s*[-/.]\s*(\d{1,2})$/.exec(s);
-  if (m) return { ly: Number(m[1]), lm: Number(m[2]), ld: Number(m[3]) };
-  // 8 位连续数字：19870312
-  m = /^(\d{4})(\d{2})(\d{2})$/.exec(s);
-  if (m) return { ly: Number(m[1]), lm: Number(m[2]), ld: Number(m[3]) };
-  return null;
-}
-/** 农历文本解析器（供 DatePicker parseInput 使用）：解析成功返回「农历文本本身」，不换算为公历。
- *  目的：保证农历模式输入框只显示用户所写的农历，绝不把公历换算值写回输入框（用户硬性要求）。
- *  输出格式：YYYY-MM-DD（闰月展示为 -MM，如 1987--06-12）。
- *  支持输入：1987年3月12日 | 1987年闰3月12日 | 1987-3-12 | 1987/03/12 | 19870312 */
-function parseLunarLooseDate(text: string): string | null {
-  const p = parseLunarToParts(text);
-  if (!p) return null;
-  const m = String(Math.abs(p.lm)).padStart(2, '0');
-  const d = String(p.ld).padStart(2, '0');
-  return `${p.ly}-${p.lm < 0 ? '-' : ''}${m}-${d}`;
-}
-/** 公历生日可读文本（如「1987年4月9日」；空值返回占位符） */
-function formatSolarText(solar: string): string {
-  if (!solar) return '—';
-  const [y, m, d] = solar.split('-');
-  return `${y}年${Number(m)}月${Number(d)}日`;
-}
 /** 后端存档时间（UTC）→ 东八区可读文本 'YYYY-MM-DD HH:mm'（兜底原样返回） */
 function formatArchiveAt(at: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(at || '');
@@ -738,47 +664,28 @@ export default function BuguaPage() {
     selChipsRef.current = selChips;
   }, [selChips]);
 
-  /** 日期输入变化：只更新「当前录入历法」一侧，不实时换算另一侧（用户写什么显示什么）。
-   *  另一历法的换算值统一在「切换 Tab 的 onClick」里完成（见 switchToLunar / switchToSolar）。 */
-  const onSolarDateChange = (v: string) => {
+  /** 出生日期变化（BirthDatePicker 统一入口）。
+   *  组件保证：无论以公历还是农历录入，都同时产出「公历 date」与「农历 lunarY/M/D」两份，
+   *  即 VisitorBirth 的「农历录入、阳历推算、两者同存」策略。
+   *  旧的「只更新一侧、切 Tab 才换算」模型由组件内部承担，此处不再重复实现。 */
+  const onBirthDateChange = (v: BirthValue) => {
     setLunarError('');
-    if (!v) {
+    if (!v.date) {
       // 清空：两侧生日状态一并清空
       setBirthDate('');
       setLunarY(0); setLunarM(0); setLunarD(0); setLunarText('');
       setBirth(withBirthPlace({ date: '', lunarYear: 0, lunarMonth: 0, lunarDay: 0, time: birthTime.split(' ')[0], gender }));
       return;
     }
-    if (dateInputMode === 'lunar') {
-      // 农历录入：v 是 parseInput 产出的「农历文本本身」（不换算公历）。解析出 lunarY/M/D 供排盘与切 Tab 用，
-      // birthDate（公历 canonical）保持原值，待切到公历 Tab 时才换算填充。输入框显示的农历原文存进 lunarText。
-      const p = parseLunarToParts(v);
-      if (!p) { setLunarError('农历日期不正确'); return; }
-      setLunarY(p.ly); setLunarM(p.lm); setLunarD(p.ld); setLunarText(v);
-      setBirth(withBirthPlace({ lunarYear: p.ly, lunarMonth: p.lm, lunarDay: p.ld, date: birthDate || '', time: birthTime.split(' ')[0], gender }));
-    } else {
-      // 公历录入：只更新公历；农历分量保持原值，待切到农历 Tab 时才换算填充。
-      setBirthDate(v);
-      setBirth(withBirthPlace({ date: v, time: birthTime.split(' ')[0], gender }));
-    }
-  };
-  /** 切到农历 Tab：若尚无农历分量，用当前公历生日换算填充（切换时才换算）。 */
-  const switchToLunar = () => {
-    if (dateInputMode === 'lunar') return;
-    if (birthDate) {
-      const p = solarToLunarParts(birthDate);
-      if (p) { setLunarY(p.ly); setLunarM(p.lm); setLunarD(p.ld); setLunarText(formatLunarText(p.ly, p.lm, p.ld)); }
-    }
-    setDateInputMode('lunar');
-  };
-  /** 切到公历 Tab：用当前农历生日换算填充公历（切换时才换算）。 */
-  const switchToSolar = () => {
-    if (dateInputMode === 'solar') return;
-    if (lunarY && lunarM && lunarD) {
-      const s = lunarToSolar(lunarY, lunarM, lunarD);
-      if (s) setBirthDate(s);
-    }
-    setDateInputMode('solar');
+    // 农历录入时排盘需要把农历分量原样上送后端（见 parseBirth 的 lunarArg）
+    if (v.mode) setDateInputMode(v.mode);
+    const ly = v.lunarYear ?? lunarY;
+    const lm = v.lunarMonth ?? lunarM;
+    const ld = v.lunarDay ?? lunarD;
+    setBirthDate(v.date);
+    setLunarY(ly); setLunarM(lm); setLunarD(ld);
+    setLunarText(ly && lm && ld ? formatLunarText(ly, lm, ld) : '');
+    setBirth(withBirthPlace({ date: v.date, lunarYear: ly, lunarMonth: lm, lunarDay: ld, time: birthTime.split(' ')[0], gender }));
   };
   const onBirthTimeChange = (v: string) => {
     setBirthTime(v);
@@ -1537,49 +1444,21 @@ export default function BuguaPage() {
                     <div className="birth-field">
                       <div className="label-box">
                         <label>出生日期</label>
-                        {/* 公历/农历 切换：很多人只记得农历生日 */}
-                        <div className="date-mode-toggle" role="tablist" aria-label="日期输入模式">
-                          <button
-                            type="button"
-                            role="tab"
-                            aria-selected={dateInputMode === 'solar'}
-                            className={`date-mode-btn ${dateInputMode === 'solar' ? 'active' : ''}`}
-                            onClick={switchToSolar}
-                          >
-                            ☀ 公历
-                          </button>
-                          <button
-                            type="button"
-                            role="tab"
-                            aria-selected={dateInputMode === 'lunar'}
-                            className={`date-mode-btn ${dateInputMode === 'lunar' ? 'active' : ''}`}
-                            onClick={switchToLunar}
-                          >
-                            🌙 农历
-                          </button>
-                        </div>
                       </div>
-                      {dateInputMode === 'solar' ? (
-                        <DatePicker
-                          key="solar"
-                          value={birthDate}
-                          onChange={onSolarDateChange}
-                          placeholder="选择公历日期"
-                          minYear={1900}
-                          maxYear={new Date().getFullYear()}
-                        />
-                      ) : (
-                        <DatePicker
-                          key="lunar"
-                          value={lunarY && lunarM && lunarD ? (lunarToSolar(lunarY, lunarM, lunarD) || birthDate) : birthDate}
-                          onChange={onSolarDateChange}
-                          placeholder="选择农历日期"
-                          minYear={1900}
-                          maxYear={new Date().getFullYear()}
-                          displayValue={lunarText || (lunarY ? formatLunarText(lunarY, lunarM, lunarD) : '')}
-                          parseInput={parseLunarLooseDate}
-                        />
-                      )}
+                      {/* 出生日期统一入口：内建 公历/农历 双模式切换（很多人只记得农历生日），
+                          并同时产出两份历法分量，供排盘与展示使用 */}
+                      <BirthDatePicker
+                        value={{
+                          date: birthDate,
+                          lunarYear: lunarY || undefined,
+                          lunarMonth: lunarM || undefined,
+                          lunarDay: lunarD || undefined,
+                          mode: dateInputMode,
+                        }}
+                        onChange={onBirthDateChange}
+                        minYear={1900}
+                        maxYear={new Date().getFullYear()}
+                      />
                       {lunarError && <div className="birth-error">{lunarError}</div>}
                     </div>
                     <div>
