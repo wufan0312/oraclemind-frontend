@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Solar } from 'lunar-typescript';
 import CrossPageLink from '@/components/ui/CrossPageLink';
 import SectionIcon from '@/components/ui/SectionIcon';
-import { DatePicker } from '@/components/ui/DateTimePicker';
+import { BirthDatePicker } from '@/components/ui/BirthDatePicker';
 import OmLoading from '@/components/ui/OmLoading';
 import { useVisitor } from '@/components/visitor/VisitorProvider';
 import { getVisitorBirth } from '@/lib/visitor';
@@ -17,7 +17,7 @@ import { parseAiSections, type AiSection } from '@/lib/aiSections';
 import Modal from '@/components/ui/Modal';
 import { showToast } from '@/components/ui/Toast';
 import {
-  NUM_DATA, YEAR_MEANING, YEAR_GUIDE, NUM_COLORS, NUM_HEX, MONTH_GUIDE, DAY_GUIDE, digitalRoot, numGridCounts,
+  NUM_DATA, YEAR_MEANING, YEAR_GUIDE, NUM_COLORS, NUM_HEX, MONTH_GUIDE, DAY_GUIDE, digitalRoot, lifePathNumber, numGridCounts,
   computeCore, computeSynastry, computeLingCode, CHALLENGE_DATA, CORE_META,
   type NumDetail, type NumCore, type SynastryResult, type LingCode,
 } from '@/data/numerologyData';
@@ -983,11 +983,11 @@ export default function NumerologyPage() {
             </div>
             <div className="birth-field num-field-solar">
               <label>{mode === 'natal' ? '出生日期' : '你的出生日期'}</label>
-              <div className="num-date-hint">请填写<strong>公历（阳历）</strong>生日，系统会自动换算成农历参与计算</div>
-              <DatePicker
-                value={solarDate}
-                onChange={(v) => { setSolarDate(v); userTouchedRef.current = true; syncBirthToVisitor(v); }}
-                placeholder="选择公历日期"
+              <BirthDatePicker
+                value={{ date: solarDate, mode: 'solar' }}
+                onChange={(v) => { setSolarDate(v.date); userTouchedRef.current = true; syncBirthToVisitor(v.date); }}
+                label=""
+                placeholder="选择出生日期"
                 minYear={1900}
                 maxYear={new Date().getFullYear()}
               />
@@ -1007,11 +1007,11 @@ export default function NumerologyPage() {
               <>
                 <div className="birth-field num-field-solar">
                   <label>对方出生日期</label>
-                  <div className="num-date-hint">同样填写<strong>公历（阳历）</strong>生日</div>
-                  <DatePicker
-                    value={partnerDate}
-                    onChange={(v) => { setPartnerDate(v); partnerTouchedRef.current = true; }}
-                    placeholder="选择公历日期"
+                  <BirthDatePicker
+                    value={{ date: partnerDate, mode: 'solar' }}
+                    onChange={(v) => { setPartnerDate(v.date); partnerTouchedRef.current = true; }}
+                    label=""
+                    placeholder="选择出生日期"
                     minYear={1900}
                     maxYear={new Date().getFullYear()}
                   />

@@ -3,8 +3,10 @@
 import '@/styles/bugua.scss';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lunar, Solar } from 'lunar-typescript';
-import { DatePicker } from '@/components/ui/DateTimePicker';
+import { BirthDatePicker, type BirthDateValue } from '@/components/ui/BirthDatePicker';
+import {
+  solarToLunarParts, formatLunarText, formatSolarText,
+} from '@/lib/lunarDate';
 import OmLoading from '@/components/ui/OmLoading';
 import Modal from '@/components/ui/Modal';
 import CrossPageLink from '@/components/ui/CrossPageLink';
@@ -57,6 +59,7 @@ import {
 } from '@/lib/api';
 import { saveBaziLink } from '@/data/fengshuiData';
 import { storage } from '@/lib/storage';
+import { pushTrajectory } from '@/lib/trajectory';
 import type { VisitorBirth } from '@/lib/visitor';
 import { useShare, shareOutToPoster } from '@/hooks/useShare';
 import ShareLoginGate from '@/components/share/ShareLoginGate';
@@ -187,95 +190,11 @@ const DEFAULT_BIRTH_PLACE = { province: '北京市', city: '东城区' };
 
 // ============================================================================
 // 农历生日录入 → 阳历换算工具（lunar-typescript）
-// 约定：农历月以负数表示闰月（如 -8 = 闰八月）。用户填农历，系统换算阳历，两者同存。
+// 已抽到 src/lib/lunarDate.ts 统一维护：LUNAR_YEAR_MIN/MAX、LUNAR_MONTH_NAMES、
+// lunarMonthName、leapMonthOf、buildLunarMonths、lunarToSolar、solarToLunarParts、
+// formatLunarText、parseLunarToParts、parseLunarLooseDate、formatSolarText。
 // ============================================================================
-const LUNAR_YEAR_MIN = 1920;
-const LUNAR_YEAR_MAX = 2026;
-const LUNAR_MONTH_NAMES = ['', '正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '腊'];
 const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
-/** 农历月 → 中文名（闰月带「闰」前缀） */
-function lunarMonthName(m: number): string {
-  return m < 0 ? `闰${LUNAR_MONTH_NAMES[-m]}` : LUNAR_MONTH_NAMES[m];
-}
-/** 探测某农历年是否有闰月，返回闰月数字（无则 0）。尝试负月构造，捕获异常即无闰月。 */
-function leapMonthOf(year: number): number {
-  for (let m = 1; m <= 12; m++) {
-    try {
-      Lunar.fromYmd(year, -m, 1);
-      return m;
-    } catch {
-      /* 该月非闰月，继续 */
-    }
-  }
-  return 0;
-}
-/** 构造农历月份下拉选项（正月~腊月，若该年有闰月则插入「闰X月」） */
-function buildLunarMonths(year: number): { value: number; label: string }[] {
-  const months: { value: number; label: string }[] = [];
-  for (let m = 1; m <= 12; m++) months.push({ value: m, label: `${LUNAR_MONTH_NAMES[m]}月` });
-  const leap = leapMonthOf(year);
-  if (leap > 0) months.splice(leap, 0, { value: -leap, label: `闰${LUNAR_MONTH_NAMES[leap]}月` });
-  return months;
-}
-/** 农历 → 阳历，返回 YYYY-MM-DD；非法组合返回 null */
-function lunarToSolar(ly: number, lm: number, ld: number): string | null {
-  try {
-    const solar = Lunar.fromYmd(ly, lm, ld).getSolar();
-    return `${solar.getYear()}-${pad2(solar.getMonth())}-${pad2(solar.getDay())}`;
-  } catch {
-    return null;
-  }
-}
-/** 阳历 YYYY-MM-DD → 农历各分量 {ly, lm(负=闰月), ld} */
-function solarToLunarParts(solarStr: string): { ly: number; lm: number; ld: number } | null {
-  const [y, m, d] = solarStr.split('-').map(Number);
-  if (!y || !m || !d) return null;
-  try {
-    const lunar = Solar.fromYmd(y, m, d).getLunar();
-    return { ly: lunar.getYear(), lm: lunar.getMonth(), ld: lunar.getDay() };
-  } catch {
-    return null;
-  }
-}
-/** 农历日期展示格式：YYYY-MM-DD（闰月 month 为负，展示为 YYYY--MM-DD，如 1987--06-12） */
-function formatLunarText(ly: number, lm: number, ld: number): string {
-  const m = String(Math.abs(lm)).padStart(2, '0');
-  const d = String(ld).padStart(2, '0');
-  return `${ly}-${lm < 0 ? '-' : ''}${m}-${d}`;
-}
-/** 解析用户键入的农历日期文本 → 农历各分量 {ly, lm(负=闰月), ld}；无法识别返回 null。
- *  支持：1987年3月12日 | 1987年闰3月12日 | 1987-3-12 | 1987/03/12 | 19870312 */
-function parseLunarToParts(text: string): { ly: number; lm: number; ld: number } | null {
-  const s = (text ?? '').trim().replace(/\s+/g, '');
-  if (!s) return null;
-  // 中文格式：1987年3月12日 / 1987年闰3月12日
-  let m = /^(\d{4})年(闰)?(\d{1,2})月(\d{1,2})日?$/.exec(s);
-  if (m) return { ly: Number(m[1]), lm: Number(m[3]) * (m[2] ? -1 : 1), ld: Number(m[4]) };
-  // 分隔符格式：1987-3-12 / 1987/03/12 / 1987.3.12
-  m = /^(\d{4})\s*[-/.]\s*(\d{1,2})\s*[-/.]\s*(\d{1,2})$/.exec(s);
-  if (m) return { ly: Number(m[1]), lm: Number(m[2]), ld: Number(m[3]) };
-  // 8 位连续数字：19870312
-  m = /^(\d{4})(\d{2})(\d{2})$/.exec(s);
-  if (m) return { ly: Number(m[1]), lm: Number(m[2]), ld: Number(m[3]) };
-  return null;
-}
-/** 农历文本解析器（供 DatePicker parseInput 使用）：解析成功返回「农历文本本身」，不换算为公历。
- *  目的：保证农历模式输入框只显示用户所写的农历，绝不把公历换算值写回输入框（用户硬性要求）。
- *  输出格式：YYYY-MM-DD（闰月展示为 -MM，如 1987--06-12）。
- *  支持输入：1987年3月12日 | 1987年闰3月12日 | 1987-3-12 | 1987/03/12 | 19870312 */
-function parseLunarLooseDate(text: string): string | null {
-  const p = parseLunarToParts(text);
-  if (!p) return null;
-  const m = String(Math.abs(p.lm)).padStart(2, '0');
-  const d = String(p.ld).padStart(2, '0');
-  return `${p.ly}-${p.lm < 0 ? '-' : ''}${m}-${d}`;
-}
-/** 公历生日可读文本（如「1987年4月9日」；空值返回占位符） */
-function formatSolarText(solar: string): string {
-  if (!solar) return '—';
-  const [y, m, d] = solar.split('-');
-  return `${y}年${Number(m)}月${Number(d)}日`;
-}
 /** 后端存档时间（UTC）→ 东八区可读文本 'YYYY-MM-DD HH:mm'（兜底原样返回） */
 function formatArchiveAt(at: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(at || '');
@@ -443,15 +362,8 @@ export default function BuguaPage() {
   const { ready: authReady } = useAuth();
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [lunarY, setLunarY] = useState(0);
-  const [lunarM, setLunarM] = useState(0);
-  const [lunarD, setLunarD] = useState(0);
-  /** 农历模式输入框显示的原文（用户所写农历文本，绝不做公历换算写回） */
-  const [lunarText, setLunarText] = useState('');
-  const [lunarError, setLunarError] = useState('');
-  /** 日期输入模式：公历（默认）或农历（适用于只记得农历生日的用户） */
-  const [dateInputMode, setDateInputMode] = useState<'solar' | 'lunar'>('solar');
+  /** 出生日期：canonical 公历 + 农历分量 + 当前输入模式；统一由 BirthDatePicker 管理 */
+  const [birthValue, setBirthValue] = useState<BirthDateValue>({ date: '', mode: 'solar' });
   const [birthTime, setBirthTime] = useState('');
   const [question, setQuestion] = useState('');
   const [selChips, setSelChips] = useState<Set<string>>(new Set(DEFAULT_CHIPS));
@@ -681,16 +593,16 @@ export default function BuguaPage() {
     // 已登录 + 有出生档案 → 自动回填表单
     if (birth.date) {
       profileUsedRef.current = true;
-      setBirthDate(birth.date);
+      const next: BirthDateValue = { date: birth.date, mode: birthValue.mode };
       if (typeof birth.lunarYear === 'number' && typeof birth.lunarMonth === 'number' && typeof birth.lunarDay === 'number') {
-        setLunarY(birth.lunarYear);
-        setLunarM(birth.lunarMonth);
-        setLunarD(birth.lunarDay);
-        setLunarText(formatLunarText(birth.lunarYear, birth.lunarMonth, birth.lunarDay));
+        next.lunarYear = birth.lunarYear;
+        next.lunarMonth = birth.lunarMonth;
+        next.lunarDay = birth.lunarDay;
       } else {
         const p = solarToLunarParts(birth.date);
-        if (p) { setLunarY(p.ly); setLunarM(p.lm); setLunarD(p.ld); setLunarText(formatLunarText(p.ly, p.lm, p.ld)); }
+        if (p) { next.lunarYear = p.ly; next.lunarMonth = p.lm; next.lunarDay = p.ld; }
       }
+      setBirthValue(next);
       if (birth.time) setBirthTime(timeNameToFull(birth.time));
       setGender(birth.gender === '女' ? '女' : birth.gender === '男' ? '男' : '');
     }
@@ -709,15 +621,17 @@ export default function BuguaPage() {
       setBirthCity(sb.city as string);
       writeSavedBirthPlace(sb.province as string, sb.city as string);
     }
-    if (sb.date) setBirthDate(sb.date);
-    if (typeof sb.lunarYear === 'number' && typeof sb.lunarMonth === 'number' && typeof sb.lunarDay === 'number') {
-      setLunarY(sb.lunarYear);
-      setLunarM(sb.lunarMonth);
-      setLunarD(sb.lunarDay);
-      setLunarText(formatLunarText(sb.lunarYear, sb.lunarMonth, sb.lunarDay));
-    } else if (sb.date) {
-      const p = solarToLunarParts(sb.date);
-      if (p) { setLunarY(p.ly); setLunarM(p.lm); setLunarD(p.ld); setLunarText(formatLunarText(p.ly, p.lm, p.ld)); }
+    if (sb.date) {
+      const next: BirthDateValue = { date: sb.date, mode: birthValue.mode };
+      if (typeof sb.lunarYear === 'number' && typeof sb.lunarMonth === 'number' && typeof sb.lunarDay === 'number') {
+        next.lunarYear = sb.lunarYear;
+        next.lunarMonth = sb.lunarMonth;
+        next.lunarDay = sb.lunarDay;
+      } else {
+        const p = solarToLunarParts(sb.date);
+        if (p) { next.lunarYear = p.ly; next.lunarMonth = p.lm; next.lunarDay = p.ld; }
+      }
+      setBirthValue(next);
     }
     if (sb.time) setBirthTime(timeNameToFull(sb.time));
     setGender(sb.gender === '女' ? '女' : '');
@@ -726,10 +640,10 @@ export default function BuguaPage() {
   // 出生表单最新快照（ref）：自动排盘由 setTimeout 延迟触发，闭包可能捕获
   // 旧状态；parseBirth 改读该 ref（ref 对象跨渲染稳定、.current 在调用时才求值），
   // 保证延迟触发的排盘一定拿到出生档案回填后的真实出生时间。
-  const birthFormRef = useRef({ date: birthDate, time: birthTime, gender });
+  const birthFormRef = useRef({ date: birthValue.date, time: birthTime, gender });
   useEffect(() => {
-    birthFormRef.current = { date: birthDate, time: birthTime, gender };
-  }, [birthDate, birthTime, gender]);
+    birthFormRef.current = { date: birthValue.date, time: birthTime, gender };
+  }, [birthValue.date, birthTime, gender]);
 
   // 术数勾选最新快照（ref）：requestAll 由 setTimeout 延迟触发，若直接闭包捕获
   // selChips 会拿到排盘前的旧勾选；改读 ref 保证与实际勾选一致。
@@ -738,55 +652,24 @@ export default function BuguaPage() {
     selChipsRef.current = selChips;
   }, [selChips]);
 
-  /** 日期输入变化：只更新「当前录入历法」一侧，不实时换算另一侧（用户写什么显示什么）。
-   *  另一历法的换算值统一在「切换 Tab 的 onClick」里完成（见 switchToLunar / switchToSolar）。 */
-  const onSolarDateChange = (v: string) => {
-    setLunarError('');
-    if (!v) {
-      // 清空：两侧生日状态一并清空
-      setBirthDate('');
-      setLunarY(0); setLunarM(0); setLunarD(0); setLunarText('');
-      setBirth(withBirthPlace({ date: '', lunarYear: 0, lunarMonth: 0, lunarDay: 0, time: birthTime.split(' ')[0], gender }));
-      return;
-    }
-    if (dateInputMode === 'lunar') {
-      // 农历录入：v 是 parseInput 产出的「农历文本本身」（不换算公历）。解析出 lunarY/M/D 供排盘与切 Tab 用，
-      // birthDate（公历 canonical）保持原值，待切到公历 Tab 时才换算填充。输入框显示的农历原文存进 lunarText。
-      const p = parseLunarToParts(v);
-      if (!p) { setLunarError('农历日期不正确'); return; }
-      setLunarY(p.ly); setLunarM(p.lm); setLunarD(p.ld); setLunarText(v);
-      setBirth(withBirthPlace({ lunarYear: p.ly, lunarMonth: p.lm, lunarDay: p.ld, date: birthDate || '', time: birthTime.split(' ')[0], gender }));
-    } else {
-      // 公历录入：只更新公历；农历分量保持原值，待切到农历 Tab 时才换算填充。
-      setBirthDate(v);
-      setBirth(withBirthPlace({ date: v, time: birthTime.split(' ')[0], gender }));
-    }
-  };
-  /** 切到农历 Tab：若尚无农历分量，用当前公历生日换算填充（切换时才换算）。 */
-  const switchToLunar = () => {
-    if (dateInputMode === 'lunar') return;
-    if (birthDate) {
-      const p = solarToLunarParts(birthDate);
-      if (p) { setLunarY(p.ly); setLunarM(p.lm); setLunarD(p.ld); setLunarText(formatLunarText(p.ly, p.lm, p.ld)); }
-    }
-    setDateInputMode('lunar');
-  };
-  /** 切到公历 Tab：用当前农历生日换算填充公历（切换时才换算）。 */
-  const switchToSolar = () => {
-    if (dateInputMode === 'solar') return;
-    if (lunarY && lunarM && lunarD) {
-      const s = lunarToSolar(lunarY, lunarM, lunarD);
-      if (s) setBirthDate(s);
-    }
-    setDateInputMode('solar');
+  const onBirthValueChange = (v: BirthDateValue) => {
+    setBirthValue(v);
+    setBirth(withBirthPlace({
+      date: v.date,
+      lunarYear: v.lunarYear,
+      lunarMonth: v.lunarMonth,
+      lunarDay: v.lunarDay,
+      time: birthTime.split(' ')[0],
+      gender,
+    }));
   };
   const onBirthTimeChange = (v: string) => {
     setBirthTime(v);
-    setBirth(withBirthPlace({ date: birthDate, time: v.split(' ')[0], gender }));
+    setBirth(withBirthPlace({ date: birthValue.date, time: v.split(' ')[0], gender }));
   };
   const onGenderChange = (v: string) => {
     setGender(v);
-    setBirth(withBirthPlace({ date: birthDate, time: birthTime.split(' ')[0], gender: v }));
+    setBirth(withBirthPlace({ date: birthValue.date, time: birthTime.split(' ')[0], gender: v }));
   };
 
   // 从首页 AI 问答跳转时：填入问题 + 自动排盘（原型 autodiv=1，q=问题文本）
@@ -807,14 +690,10 @@ export default function BuguaPage() {
     const timeParam = sp.get('time');
     const genderParam = sp.get('gender');
     if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
-      setBirthDate(dateParam);
+      const next: BirthDateValue = { date: dateParam, mode: birthValue.mode };
       const p = solarToLunarParts(dateParam);
-      if (p) {
-        setLunarY(p.ly);
-        setLunarM(p.lm);
-        setLunarD(p.ld);
-        setLunarText(formatLunarText(p.ly, p.lm, p.ld));
-      }
+      if (p) { next.lunarYear = p.ly; next.lunarMonth = p.lm; next.lunarDay = p.ld; }
+      setBirthValue(next);
     }
     if (timeParam) setBirthTime(timeNameToFull(timeParam));
     if (genderParam === '男' || genderParam === '女') setGender(genderParam);
@@ -959,6 +838,8 @@ export default function BuguaPage() {
       if (effQ) storage.setItem(BUGUA_QUESTION_KEY, effQ);
       else storage.removeItem(BUGUA_QUESTION_KEY);
     } catch { /* 隐私模式等静默忽略 */ }
+    // 命运轨迹：每次起卦都留痕（竞品留存体系）
+    pushTrajectory({ type: 'bugua', label: '卜卦', summary: effQ ? `卜卦：${effQ}` : '完成一次卜卦' });
     // 起卦即把命主信息写入档案（含出生地）：刷新 / 切页 / 换设备后都能恢复出生地。
     // 不能只依赖「云端存档恢复」链路——那条路径要求本地 birth 已就绪，
     // autodiv 等跳过表单交互的入口本地档案为空，出生地就会回落默认北京。
@@ -979,18 +860,13 @@ export default function BuguaPage() {
   const parseBirth = (q?: string): PaipanRequest => {
     const { date, time, gender: g } = birthFormRef.current;
     const timeText = time ? (time.split(' ')[0] || '不详') : '不详';
-    // 农历录入模式：把用户录入的农历分量原样上送，由后端换算公历（前端不在录入时切换历法，只在切 Tab 时换算展示）。
-    // year/month/day 携带公历兜底值（来自 solarDate 的 lunarToSolar 兜底），存档恢复与模块展示沿用，但后端以 lunar 为准。
+    // 农历录入模式：把用户录入的农历分量原样上送，由后端换算公历。
+    // BirthDatePicker 已保证 date 始终是规范化公历，但后端仍可能优先以 lunar 为准。
     const lunarArg =
-      dateInputMode === 'lunar' && lunarY && lunarM && lunarD
-        ? { year: lunarY, month: lunarM, day: lunarD }
+      birthValue.mode === 'lunar' && birthValue.lunarYear && birthValue.lunarMonth && birthValue.lunarDay
+        ? { year: birthValue.lunarYear, month: birthValue.lunarMonth, day: birthValue.lunarDay }
         : undefined;
-    // 农历录入模式且尚未切回公历（birthDate 仍为空）时，用农历分量兜底 canonical 公历，
-    // 保证排盘入参的 year/month/day 永远有效（后端仍以 lunar 为准）。
-    const solarDate =
-      dateInputMode === 'lunar' && lunarY && lunarM && lunarD && !date
-        ? (lunarToSolar(lunarY, lunarM, lunarD) || '')
-        : (date || '');
+    const solarDate = date || '';
     // 表单有填写 → 使用表单数据
     if (solarDate) {
       const [y, m, d] = solarDate.split('-').map(Number);
@@ -1260,9 +1136,10 @@ export default function BuguaPage() {
       if (p.question) setQuestion(p.question);
       const d = p.year && p.month && p.day ? `${p.year}-${pad2(p.month)}-${pad2(p.day)}` : '';
       if (d) {
-        setBirthDate(d);
+        const next: BirthDateValue = { date: d, mode: birthValue.mode };
         const lp = solarToLunarParts(d);
-        if (lp) { setLunarY(lp.ly); setLunarM(lp.lm); setLunarD(lp.ld); setLunarText(formatLunarText(lp.ly, lp.lm, lp.ld)); }
+        if (lp) { next.lunarYear = lp.ly; next.lunarMonth = lp.lm; next.lunarDay = lp.ld; }
+        setBirthValue(next);
       }
       if (p.timeText) setBirthTime(timeNameToFull(p.timeText));
       if (p.gender) setGender(p.gender === '女' ? '女' : '男');
@@ -1428,7 +1305,7 @@ export default function BuguaPage() {
       void share.persist({ title: keyword, shareText: r.shareText, imageUrl: r.imageUrl, imagePrompt: r.imagePrompt });
     } catch (err: any) {
       const fallback: PosterResult = {
-        shareText: `「${keyword}」—— 知命改运，顺势而为。`,
+        shareText: `「${keyword}」—— 卜一卦，且当娱乐参考。`,
         imagePrompt: '',
         imageUrl: null,
         imageError: err?.message || '生成失败',
@@ -1535,52 +1412,12 @@ export default function BuguaPage() {
                       </select>
                     </div>
                     <div className="birth-field">
-                      <div className="label-box">
-                        <label>出生日期</label>
-                        {/* 公历/农历 切换：很多人只记得农历生日 */}
-                        <div className="date-mode-toggle" role="tablist" aria-label="日期输入模式">
-                          <button
-                            type="button"
-                            role="tab"
-                            aria-selected={dateInputMode === 'solar'}
-                            className={`date-mode-btn ${dateInputMode === 'solar' ? 'active' : ''}`}
-                            onClick={switchToSolar}
-                          >
-                            ☀ 公历
-                          </button>
-                          <button
-                            type="button"
-                            role="tab"
-                            aria-selected={dateInputMode === 'lunar'}
-                            className={`date-mode-btn ${dateInputMode === 'lunar' ? 'active' : ''}`}
-                            onClick={switchToLunar}
-                          >
-                            🌙 农历
-                          </button>
-                        </div>
-                      </div>
-                      {dateInputMode === 'solar' ? (
-                        <DatePicker
-                          key="solar"
-                          value={birthDate}
-                          onChange={onSolarDateChange}
-                          placeholder="选择公历日期"
-                          minYear={1900}
-                          maxYear={new Date().getFullYear()}
-                        />
-                      ) : (
-                        <DatePicker
-                          key="lunar"
-                          value={lunarY && lunarM && lunarD ? (lunarToSolar(lunarY, lunarM, lunarD) || birthDate) : birthDate}
-                          onChange={onSolarDateChange}
-                          placeholder="选择农历日期"
-                          minYear={1900}
-                          maxYear={new Date().getFullYear()}
-                          displayValue={lunarText || (lunarY ? formatLunarText(lunarY, lunarM, lunarD) : '')}
-                          parseInput={parseLunarLooseDate}
-                        />
-                      )}
-                      {lunarError && <div className="birth-error">{lunarError}</div>}
+                      <BirthDatePicker
+                        value={birthValue}
+                        onChange={onBirthValueChange}
+                        minYear={1900}
+                        maxYear={new Date().getFullYear()}
+                      />
                     </div>
                     <div>
                       <label className="form-label">出生时辰</label>
@@ -1624,8 +1461,8 @@ export default function BuguaPage() {
 
                   {/* 出生信息汇总 —— 全页仅此一处，各结果模块不再重复展示 */}
                   <div className="bugua-datetime-bar">
-                    <span>📅 公历：{formatSolarText(birthDate)}</span>
-                    <span>🌗 农历：{birthDate ? formatLunarText(lunarY, lunarM, lunarD) : '—'}</span>
+                    <span>📅 公历：{formatSolarText(birthValue.date)}</span>
+                    <span>🌗 农历：{birthValue.date ? formatLunarText(birthValue.lunarYear ?? 0, birthValue.lunarMonth ?? 0, birthValue.lunarDay ?? 0) : '—'}</span>
                     <span>⏰ 时辰：{birthTime ? birthTime.split(' ')[0] : '—'}</span>
                   </div>
                 </div>
@@ -1996,11 +1833,11 @@ export default function BuguaPage() {
                   </div>
                   <div className="brief-row">
                     <span className="brief-k">公历</span>
-                    <span className="brief-v">{birthDate || '未选择'}</span>
+                    <span className="brief-v">{birthValue.date || '未选择'}</span>
                   </div>
                   <div className="brief-row">
                     <span className="brief-k">农历</span>
-                    <span className="brief-v">{birthDate ? formatLunarText(lunarY, lunarM, lunarD) : '—'}</span>
+                    <span className="brief-v">{birthValue.date ? formatLunarText(birthValue.lunarYear ?? 0, birthValue.lunarMonth ?? 0, birthValue.lunarDay ?? 0) : '—'}</span>
                   </div>
                   <div className="brief-row">
                     <span className="brief-k">时辰</span>
@@ -2093,8 +1930,8 @@ export default function BuguaPage() {
             {/* 主内容区 */}
             <div className="result-main">
               <div className="module-panel active fade-in" key={activeModule}>
-                {activeModule === 'mod-bazi' && <BaziModule data={apiResults.bazi} status={apiStatus.bazi} birth={{ date: birthDate, time: birthTime, gender }} />}
-                {activeModule === 'mod-wuxing' && <WuxingModule data={apiResults.bazi} status={apiStatus.bazi} birth={{ date: birthDate, time: birthTime, gender }} />}
+                {activeModule === 'mod-bazi' && <BaziModule data={apiResults.bazi} status={apiStatus.bazi} birth={{ date: birthValue.date, time: birthTime, gender }} />}
+                {activeModule === 'mod-wuxing' && <WuxingModule data={apiResults.bazi} status={apiStatus.bazi} birth={{ date: birthValue.date, time: birthTime, gender }} />}
                 {activeModule === 'mod-ziwei' && <ZiweiModule data={apiResults.ziwei} status={apiStatus.ziwei} />}
                 {activeModule === 'mod-liuyao' && <LiuyaoModule data={apiResults.liuyao} status={apiStatus.liuyao} />}
                 {activeModule === 'mod-meihua' && <MeihuaModule data={apiResults.meihua} status={apiStatus.meihua} />}
@@ -2254,7 +2091,7 @@ export default function BuguaPage() {
           <ShareLoginGate context="保存 / 分享结果" />
         ) : (
           <>
-            选择分享方式，让好友也来探索自己的命运密码
+            选择分享方式，把这份趣味分享给好友
             <div className="share-options">
               <div className="share-option"><div className="share-icon">💬</div><div className="share-label">微信好友</div></div>
               <div className="share-option"><div className="share-icon">📱</div><div className="share-label">朋友圈</div></div>

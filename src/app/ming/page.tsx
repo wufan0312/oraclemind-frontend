@@ -42,7 +42,7 @@ import { charToPinyin } from '@/data/pinyinData';
 import { findLuckyDates } from '@/data/fengshuiData';
 import CrossPageLink from '@/components/ui/CrossPageLink';
 import SectionIcon from '@/components/ui/SectionIcon';
-import { DatePicker } from '@/components/ui/DateTimePicker';
+import { BirthDatePicker } from '@/components/ui/BirthDatePicker';
 import OmLoading from '@/components/ui/OmLoading';
 import Modal from '@/components/ui/Modal';
 import { useVisitor } from '@/components/visitor/VisitorProvider';
@@ -514,7 +514,7 @@ function IntroCard() {
       <div className="ming-intro-head">
         <span className="ming-intro-glyph">🔮</span>
         <div>
-          <div className="ming-intro-title">玄镜 · 测字起名一站式推演</div>
+          <div className="ming-intro-title">玄镜 · 测字起名文化推演</div>
           <div className="ming-intro-sub">
             融汇五行八卦与典籍诗赋，单字取象 · 五格测名 · 智能起名 · 八字合婚，一键获取 AI 文化解读。
           </div>
@@ -1132,12 +1132,13 @@ function NamePanel({ active, history, onAdd, onRemove, onClearTab, onJump, onZid
         <div className="ming-form-group">
           <div className="ming-form-group-title">出生信息（可选）</div>
           <div className="ming-form-grid-2">
-            <DatePicker
-              value={date}
+            <BirthDatePicker
+              value={{ date, mode: 'solar' }}
               onChange={(v) => {
-                setDate(v);
+                setDate(v.date);
                 if (res) void run(undefined, undefined, gender);
               }}
+              label=""
               placeholder="选择出生日期"
             />
             <select
@@ -1567,7 +1568,7 @@ function HehunPanel({ active, history, onAdd, onRemove, onClearTab, onJump, seed
           <option value="男">男</option>
           <option value="女">女</option>
         </select>
-        <DatePicker value={p.date} onChange={(v) => setSide(side, { date: v })} placeholder="出生日期" />
+        <BirthDatePicker value={{ date: p.date, mode: 'solar' }} onChange={(v) => setSide(side, { date: v.date })} label="" placeholder="出生日期" />
         <select className="form-input ming-select field-pill" value={p.shichen} onChange={(e) => setSide(side, { shichen: e.target.value })}>
           {SHICHEN.map((s) => (
             <option key={s} value={s}>{s}</option>
@@ -2241,12 +2242,13 @@ function QimingPanel({ active, history, onAdd, onRemove, onClearTab, onJump, onZ
         <div className="ming-form-group">
           <div className="ming-form-group-title">出生信息（可选）</div>
           <div className="ming-form-grid-2">
-            <DatePicker
-              value={date}
+            <BirthDatePicker
+              value={{ date, mode: 'solar' }}
               onChange={(v) => {
-                setDate(v);
-                if (hasResult && v) void run({ date: v });
+                setDate(v.date);
+                if (hasResult && v.date) void run({ date: v.date });
               }}
+              label=""
               placeholder="选择出生日期"
             />
             <select
@@ -3383,7 +3385,7 @@ export default function MingPage() {
       <div className="page-header">
         <div>
           <div className="page-title">🔮 测字 · 姓名 · 起名 · 合婚</div>
-          <div className="page-subtitle">一字观象、五格测名、智能起名、八字合婚——传统民俗文化的一站式趣味推演</div>
+          <div className="page-subtitle">一字观象、五格测名、智能起名、八字合婚——传统民俗文化的趣味推演</div>
         </div>
       </div>
 

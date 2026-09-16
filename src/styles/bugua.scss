@@ -5581,35 +5581,7 @@ details.wxref-row[open] > .wxref-head::before {
   }
 }
 
-// ===== 出生日期：公历/农历 切换（2026-09-08：让只记得农历生日的用户可输入农历） =====
-.date-mode-toggle {
-  display: inline-flex;
-  gap: 2px;
-  padding: 2px;
-  border-radius: 999px;
-  background: rgba(124, 92, 255, 0.08);
-  border: 1px solid rgba(124, 92, 255, 0.18);
-}
-.date-mode-btn {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.18s;
-
-  &:hover {
-    color: var(--text-primary);
-  }
-  &.active {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(124, 92, 255, 0.3);
-  }
-}
+// 出生日期公历/农历切换样式已迁移到 src/components/ui/BirthDatePicker.scss（全站共用）
 
 // ===== 真太阳时校正（P3-4）=====
 .tst-row {

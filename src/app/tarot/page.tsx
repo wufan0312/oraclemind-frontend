@@ -1508,7 +1508,7 @@ export default function TarotPage() {
     let note = '';
     if (total) {
       if (ratio(counts.major) >= 0.5) {
-        note = `大阿卡纳 ${counts.major}/${total}：不是日常小事，是命运级的转折，外力强于个人选择。`;
+        note = `大阿卡纳 ${counts.major}/${total}：不是日常小事，是关键性的转折，外力强于个人选择。`;
       } else if (ratio(rev) >= 0.6) {
         note = `逆位 ${rev}/${total}：能量普遍受阻，先化解卡点再谈推进。`;
       } else {

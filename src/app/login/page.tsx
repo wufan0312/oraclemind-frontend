@@ -69,7 +69,7 @@ export default function LoginPage() {
           <img src="/images/spirit_combined.png" alt="小玄" className="login-spirit" />
           <h1 className="login-title">玄镜 OracleMind</h1>
           <p className="login-subtitle">
-            {mode === 'login' ? '欢迎回来，探索命运之美' : '开启你的命运探索之旅'}
+            {mode === 'login' ? '欢迎回来，探索传统文化之美' : '开启你的文化体验之旅'}
           </p>
         </div>
 

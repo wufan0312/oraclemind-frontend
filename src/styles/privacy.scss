@@ -1,0 +1,58 @@
+// ===== 隐私政策页 =====
+.privacy-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.privacy-inner h1 {
+  font-size: 26px;
+  margin: 0 0 4px;
+}
+
+.privacy-updated {
+  color: var(--text-muted, #9ca3af);
+  font-size: 13px;
+  margin: 0 0 24px;
+}
+
+.privacy-inner h2 {
+  font-size: 18px;
+  margin: 28px 0 8px;
+}
+
+.privacy-inner p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text, #374151);
+  margin: 0 0 10px;
+}
+
+.privacy-inner ul {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text, #374151);
+  padding-left: 20px;
+  margin: 0 0 10px;
+}
+
+.privacy-erase-btn {
+  margin-top: 8px;
+  background: var(--warn, #ff8e53);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.privacy-erase-btn:hover {
+  filter: brightness(0.95);
+}
+
+.privacy-msg {
+  margin-top: 10px;
+  color: var(--accent-green, #4ade80);
+  font-size: 14px;
+}

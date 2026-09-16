@@ -1,6 +1,6 @@
 // ============================================================================
 // 玄镜 OracleMind · 风水数据与算法模块
-// 九宫飞星(玄空) + 八宅明镜(命卦) + 形煞自查 + 择日引擎 + 开运好物
+// 九宫飞星(玄空) + 八宅明镜(命卦) + 形煞自查 + 择日引擎
 // ============================================================================
 
 import { Solar } from 'lunar-typescript';
@@ -38,7 +38,6 @@ export interface StarInfo {
   auspicious: '吉' | '凶' | '平';
   title: string;      // 别名(如「桃花星」「文昌星」)
   meaning: string;    // 含义
-  cure: string;       // 催旺/化解建议
   detail: string;     // 详细解读
 }
 
@@ -47,64 +46,55 @@ export const STARS: Record<number, StarInfo> = {
     num: 1, name: '一白贪狼星', short: '一白', wuxing: '水', color: '#7c5cff',
     auspicious: '吉', title: '桃花·官星',
     meaning: '主桃花、人缘、官运、智慧',
-    cure: '宜在北方放置水类物品或金属饰品催旺，利事业人际与感情',
-    detail: '一白贪狼星属水，为魁名之星、主桃花与人缘。飞临之方利考试、求职、社交；若见水则旺桃花官贵。流年一白所临之宫宜保持整洁明亮，可摆金属风铃或流水摆件助旺。',
+    detail: '一白贪狼星属水，传统关联桃花、人缘与名望。飞临之方宜保持整洁明亮。',
   },
   2: {
     num: 2, name: '二黑巨门星', short: '二黑', wuxing: '土', color: '#ff6b6b',
     auspicious: '凶', title: '病符星',
     meaning: '主疾病、健康问题、消极',
-    cure: '宜静不宜动，忌堆杂物；可挂五帝铜钱或铜葫芦化解土煞',
-    detail: '二黑巨门星属土，为病符之星。飞临之方忌动土、装修，忌见红色物品催旺火生土煞。可挂六字铜铃、安放铜制葫芦泄土气。若为卧室或厨房所在，尤需注意健康。',
+    detail: '二黑巨门星属土。飞临之方宜保持安静整洁，避免动土装修。',
   },
   3: {
     num: 3, name: '三碧禄存星', short: '三碧', wuxing: '木', color: '#8b9a4a',
     auspicious: '凶', title: '是非星·蚩尤星',
     meaning: '主是非口舌、官非、争执',
-    cure: '宜用红色物品或火属性物件克制木煞；忌放绿色植物',
-    detail: '三碧禄存星属木，为是非之星。飞临之方易招口舌争端、官非诉讼。化解宜用火克木——可摆放红色地毯、红色装饰品，或置明灯。切忌在此方养植物或放木制家具，以免助长木气。',
+    detail: '三碧禄存星属木。飞临之方宜保持通透有序。',
   },
   4: {
     num: 4, name: '四绿文曲星', short: '四绿', wuxing: '木', color: '#4ade80',
     auspicious: '吉', title: '文昌星',
     meaning: '主学业、考试、文采、名誉',
-    cure: '宜设书房书桌；摆放四支富贵竹或文昌塔催旺',
-    detail: '四绿文曲星属木，为文昌之星。飞临之宫大利读书、考试、写作、升职。可在该方设书桌、书架，摆四支富贵竹（取「四绿」之数），或置文昌塔、毛笔架。忌见红色克木。',
+    detail: '四绿文曲星属木，为传统文昌位，利静心读书与写作。',
   },
   5: {
     num: 5, name: '五黄廉贞星', short: '五黄', wuxing: '土', color: '#a0a0b8',
     auspicious: '凶', title: '正关煞·灾星',
     meaning: '主灾祸、意外、凶险',
-    cure: '宜绝对安静；挂五帝铜钱或安铜麒麟化煞；忌动土装修',
-    detail: '五黄廉贞星属土，为九星中最凶之星，又称「正关煞」。飞临之方切忌动土、钻孔、装修、搬动家具。宜保持静止、暗淡。化解须用金泄土——挂五帝铜钱、安放铜麒麟或铜葫芦。若五黄叠临二黑，尤需谨慎。',
+    detail: '五黄廉贞星属土。飞临之方宜保持安静、减少大型变动。',
   },
   6: {
     num: 6, name: '六白武曲星', short: '六白', wuxing: '金', color: '#a78bfa',
     auspicious: '吉', title: '武贵星·官星',
     meaning: '主贵人、武贵、权力、权威',
-    cure: '宜放金属摆件或黄色水晶；利武职及管理岗',
-    detail: '六白武曲星属金，为武贵之星。飞临之方利升职、遇贵人、掌权。可在该方放金属摆件、铜马、黄水晶球助旺。亦利动中求贵——出差、运动可在此方出门。忌见红色克金。',
+    detail: '六白武曲星属金，传统关联事业与人际。',
   },
   7: {
     num: 7, name: '七赤破军星', short: '七赤', wuxing: '金', color: '#5ce1e6',
     auspicious: '平', title: '破军星·偏财',
     meaning: '主偏财、口舌、破败、肃杀',
-    cure: '吉则催旺偏财宜放金属物；凶则忌动，宜用水泄金',
-    detail: '七赤破军星属金，主肃杀与破败，亦主偏财。飞临之方若得令则利偏门财运、投资投机；若失令则主口舌、盗贼、破财。催旺可放金属饰品，化解宜用水泄金——置鱼缸或流水摆件。',
+    detail: '七赤破军星属金。飞临之方五行属金。',
   },
   8: {
     num: 8, name: '八白左辅星', short: '八白', wuxing: '土', color: '#d4a853',
     auspicious: '吉', title: '当旺财星',
     meaning: '主正财、置业、田产、富足',
-    cure: '大利财运；宜放聚宝盆、黄水晶、貔貅催旺财气',
-    detail: '八白左辅星属土，为当运财星（八运2004-2023当旺）。飞临之方为流年财位，大利求财、投资、置业。可放聚宝盆、黄水晶球、貔貅、金蟾催旺。该方宜明亮、整洁，忌阴暗潮湿。',
+    detail: '八白左辅星属土，传统关联财富与安定。飞临之方宜整洁明亮。',
   },
   9: {
     num: 9, name: '九紫右弼星', short: '九紫', wuxing: '火', color: '#ff6b9d',
     auspicious: '吉', title: '喜庆星·桃花',
     meaning: '主喜庆、姻缘、生育、姻缘桃花',
-    cure: '宜放红色或紫色喜庆物品；利婚嫁添丁',
-    detail: '九紫右弼星属火，为喜庆之星。飞临之方利婚嫁、添丁、庆贺、姻缘。可摆红色花束、紫色水晶、喜庆装饰催旺。该方宜亮不宜暗，见红色或暖色调物品尤佳。但若飞临凶位叠煞则反主火灾、血光。',
+    detail: '九紫右弼星属火，传统关联人际喜事。飞临之方宜明亮温暖。',
   },
 };
 
@@ -218,13 +208,13 @@ export const STAR_ATTRS: Record<DayouYearStar, {
   advice: string;
 }> = {
   '伏位': { auspicious: '吉', level: '小吉', color: '#a0a0b8', meaning: '主平稳安定、伏藏蓄力', advice: '该方宜安床、静坐，利休养蓄势' },
-  '生气': { auspicious: '吉', level: '大吉', color: '#4ade80', meaning: '主生机勃勃、贵人运、财运', advice: '该方宜开门、设财位，大利进取求财' },
+  '生气': { auspicious: '吉', level: '大吉', color: '#4ade80', meaning: '主生机勃勃、贵人运、财运', advice: '该方宜开门、保持明亮，利进取与人脉' },
   '天医': { auspicious: '吉', level: '中吉', color: '#5ce1e6', meaning: '主健康疗愈、贵人助', advice: '该方宜设卧室、安床，利健康康复' },
   '延年': { auspicious: '吉', level: '大吉', color: '#d4a853', meaning: '主感情和谐、人缘旺、长寿', advice: '该方宜设主卧或会客，利姻缘人际' },
-  '绝命': { auspicious: '凶', level: '大凶', color: '#ff6b6b', meaning: '主破财、伤丁、绝嗣', advice: '该方忌做主卧、开门；宜用金属性物品化解' },
-  '五鬼': { auspicious: '凶', level: '大凶', color: '#ff6b6b', meaning: '主官非、口舌、火灾、破财', advice: '该方忌安炉灶、动土；宜安铜器泄煞' },
-  '祸害': { auspicious: '凶', level: '小凶', color: '#d4a853', meaning: '主是非、口舌、诸事不顺', advice: '该方宜静不宜动；可置金属物化解' },
-  '六煞': { auspicious: '凶', level: '中凶', color: '#ff8c69', meaning: '主桃花劫、抑郁、人际关系差', advice: '该方忌做卧室；宜用水属性物品泄化' },
+  '绝命': { auspicious: '凶', level: '大凶', color: '#ff6b6b', meaning: '八宅四凶之一，主气场冲克', advice: '该方宜保持安静、避免设主卧或开门' },
+  '五鬼': { auspicious: '凶', level: '大凶', color: '#ff6b6b', meaning: '八宅四凶之一，主变动较多', advice: '该方宜安静、避免炉灶与动土' },
+  '祸害': { auspicious: '凶', level: '小凶', color: '#d4a853', meaning: '八宅四凶之一，主口舌纷扰', advice: '该方宜安静、减少活动' },
+  '六煞': { auspicious: '凶', level: '中凶', color: '#ff8c69', meaning: '八宅四凶之一，主人际波动', advice: '该方宜保持通透、避免设卧室' },
 };
 
 /**
@@ -299,114 +289,59 @@ export interface XingSha {
   severity: '轻' | '中' | '重';
   color: string;
   checklist: string[];      // 检测清单(用户自查)
-  effect: string;           // 影响说明
-  cures: {                  // 3档化解方案
-    level: '基础' | '进阶' | '专业';
-    method: string;
-    items: string[];        // 开运好物
-  }[];
+  effect: string;           // 影响说明(传统说法，中性描述)
 }
 
 export const XING_SHA_LIST: XingSha[] = [
   {
     id: 'luanchong', name: '路冲煞', icon: '🛣️', severity: '重', color: '#ff6b6b',
     checklist: ['住宅正对直路/走廊/巷道', '门窗外有直路冲来', '走廊尽头正对入户门'],
-    effect: '主血光、意外、破财、家人不睦',
-    cures: [
-      { level: '基础', method: '玄关遮挡', items: ['屏风', '玄关柜'] },
-      { level: '进阶', method: '铜器化煞', items: ['五帝铜钱', '铜麒麟'] },
-      { level: '专业', method: '泰山石+八卦镜', items: ['泰山石敢当', '凸面八卦镜'] },
-    ],
+    effect: '传统认为易带来居住不安与家庭氛围紧张',
   },
   {
     id: 'tianzhan', name: '天斩煞', icon: '⛰️', severity: '重', color: '#ff6b6b',
     checklist: ['窗外两栋高楼间有狭窄缝隙正对', '缝隙如刀劈般直对住宅'],
-    effect: '主血光、手术、呼吸系统疾病',
-    cures: [
-      { level: '基础', method: '厚窗帘遮挡', items: ['遮光厚窗帘'] },
-      { level: '进阶', method: '铜器化煞', items: ['铜葫芦', '五帝铜钱'] },
-      { level: '专业', method: '凸面八卦镜反射', items: ['凸面八卦镜', '铜麒麟'] },
-    ],
+    effect: '传统认为不利居住安宁',
   },
   {
     id: 'fanhui', name: '反弓煞', icon: '🏹', severity: '中', color: '#d4a853',
     checklist: ['住宅位于道路/河流弯道外侧', '弯道弧线如弓箭对准住宅'],
-    effect: '主破财、感情破裂、人际关系差',
-    cures: [
-      { level: '基础', method: '绿植缓冲', items: ['大型绿植', '篱笆'] },
-      { level: '进阶', method: '泰山石+五帝钱', items: ['泰山石敢当', '五帝铜钱'] },
-      { level: '专业', method: '八卦镜+风水轮', items: ['凸面八卦镜', '铜风水轮'] },
-    ],
+    effect: '传统认为影响人际与情绪',
   },
   {
     id: 'jianjiao', name: '尖角煞', icon: '🔺', severity: '中', color: '#d4a853',
     checklist: ['窗外有建筑尖角/屋檐正对', '对面楼体锐角直指住宅'],
-    effect: '主口舌是非、失眠头痛、健康问题',
-    cures: [
-      { level: '基础', method: '窗帘遮挡+凸面镜', items: ['遮光窗帘', '小凸面镜'] },
-      { level: '进阶', method: '铜葫芦化煞', items: ['铜葫芦', '五帝铜钱'] },
-      { level: '专业', method: '泰山石+八卦镜', items: ['泰山石敢当', '凸面八卦镜'] },
-    ],
+    effect: '传统认为影响休息与情绪',
   },
   {
     id: 'liangya', name: '梁压煞', icon: '📏', severity: '中', color: '#d4a853',
     checklist: ['床头/沙发/书桌正上方有横梁', '横梁压顶导致坐卧不安'],
-    effect: '主头痛、事业压力、精神紧张',
-    cures: [
-      { level: '基础', method: '移位避开', items: ['床头/桌位移开横梁下方'] },
-      { level: '进阶', method: '吊顶遮梁', items: ['吊顶装修', '装饰横梁包边'] },
-      { level: '专业', method: '葫芦+五帝钱挂梁', items: ['铜葫芦', '五帝铜钱'] },
-    ],
+    effect: '传统认为影响休息与专注',
   },
   {
     id: 'dujian', name: '穿心煞', icon: '🗡️', severity: '重', color: '#ff6b6b',
     checklist: ['电梯/楼梯正对入户门', '门一开即见电梯或下行楼梯'],
-    effect: '主破财、气场不稳、家运衰退',
-    cures: [
-      { level: '基础', method: '玄关遮挡', items: ['屏风', '玄关柜', '门帘'] },
-      { level: '进阶', method: '五帝钱+绿植', items: ['五帝铜钱', '大型绿植'] },
-      { level: '专业', method: '泰山石+八卦镜', items: ['泰山石敢当', '凸面八卦镜'] },
-    ],
+    effect: '传统认为影响居住安定感',
   },
   {
     id: 'guangsha', name: '光煞', icon: '💡', severity: '轻', color: '#a0a0b8',
     checklist: ['窗外有强光/霓虹灯/玻璃幕墙反射直射', '室内光线过强刺眼无法调节'],
-    effect: '主失眠、烦躁、精神不宁',
-    cures: [
-      { level: '基础', method: '遮光窗帘', items: ['遮光厚窗帘', '磨砂窗贴'] },
-      { level: '进阶', method: '绿植+水化解', items: ['大型绿植', '鱼缸'] },
-      { level: '专业', method: '磨砂玻璃更换', items: ['磨砂玻璃窗', '百叶窗'] },
-    ],
+    effect: '传统认为影响睡眠与情绪',
   },
   {
     id: 'shengsha', name: '声煞', icon: '🔊', severity: '轻', color: '#a0a0b8',
     checklist: ['窗外临马路/工地/广场噪音持续', '室内有水管/电器持续嗡鸣'],
-    effect: '主烦躁、失眠、判断力下降',
-    cures: [
-      { level: '基础', method: '隔音降噪', items: ['隔音窗', '隔音门帘', '耳塞'] },
-      { level: '进阶', method: '水化解+绿植', items: ['鱼缸', '大型绿植', '白噪音机'] },
-      { level: '专业', method: '专业隔音工程', items: ['隔音墙', '双层中空玻璃'] },
-    ],
+    effect: '传统认为影响安静与专注',
   },
   {
     id: 'weisha', name: '孤峰煞', icon: '🏙️', severity: '中', color: '#d4a853',
     checklist: ['住宅为周边最高建筑、四周无靠', '独高楼立于矮房群中'],
-    effect: '主孤立无援、事业人际受阻',
-    cures: [
-      { level: '基础', method: '靠山布置', items: ['山水画挂背后', '厚实靠背椅'] },
-      { level: '进阶', method: '水晶+绿植聚气', items: ['黄水晶球', '大型绿植'] },
-      { level: '专业', method: '风水球+泰山石', items: ['铜风水球', '泰山石敢当'] },
-    ],
+    effect: '传统认为影响人际支持感',
   },
   {
     id: 'dengxia', name: '灯柱煞', icon: '🔌', severity: '轻', color: '#a0a0b8',
     checklist: ['窗外电灯柱/信号塔/变压器正对', '大型电线杆正对门窗'],
-    effect: '主脾气暴躁、暗病缠身',
-    cures: [
-      { level: '基础', method: '窗帘遮挡', items: ['遮光窗帘', '磨砂窗贴'] },
-      { level: '进阶', method: '凸面镜反射', items: ['小凸面镜', '五帝铜钱'] },
-      { level: '专业', method: '八卦镜+铜葫芦', items: ['凸面八卦镜', '铜葫芦'] },
-    ],
+    effect: '传统认为影响情绪与安定',
   },
 ];
 
@@ -575,90 +510,18 @@ function isKe(a: string, b: string): boolean {
   return (ai + 2) % 5 === bi;
 }
 
-// ============================ 开运好物 ============================
 
-export interface LuckyItem {
-  icon: string;
-  name: string;
-  place: string;
-  effect: string;
-  wuxing: string;
-}
 
-/** 星曜 → 开运好物推荐 */
-export const STAR_LUCKY_ITEMS: Record<number, LuckyItem[]> = {
-  1: [ // 一白桃花官星
-    { icon: '🔮', name: '紫水晶', place: '正北方', effect: '催旺桃花人缘', wuxing: '水' },
-    { icon: '🔔', name: '铜风铃', place: '一白方', effect: '金生水助旺', wuxing: '金' },
-  ],
-  2: [ // 二黑病符
-    { icon: '🪙', name: '五帝铜钱', place: '二黑方', effect: '金泄土煞', wuxing: '金' },
-    { icon: '🫙', name: '铜葫芦', place: '病符方', effect: '化病化煞', wuxing: '金' },
-  ],
-  3: [ // 三碧是非
-    { icon: '🔴', name: '红色地毯', place: '三碧方', effect: '火克木化是非', wuxing: '火' },
-    { icon: '🏮', name: '红灯笼', place: '是非方', effect: '火克木镇煞', wuxing: '火' },
-  ],
-  4: [ // 四绿文昌
-    { icon: '🎋', name: '富贵竹×4', place: '四绿方', effect: '催旺文昌学业', wuxing: '木' },
-    { icon: '🏯', name: '文昌塔', place: '书桌东南方', effect: '利考试升职', wuxing: '木' },
-  ],
-  5: [ // 五黄煞
-    { icon: '🪙', name: '五帝铜钱', place: '五黄方', effect: '金泄土大煞', wuxing: '金' },
-    { icon: '🦁', name: '铜麒麟', place: '中宫五黄方', effect: '镇宅化灾煞', wuxing: '金' },
-  ],
-  6: [ // 六白武贵
-    { icon: '💎', name: '黄水晶球', place: '六白方', effect: '催旺贵人武贵', wuxing: '土' },
-    { icon: '🐴', name: '铜马', place: '西北方', effect: '利升职遇贵', wuxing: '金' },
-  ],
-  7: [ // 七赤破军
-    { icon: '🐠', name: '鱼缸', place: '七赤方', effect: '水泄金化口舌', wuxing: '水' },
-    { icon: '💧', name: '流水摆件', place: '破军方', effect: '水泄金生偏财', wuxing: '水' },
-  ],
-  8: [ // 八白财星
-    { icon: '🏺', name: '聚宝盆', place: '八白财位', effect: '大利正财聚财', wuxing: '土' },
-    { icon: '💎', name: '黄水晶球', place: '东北财位', effect: '旺财招偏财', wuxing: '土' },
-    { icon: '🦔', name: '貔貅', place: '财位', effect: '招财守财', wuxing: '土' },
-  ],
-  9: [ // 九紫喜庆
-    { icon: '🌹', name: '红色花束', place: '九紫方', effect: '催旺姻缘喜庆', wuxing: '火' },
-    { icon: '💜', name: '紫水晶', place: '喜庆方', effect: '利婚嫁添丁', wuxing: '火' },
-  ],
-};
-
-/** 形煞化解 → 开运好物 */
-export const SHA_CURE_ITEMS: Record<string, LuckyItem[]> = {
-  'luanchong': [{ icon: '🪨', name: '泰山石敢当', place: '入户门侧', effect: '挡路冲煞', wuxing: '土' }, { icon: '🪙', name: '五帝铜钱', place: '门框', effect: '化煞聚气', wuxing: '金' }],
-  'tianzhan': [{ icon: '🪞', name: '凸面八卦镜', place: '窗户外侧', effect: '反射天斩煞', wuxing: '金' }, { icon: '🫙', name: '铜葫芦', place: '窗台', effect: '化煞收气', wuxing: '金' }],
-  'fanhui': [{ icon: '🪨', name: '泰山石敢当', place: '反弓方位', effect: '挡反弓煞', wuxing: '土' }, { icon: '🪿', name: '铜麒麟', place: '门口', effect: '镇煞招贵', wuxing: '金' }],
-  'jianjiao': [{ icon: '🫙', name: '铜葫芦', place: '窗台', effect: '收尖角煞', wuxing: '金' }, { icon: '🪞', name: '凸面镜', place: '窗外', effect: '反射尖角', wuxing: '金' }],
-  'liangya': [{ icon: '🫙', name: '铜葫芦', place: '横梁下', effect: '化梁压煞', wuxing: '金' }, { icon: '🪙', name: '五帝铜钱', place: '横梁两端', effect: '泄土煞', wuxing: '金' }],
-  'dujian': [{ icon: '🪞', name: '屏风', place: '入户门内', effect: '遮挡穿心煞', wuxing: '木' }, { icon: '🪙', name: '五帝铜钱', place: '门框', effect: '化煞聚气', wuxing: '金' }],
-  'guangsha': [{ icon: '🪟', name: '遮光窗帘', place: '窗户', effect: '挡光煞', wuxing: '土' }, { icon: '🌵', name: '大型绿植', place: '窗台', effect: '缓冲化光', wuxing: '木' }],
-  'shengsha': [{ icon: '🪟', name: '隔音窗', place: '窗户', effect: '降噪化声煞', wuxing: '金' }, { icon: '🐠', name: '鱼缸', place: '窗边', effect: '水化声煞', wuxing: '水' }],
-  'weisha': [{ icon: '🖼️', name: '山水画', place: '座椅背后', effect: '做靠山补孤峰', wuxing: '土' }, { icon: '💎', name: '黄水晶球', place: '财位', effect: '聚气补气', wuxing: '土' }],
-  'dengxia': [{ icon: '🪞', name: '凸面镜', place: '窗外', effect: '反射灯柱煞', wuxing: '金' }, { icon: '🪙', name: '五帝铜钱', place: '窗框', effect: '化煞', wuxing: '金' }],
-};
-
-/** 综合开运好物(家居通用) */
-export const HOME_GOODS: LuckyItem[] = [
-  { icon: '🪙', name: '五帝铜钱', place: '挂入户门左侧', effect: '挡煞聚气', wuxing: '金' },
-  { icon: '💎', name: '黄水晶球', place: '东北财位', effect: '旺财招偏财', wuxing: '土' },
-  { icon: '🌿', name: '富贵竹×4', place: '东南文昌', effect: '利学业事业', wuxing: '木' },
-  { icon: '🔔', name: '铜风铃', place: '五黄方', effect: '化五黄煞', wuxing: '金' },
-  { icon: '🫙', name: '铜葫芦', place: '病符方/窗台', effect: '化病化煞', wuxing: '金' },
-  { icon: '🦔', name: '貔貅摆件', place: '财位', effect: '招财守财', wuxing: '土' },
-];
 
 // ============================ AI 堪舆四维 ============================
 
 export type FengshuiDimension = 'wealth' | 'health' | 'love' | 'career';
 
 export const DIMENSIONS: { key: FengshuiDimension; icon: string; name: string; desc: string }[] = [
-  { key: 'wealth', icon: '💰', name: '财运', desc: '财位布局·催财化煞·偏正财方向' },
-  { key: 'health', icon: '🌿', name: '健康', desc: '病符方位·卧室安床·健康化解' },
-  { key: 'love', icon: '❤️', name: '感情', desc: '桃花位·喜庆方·姻缘催旺' },
-  { key: 'career', icon: '🏆', name: '事业', desc: '官星位·贵人方·文昌催旺' },
+  { key: 'wealth', icon: '💰', name: '财运', desc: '方位认知·环境整理·财位常识' },
+  { key: 'health', icon: '🌿', name: '健康', desc: '卧室安宁·环境舒适·休息质量' },
+  { key: 'love', icon: '❤️', name: '感情', desc: '人际互动·环境氛围·情感空间' },
+  { key: 'career', icon: '🏆', name: '事业', desc: '环境秩序·专注空间·事业方位' },
 ];
 
 /** 方位 → 五行 */
@@ -670,7 +533,7 @@ export const DIR_WUXING: Record<string, string> = {
 /** 四维 → 关注星号 */
 export const DIMENSION_STARS: Record<FengshuiDimension, number[]> = {
   wealth: [8, 6, 7],    // 八白财星 / 六白武贵 / 七赤偏财
-  health: [2, 5, 1],    // 二黑病符 / 五黄煞 / 一白(也管官/身体)
+  health: [2, 5, 1],    // 二黑 / 五黄 / 一白
   love: [9, 1],         // 九紫喜庆 / 一白桃花
   career: [6, 4, 1],    // 六白武贵 / 四绿文昌 / 一白官星
 };

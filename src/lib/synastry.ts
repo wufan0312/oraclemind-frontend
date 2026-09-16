@@ -4,7 +4,8 @@
 // 说明：本模块为传统文化视角的「合参」，仅供娱乐参考，不构成任何现实决策依据。
 
 import { computeLocalBazi } from '@/data/baziDayun';
-import { digitalRoot } from '@/data/numerologyData';
+import { digitalRoot, lifePathNumber } from '@/data/numerologyData';
+import { lifePathBasisFromBirth } from '@/lib/lunarDate';
 
 export interface BirthProfile {
   name: string;
@@ -161,8 +162,13 @@ export function computeSynastry(a: BirthProfile, b: BirthProfile): SynastryResul
   const signA = getConstellation(a.date);
   const signB = getConstellation(b.date);
 
-  const lpA = digitalRoot(ya + Number(a.date.split('-')[1]) + Number(a.date.split('-')[2]));
-  const lpB = digitalRoot(yb + Number(b.date.split('-')[1]) + Number(b.date.split('-')[2]));
+  // 生命灵数统一走农历口径（与数字命理页 / 报告命主卡一致）：公历换算农历后取数字根，保留 11/22/33 大师数；换算失败回退公历
+  const lpOf = (p: BirthProfile): number => {
+    const basis = lifePathBasisFromBirth(p, 'lunar');
+    return basis ? lifePathNumber(basis.y, basis.m, basis.d) : digitalRoot(Number(p.date.split('-')[0]) + Number(p.date.split('-')[1]) + Number(p.date.split('-')[2]), true);
+  };
+  const lpA = lpOf(a);
+  const lpB = lpOf(b);
 
   const dayGanA = computeLocalBazi({ date: a.date, time: a.time || '子时', gender: a.gender || 'male' }).dayGan;
   const dayGanB = computeLocalBazi({ date: b.date, time: b.time || '子时', gender: b.gender || 'female' }).dayGan;

@@ -3215,6 +3215,10 @@ export interface ReportAgentBirthInfo {
   hour?: number | null;
   timeText?: string;
   gender?: string;
+  /** 农历出生年/月/日（可选）：生命灵数统一农历口径时由前端一并传入，AI 数字命理模块排盘使用 */
+  lunarYear?: number;
+  lunarMonth?: number;
+  lunarDay?: number;
 }
 
 /**

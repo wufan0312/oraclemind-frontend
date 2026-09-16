@@ -24,7 +24,6 @@ import {
   getMingGua, getMingGuaInfo, GUAS, getBazhaiLayout, STAR_ATTRS,
   XING_SHA_LIST, type XingSha,
   DATE_CATEGORIES, findLuckyDates, getDailyYiJi, getShichenJiXiong,
-  HOME_GOODS, STAR_LUCKY_ITEMS,
   DIMENSIONS, type FengshuiDimension,
   loadBaziLink, getShengxiao, type BaziFengshuiLink,
 } from '@/data/fengshuiData';
@@ -273,7 +272,7 @@ export default function FengshuiPage() {
     <div className="page active" id="page-fengshui">
       <div className="page-header">
         <div>
-          <div className="page-title">🏠 风水开运</div>
+          <div className="page-title">🏠 居家风水</div>
           <div className="page-subtitle">九宫飞星 × 八宅明镜 · 算法驱动的家居·办公·方位布局</div>
           {birthDateStr && <div className="page-subtitle" style={{ fontSize: 13, color: 'var(--accent-cyan)' }}>📊 命主：{birthDateStr}</div>}
         </div>
@@ -339,25 +338,7 @@ export default function FengshuiPage() {
                     <div className="star-detail-meta">
                       五行：<strong>{selStar.star.wuxing}</strong> ｜ 别名：{selStar.star.title} ｜ 主事：{selStar.star.meaning}
                     </div>
-                    <div className="star-detail-advice">
-                      <strong>布局建议：</strong>{selStar.star.cure}
-                    </div>
                     <div className="star-detail-full">{selStar.star.detail}</div>
-                    {/* 开运好物 */}
-                    <div className="star-detail-goods">
-                      <span className="fs-goods-mini-title">🛒 开运好物推荐</span>
-                      <div className="fs-goods-mini-list">
-                        {(STAR_LUCKY_ITEMS[selStar.starNum] || []).map((g, j) => (
-                          <div key={j} className="fs-goods-mini-item">
-                            <span className="fs-goods-ico">{g.icon}</span>
-                            <div>
-                              <span className="fs-goods-title">{g.name}</span>
-                              <span className="fs-goods-pos">{g.place}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 ) : (
                   <div className="star-detail-empty">👆 点击上方任意宫位，查看星曜详解与布局建议</div>
@@ -366,7 +347,7 @@ export default function FengshuiPage() {
                 <div className="star-intro open">
                   <p>「九宫飞星」是玄空风水的基础工具：把住宅按九宫格分为 <strong className="tc-text-primary">九个方位</strong>，每年有九颗星飞临不同宫位，<strong className="tc-text-primary">吉凶各异</strong>。</p>
                   <p><strong className="tc-text-primary">怎么看这张图：</strong>站在客厅中央，用手机指南针定出正北方向，再把图对应到你家——格子里写的是 <strong>{year}</strong> 年飞临该方位的星。</p>
-                  <p><strong className="tc-text-primary">怎么用：</strong>吉星落宫宜<strong className="tc-green">催旺布置</strong>；凶星落宫宜<strong className="tc-red">化解避忌</strong>，避免动土装修。点击每格可查看详细布局方案。</p>
+                  <p><strong className="tc-text-primary">怎么用：</strong>各星落宫对应不同的传统方位说法，可点击每格查看详细解读。</p>
                 </div>
               </Card>
 
@@ -392,7 +373,7 @@ export default function FengshuiPage() {
                             ? baziLink.yongshen.xi.map((v, j) => <Tag key={j} variant="good" className="tag-mr">{v}</Tag>)
                             : <Tag variant="warn">未排盘</Tag>}
                         </div>
-                        <div className="fs-cell-desc">{baziLink ? `宜在 ${xiDirs.join('、')} 方位活动布置，催旺命局喜用` : '前往卜卦页排盘后自动同步喜用神方位建议'}</div>
+                        <div className="fs-cell-desc">{baziLink ? `宜在 ${xiDirs.join('、')} 方位活动布置，顺应命局喜用` : '前往卜卦页排盘后自动同步喜用神方位建议'}</div>
                       </div>
                       <div className="fs-detail-cell">
                         <div className="fs-cell-title">忌神</div>
@@ -401,12 +382,12 @@ export default function FengshuiPage() {
                             ? baziLink.yongshen.ji.map((v, j) => <Tag key={j} variant="bad" className="tag-mr">{v}</Tag>)
                             : <Tag variant="warn">未排盘</Tag>}
                         </div>
-                        <div className="fs-cell-desc">{baziLink ? '对应方位宜化解避忌，减少该五行属性物品' : '排盘后自动显示忌神五行及化解建议'}</div>
+                        <div className="fs-cell-desc">{baziLink ? '对应方位宜注意，减少该五行属性物品' : '排盘后自动显示忌神五行及注意要点'}</div>
                       </div>
                       <div className="fs-detail-cell">
                         <div className="fs-cell-title">流年财位</div>
                         <div className="fs-tags-row"><Tag variant="good" className="tag-mr">{starLayout.find((s) => s.starNum === 8)?.pos || '东北'}</Tag></div>
-                        <div className="fs-cell-desc">八白财星飞临之方，宜放聚宝盆/黄水晶催旺</div>
+                        <div className="fs-cell-desc">八白财星飞临之方，宜保持整洁明亮</div>
                       </div>
                     </>
                   ) : (
@@ -681,7 +662,7 @@ export default function FengshuiPage() {
               <Card>
                 <SectionTitle icon="alert-triangle">形煞自查 · 10类高频煞</SectionTitle>
                 <div className="fs-xingsha-intro">
-                  勾选你住宅/办公室存在的煞形，系统将自动生成化解方案。
+                  勾选你住宅/办公室存在的煞形，系统将展示对应方位的传统说法。
                 </div>
                 <div className="fs-xingsha-list">
                   {XING_SHA_LIST.map((sha) => {
@@ -726,16 +707,7 @@ export default function FengshuiPage() {
                         ))}
                       </div>
                       <div className="fs-xingsha-effect">影响：{sha.effect}</div>
-                      {hasAny && (
-                        <div className="fs-xingsha-cures">
-                          {sha.cures.map((cu, j) => (
-                            <div key={j} className={`fs-cure-card fs-cure-${cu.level}`}>
-                              <div className="fs-cure-level">{cu.level}</div>
-                              <div className="fs-cure-method">{cu.method}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+
                     </div>
                     );
                   })}
@@ -748,7 +720,7 @@ export default function FengshuiPage() {
         {/* ===================== 侧栏 ===================== */}
         <div className="result-sidebar">
           <Card variant="side">
-            <SectionTitle icon="gift">开运好物</SectionTitle>
+            <SectionTitle icon="compass">方位常识</SectionTitle>
             <div className="fs-col-list">
               {mode === 'date' ? (
                 <>
@@ -757,16 +729,7 @@ export default function FengshuiPage() {
                   <div className="fs-goods-row"><span className="fs-goods-ico">🔨</span><div className="fs-goods-body"><div className="fs-goods-title">装修动土</div><div className="fs-goods-note">避开五黄、二黑方与午未月</div></div></div>
                 </>
               ) : (
-                HOME_GOODS.map((g, i) => (
-                  <div key={i} className="fs-goods-row">
-                    <span className="fs-goods-ico">{g.icon}</span>
-                    <div className="fs-goods-body">
-                      <div className="fs-goods-title">{g.name}</div>
-                      <div className="fs-goods-pos">摆放：{g.place}</div>
-                      <div className="fs-goods-note">功效：{g.effect}</div>
-                    </div>
-                  </div>
-                ))
+                <div className="fs-goods-row"><span className="fs-goods-ico">🧭</span><div className="fs-goods-body"><div className="fs-goods-title">方位常识</div><div className="fs-goods-note">方位吉凶属传统环境文化认知，仅供了解，不构成任何操作建议</div></div></div>
               )}
             </div>
           </Card>

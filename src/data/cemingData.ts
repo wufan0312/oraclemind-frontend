@@ -20,7 +20,7 @@ export const CEZI_TOPICS: CeziTopic[] = [
   { key: 'study', label: '学业' },
   { key: 'official', label: '官运' },
   { key: 'children', label: '子女' },
-  { key: 'fate', label: '命运' },
+  { key: 'fate', label: '格局' },
 ];
 
 export const FIVE_ELEMENTS = ['金', '木', '水', '火', '土'] as const;
@@ -85,7 +85,7 @@ export const TOPIC_TEMPLATE: Record<string, (word: string, flow: string) => stri
   children: (w, f) =>
     `子女上，此字气象偏${w}，缘路${f}。宜循循善诱、宽严相济，亲子多一分倾听便多一分亲近；忌溺爱纵容或责之过苛。`,
   fate: (w, f) =>
-    `命运上，此字气象偏${w}，运程${f}。命由天定、运由己造，顺势修身则变数可化；尽人事而后听天命，方不致虚度。`,
+    `整体来看，此字气象偏${w}，运程${f}。境由心造、顺势修身则变数可化；尽人事而听其自然，方不致虚度。`,
 };
 
 /** 常见字拆解（趣味向，非文字学考据） */

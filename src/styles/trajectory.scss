@@ -1,0 +1,227 @@
+/* 命运轨迹页面样式 */
+
+.traj-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 18px 64px;
+  color: var(--text-primary, #e8e6f5);
+}
+
+.traj-header {
+  margin-bottom: 22px;
+}
+
+.traj-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0 0 8px;
+  background: linear-gradient(90deg, var(--primary-light, #9b8cff), var(--primary, #7c6bff));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.traj-sub {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary, #b8b4d0);
+  margin: 0;
+}
+
+/* ===== 月度复盘卡片 ===== */
+.traj-review-card {
+  background: var(--bg-card, #1b1830);
+  border: 1px solid var(--border, #2c2842);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+
+.traj-review-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.traj-review-title {
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.traj-review-meta {
+  font-size: 12px;
+  color: var(--text-muted, #8a86a8);
+  margin: 0;
+}
+
+.traj-review-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.traj-review-loading {
+  font-size: 14px;
+  color: var(--text-muted, #8a86a8);
+  padding: 14px 0;
+}
+
+.traj-review-empty {
+  font-size: 14px;
+  color: var(--text-secondary, #b8b4d0);
+  margin: 0;
+  line-height: 1.7;
+}
+
+.traj-review-body {
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: var(--text-primary, #e8e6f5);
+  margin-top: 6px;
+}
+
+.traj-review-body h1,
+.traj-review-body h2,
+.traj-review-body h3 {
+  margin: 16px 0 8px;
+  line-height: 1.4;
+}
+
+.traj-review-body ul,
+.traj-review-body ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.traj-review-body li {
+  margin: 4px 0;
+}
+
+.traj-disclaimer {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-muted, #8a86a8);
+  border-top: 1px dashed var(--border, #2c2842);
+  padding-top: 10px;
+}
+
+/* ===== 时间线 ===== */
+.traj-month {
+  margin-bottom: 22px;
+}
+
+.traj-month-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-light, #9b8cff);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
+.traj-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  border-left: 2px solid var(--border, #2c2842);
+  margin-left: 14px;
+}
+
+.traj-item {
+  position: relative;
+  padding: 0 0 4px 18px;
+}
+
+.traj-item::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg-card, #1b1830);
+  border: 2px solid var(--border-active, #4a4570);
+}
+
+.traj-item-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+
+.traj-item-link:hover {
+  background: var(--bg-hover, #221e38);
+}
+
+.traj-dot {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+.traj-item-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.traj-item-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.traj-item-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #e8e6f5);
+}
+
+.traj-item-time {
+  font-size: 12px;
+  color: var(--text-muted, #8a86a8);
+  white-space: nowrap;
+}
+
+.traj-item-summary {
+  font-size: 13px;
+  color: var(--text-secondary, #b8b4d0);
+  margin-top: 3px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+/* ===== 空态 ===== */
+.traj-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--text-secondary, #b8b4d0);
+}
+
+.traj-empty-hint {
+  font-size: 13px;
+  color: var(--text-muted, #8a86a8);
+  margin-top: 8px;
+}
+
+.traj-empty-hint a {
+  color: var(--primary-light, #9b8cff);
+  text-decoration: none;
+}

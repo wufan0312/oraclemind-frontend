@@ -37,6 +37,9 @@ export interface VisitorBirth {
   lat?: number;
   /** 经度 */
   lng?: number;
+  /** 生命灵数 / 数字命理口径：'solar'=按公历年+月+日，'lunar'=按农历年+月+日。
+   *  默认 'solar'（毕达哥拉斯标准口径）。全站数字命理（数字命理页 / 报告页命主 / 合盘）以它为单一数据源，保证三处永远一致。 */
+  calendarMode?: 'solar' | 'lunar';
   /** 更新时间戳（ms） */
   updatedAt?: number;
 }
@@ -119,6 +122,7 @@ export function getVisitorBirth(): VisitorBirth | null {
       city: typeof parsed.city === 'string' ? parsed.city : undefined,
       lat: typeof parsed.lat === 'number' ? parsed.lat : undefined,
       lng: typeof parsed.lng === 'number' ? parsed.lng : undefined,
+      calendarMode: parsed.calendarMode === 'lunar' ? 'lunar' : 'solar',
     };
   } catch {
     return null;

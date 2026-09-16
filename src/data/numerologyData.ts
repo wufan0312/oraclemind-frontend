@@ -438,6 +438,15 @@ export function digitalRoot(n: number, keepMaster = false): number {
   return n;
 }
 
+/**
+ * 生命灵数（Life Path Number）：毕达哥拉斯数字根，逐位相加到个位数。
+ * 全站（数字命理页 / 报告页命主 / 合盘）统一走这一口径（keepMaster=true，保留 11/22/33 大师数），
+ * 避免「同一人三处灵数不一致」。
+ */
+export function lifePathNumber(y: number, m: number, d: number): number {
+  return digitalRoot(y + m + d, true);
+}
+
 /** 统计年/月/日所有数字在 1~9 中出现的次数 */
 export function numGridCounts(y: number, m: number, d: number): Record<number, number> {
   const s = String(y) + String(m) + String(d);

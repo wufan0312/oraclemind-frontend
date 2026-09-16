@@ -13,6 +13,7 @@ import {
 } from '@/lib/api';
 import { storage } from '@/lib/storage';
 import { setCloudItem, removeCloudItem } from '@/lib/cloudStore';
+import { pushTrajectory, getTrajectory } from '@/lib/trajectory';
 import { useVisitor } from '@/components/visitor/VisitorProvider';
 import { useAuth } from '@/contexts/AuthContext';
 import { mdToHtml } from '@/lib/markdown';
@@ -478,6 +479,14 @@ function readHistory(): MingHistoryItem[] {
 function writeHistory(list: MingHistoryItem[]): void {
   try {
     setCloudItem(MING_HISTORY_KEY, JSON.stringify(list.slice(0, MING_HISTORY_LIMIT)));
+    // 命运轨迹：仅当最新一条尚未记录时追加，避免删除/重排时重复写入（竞品留存体系）
+    const top = list[0];
+    if (top && (top.tab as string) !== 'zidian') {
+      const items = getTrajectory();
+      if (!items.length || items[0]?.ts !== top.time) {
+        pushTrajectory({ type: 'ming', label: '测字·起名', summary: `${top.input} · ${top.summary}` });
+      }
+    }
   } catch {
     /* 隐私模式 / 配额满：忽略 */
   }

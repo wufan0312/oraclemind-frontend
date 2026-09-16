@@ -22,7 +22,8 @@ import BaziChart from '@/components/report/BaziChart';
 import { ReportPanChart } from '@/components/report/PanCharts';
 import SynastryPanel from '@/components/report/SynastryPanel';
 import ExportReportModal from '@/components/report/ExportReportModal';
-import { NUM_DATA, digitalRoot } from '@/data/numerologyData';
+import { NUM_DATA, digitalRoot, lifePathNumber } from '@/data/numerologyData';
+import { lifePathBasisFromBirth } from '@/lib/lunarDate';
 import {
   requestReportAgentStream,
   fetchReports,
@@ -299,7 +300,7 @@ function downloadIcs(events: { title: string; desc: string; start: Date; end: Da
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//玄镜 OracleMind//综合命运报告//CN',
+    'PRODID:-//玄镜 OracleMind//综合解读报告//CN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
   ];
@@ -784,10 +785,12 @@ export default function ReportPage() {
     setReasoning('');
     setReasoningOpen(true);
     const t0 = Date.now();
+    // 生命灵数统一农历口径：把农历分量一并传给 AI，使其综合报告里的数字命理模块与前端命主卡一致
+    const lpBasisForAI = lifePathBasisFromBirth(effectiveBirth, 'lunar');
     try {
       const resp = await requestReportAgentStream(
         qText,
-        { year: y, month: m, day: d, hour: null, timeText: effectiveBirth.time || '不详', gender: effectiveBirth.gender || '男' },
+        { year: y, month: m, day: d, hour: null, timeText: effectiveBirth.time || '不详', gender: effectiveBirth.gender || '男', lunarYear: lpBasisForAI?.y, lunarMonth: lpBasisForAI?.m, lunarDay: lpBasisForAI?.d },
         {
           signal: ac.signal,
           crossReadings: cross.map((r) => ({ type: r.type, label: r.label, summary: r.summary })),
@@ -1085,13 +1088,13 @@ export default function ReportPage() {
   /** 生成分享长图：复用 AI 服务 /api/v1/poster（与数字密码页同款） */
   const handlePoster = async () => {
     const rep: any = summary && summary !== 'loading' && summary !== 'error' ? summary.data : null;
-    const head = lord ? `命主 ${lord.dayGan}${lord.dayWx} · ${lord.sign || ''} · 灵数${lord.num}` : '玄镜综合命运报告';
-    const body = rep?.summary ? String(rep.summary).replace(/\*\*/g, '') : '综合命运报告';
+    const head = lord ? `命主 ${lord.dayGan}${lord.dayWx} · ${lord.sign || ''} · 灵数${lord.num}` : '玄镜综合解读报告';
+    const body = rep?.summary ? String(rep.summary).replace(/\*\*/g, '') : '综合解读报告';
     setPosterOpen(true);
     setPosterLoading(true);
     setPoster(null);
     try {
-      const p = await requestPoster('综合命运报告', `${head}\n${body}\n—— 玄镜 OracleMind`);
+      const p = await requestPoster('综合解读报告', `${head}\n${body}\n—— 玄镜 OracleMind`);
       setPoster({ shareText: p.shareText, imageUrl: p.imageUrl });
     } catch {
       setPoster({ shareText: `${head}\n${body}`, imageUrl: null });
@@ -1122,8 +1125,8 @@ export default function ReportPage() {
         ? rep.keyFindings[0]
         : typeof rep?.summary === 'string' && rep.summary
           ? rep.summary.split('\n')[0]
-          : '用玄镜做了一次综合命运报告';
-    const text = `【玄镜 · 综合命运报告】\n${who}问了「${question || '整体运势'}」：${one}\n—— 多术数交叉验证，打开玄镜也能测你的 ✨`;
+          : '用玄镜做了一次综合解读报告';
+    const text = `【玄镜 · 综合解读报告】\n${who}问了「${question || '整体运势'}」：${one}\n—— 多术数交叉验证，内容仅供娱乐参考 ✨`;
     const ok = await copyText(text);
     showToast(ok ? '朋友圈文案已复制' : '复制失败，请重试', ok ? 'success' : 'error');
   };
@@ -1134,7 +1137,9 @@ export default function ReportPage() {
     const [y, m, d] = effectiveBirth.date.split('-').map(Number);
     if (!y || !m || !d) return null;
     const local = computeLocalBazi({ date: effectiveBirth.date, time: effectiveBirth.time || '不详', gender: effectiveBirth.gender || '男' });
-    const num = digitalRoot(y + m + d);
+    // 生命灵数统一走农历口径（与数字命理页一致）：优先用档案农历分量，缺失则公历换算兜底；保留 11/22/33 大师数
+    const lpBasis = lifePathBasisFromBirth(effectiveBirth, 'lunar');
+    const num = lpBasis ? lifePathNumber(lpBasis.y, lpBasis.m, lpBasis.d) : digitalRoot(y + m + d, true);
     return {
       dayGan: local.dayGan,
       dayWx: GAN_WUXING[local.dayGan] || '',
@@ -1204,7 +1209,7 @@ export default function ReportPage() {
   /** 报告全文 Markdown：导出 PDF 与「复制全文」共用同一份内容，保证两处一致 */
   function buildReportMarkdown(): string {
     const L: string[] = [];
-    L.push('# 玄镜 · 综合命运报告');
+    L.push('# 玄镜 · 综合解读报告');
     L.push('');
     if (lord) {
       L.push(`- 命主：日主 **${lord.dayGan}${lord.dayWx}**　本命盘 ${lord.sign || '—'}　生命灵数 ${lord.num}（${lord.numName}）`);
@@ -1272,7 +1277,7 @@ export default function ReportPage() {
       if (range) {
         events.push({
           title: `玄镜 · 关键决策期（${decisionCard.score}）`,
-          desc: decisionCard.desc || '综合命运报告提示的关键决策窗口',
+          desc: decisionCard.desc || '综合解读报告提示的关键决策窗口',
           start: range.start,
           end: range.end,
         });
@@ -1411,7 +1416,7 @@ export default function ReportPage() {
     <div className="page active" id="page-report">
       {/* 页面头部 */}
       <div className="page-header">
-        <div><div className="page-title">📋 综合命运报告</div><div className="page-subtitle">{contrib.length ? `${contrib.map(moduleLabel).join(' × ')} · 交叉验证` : '多术数 · 交叉验证'}</div></div>
+        <div><div className="page-title">📋 综合解读报告</div><div className="page-subtitle">{contrib.length ? `${contrib.map(moduleLabel).join(' × ')} · 交叉验证` : '多术数 · 交叉验证'}</div></div>
         <div className="page-actions">
           <Button variant="ghost" onClick={()=>setShowShare(true)}>📤 分享报告</Button>
           <Button variant="ghost" onClick={()=>setExportPanelOpen(true)}>⬇️ 导出</Button>
@@ -2067,7 +2072,7 @@ export default function ReportPage() {
           </Card>
         </div>
       </div>
-      <Modal open={showShare} onClose={()=>setShowShare(false)} variant="share" icon="📤" title="分享你的命运报告">
+      <Modal open={showShare} onClose={()=>setShowShare(false)} variant="share" icon="📤" title="分享你的解读报告">
         <div className="share-options">
           {/* 微信/朋友圈无 JS SDK，统一走「复制文案」：用户粘贴即可发送 */}
           <div className="share-option" role="button" tabIndex={0} onClick={handleCopyText}
@@ -2095,7 +2100,7 @@ export default function ReportPage() {
       <ExportReportModal
         open={exportPanelOpen}
         onClose={()=>setExportPanelOpen(false)}
-        title={`综合命运报告 · ${question || '整体运势'}`}
+        title={`综合解读报告 · ${question || '整体运势'}`}
         markdown={buildReportMarkdown()}
       />
 

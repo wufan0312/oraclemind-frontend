@@ -33,6 +33,7 @@ import ShareLoginGate from '@/components/share/ShareLoginGate';
 import AiChatWindow from '@/components/ai-chat/AiChatWindow';
 import { storage, registerLegacy } from '@/lib/storage';
 import { setCloudItem, removeCloudItem } from '@/lib/cloudStore';
+import { pushTrajectory } from '@/lib/trajectory';
 
 /** 梦境分类快捷入口（10 个高频词，保留原有交互） */
 const QUICK_KEYWORDS = [
@@ -933,6 +934,8 @@ export default function DreamPage() {
     } catch {
       /* 存储不可用则跳过 */
     }
+    // 命运轨迹：每次解梦都留痕（竞品留存体系）
+    pushTrajectory({ type: 'dream', label: '周公解梦', summary: title || kw });
     setKeyword('');
     showToast('🌙 梦境已保存，回头看看它想告诉你什么', 'success');
   };

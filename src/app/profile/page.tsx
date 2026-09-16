@@ -12,6 +12,7 @@ import { resetOnboarded, markOnboarded } from '@/lib/onboarding';
 import RequireAuth from '@/components/auth/RequireAuth';
 import { fetchPremiumEntitlements } from '@/lib/api';
 import { loadUnlocks } from '@/lib/premium';
+import { eraseAllData } from '@/lib/eraseData';
 
 /**
  * 个人中心 —— 用户资料 / 修行境界（复用首页 GrowthCard）/ 占卜档案 / 数据与引导
@@ -78,6 +79,22 @@ function ProfileContent() {
     resetGrowth();
     setGrowthKey((k) => k + 1);
     flash('成长数据已清空');
+  };
+
+  const onEraseData = async () => {
+    if (
+      !window.confirm(
+        '确定删除你在玄镜的全部数据？\n将清除本机与云端存档（含占卜/解梦/聊天/成长记录）及后端出生信息，且不可恢复。',
+      )
+    ) {
+      return;
+    }
+    try {
+      await eraseAllData();
+      flash('已全部删除你的本地与云端数据');
+    } catch {
+      flash('删除遇到错误，请稍后重试');
+    }
   };
 
   return (
@@ -185,6 +202,7 @@ function ProfileContent() {
             <button className="profile-action-btn" onClick={onReplayTour}>重新观看新手引导</button>
             <button className="profile-action-btn" onClick={onMarkTourDone}>标记引导已完成</button>
             <button className="profile-action-btn danger" onClick={onResetGrowth}>清空成长数据</button>
+            <button className="profile-action-btn danger" onClick={onEraseData}>删除全部数据</button>
           </div>
           <div className="profile-actions-hint">
             测算结果仅供娱乐参考，不构成任何决策依据。清空成长数据不会影响各模块的占卜与日记记录。

@@ -3,6 +3,7 @@
 import '@/styles/home.scss';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useI18n } from '@/lib/i18n';
 import { requestHomeAgentStream, type ChatHistoryEntry, type HomeAgentCta } from '@/lib/api';
 import { loadHomeChat, saveHomeChat, clearHomeChat } from '@/lib/homeChatStore';
 import { dedupAdjacentParagraphs, dedupListItemsByTitle, renumberStandaloneNumberedHeadings, dedupCrossTurn } from '@/lib/textDedup';
@@ -13,21 +14,21 @@ import AiChatWindow from '@/components/ai-chat/AiChatWindow';
 import OnboardingTour from '@/components/home/OnboardingTour';
 
 const SUGGESTIONS = [
-  '💰 今年财运怎么样？',
-  '💕 我和TA适合在一起吗？',
-  '🌙 最近总是失眠做噩梦',
-  '🚀 事业转型时机分析',
-  '🔥 我的命格五行缺什么？'
+  'home.sug1',
+  'home.sug2',
+  'home.sug3',
+  'home.sug4',
+  'home.sug5'
 ];
 
 const FEATURES = [
-  { href: '/bugua', iconSrc: '/images/nav-icons/bagua.svg', name: '卜卦', desc: '排盘·多术数推演 · 点击开始' },
-  { href: '/ming', iconSrc: '/images/nav-icons/ming.svg', name: '测字起名', desc: '测字·五格·起名·合婚' },
-  { href: '/tarot', iconSrc: '/images/nav-icons/tarot.svg', name: '塔罗', desc: '5种牌阵·AI情境解读' },
-  { href: '/horoscope', iconSrc: '/images/nav-icons/horoscope.svg', name: '星座', desc: '本命盘·运势·配对' },
-  { href: '/numerology', iconSrc: '/images/nav-icons/numerology.svg', name: '数字密码', desc: '生命灵数·九宫格·流年' },
-  { href: '/dream', iconSrc: '/images/nav-icons/dream.svg', name: '周公解梦', desc: '梦境解析·吉凶预兆' },
-  { href: '/fengshui', iconSrc: '/images/nav-icons/fengshui.svg', name: '风水', desc: '家居·八字喜忌·方位' }
+  { href: '/bugua', iconSrc: '/images/nav-icons/bagua.svg', nameKey: 'home.feat.bugua', descKey: 'home.feat.buguaDesc' },
+  { href: '/ming', iconSrc: '/images/nav-icons/ming.svg', nameKey: 'home.feat.ming', descKey: 'home.feat.mingDesc' },
+  { href: '/tarot', iconSrc: '/images/nav-icons/tarot.svg', nameKey: 'home.feat.tarot', descKey: 'home.feat.tarotDesc' },
+  { href: '/horoscope', iconSrc: '/images/nav-icons/horoscope.svg', nameKey: 'home.feat.horoscope', descKey: 'home.feat.horoscopeDesc' },
+  { href: '/numerology', iconSrc: '/images/nav-icons/numerology.svg', nameKey: 'home.feat.numerology', descKey: 'home.feat.numerologyDesc' },
+  { href: '/dream', iconSrc: '/images/nav-icons/dream.svg', nameKey: 'home.feat.dream', descKey: 'home.feat.dreamDesc' },
+  { href: '/fengshui', iconSrc: '/images/nav-icons/fengshui.svg', nameKey: 'home.feat.fengshui', descKey: 'home.feat.fengshuiDesc' }
 ];
 
 /**
@@ -101,6 +102,7 @@ const HOME_WELCOME: ChatMessage = {
  * 渲染统一交给 <AiChatWindow />，与 dream / healing 三页样式功能一致。
  */
 export default function HomePage() {
+  const { t } = useI18n();
   const [cta, setCta] = useState<HomeAgentCta | null>(null);
   const [restored, setRestored] = useState(false);
   // CTA 是首页专属逻辑（后端 meta 事件下发），单独用 ref 承接，落盘时一并写入
@@ -219,31 +221,31 @@ export default function HomePage() {
   return (
     <div className="page active" id="page-home">
       <div className="hero-section">
-        <div className="hero-badge">✨ AI 驱动 · 多术数交叉验证 · 一站式命运探索</div>
+        <div className="hero-badge">{t('home.badge')}</div>
         <h1 className="hero-title">
-          <span className="gradient-text">探索未知的自己，从玄镜开始</span>
+          <span className="gradient-text">{t('home.title')}</span>
         </h1>
         <div className="hero-subtitle">
-          <p>跨越东西方千年智慧，融汇八字、紫微、塔罗、星座、数字命理与风水之精髓</p>
-          <p className="hero-subtitle-sub">AI 为您量身推演专属命理方案，让每一步抉择皆有迹可循。</p>
+          <p>{t('home.sub1')}</p>
+          <p className="hero-subtitle-sub">{t('home.sub2')}</p>
         </div>
       </div>
 
       {/* AI 对话面板（首页通用命理助手）—— 统一渲染壳 AiChatWindow */}
       <AiChatWindow
         className="home-chat"
-        title="小玄 · 通用命理助手"
-        status="在线 · 事业/感情/财运/健康都能聊"
+        title={t('home.assistantTitle')}
+        status={t('home.assistantStatus')}
         messages={messages}
         input={chat.input}
         onInputChange={chat.setInput}
         onSend={() => chat.send()}
-        inputPlaceholder="例如：我最近事业遇到瓶颈，不知道该不该换工作…"
+        inputPlaceholder={t('home.inputPlaceholder')}
         inputDisabled={streaming}
         onClear={clearChat}
         scrollRef={chat.scrollRef}
         headerExtra={
-          <Link href="/bugua" className="hero-cta">开始免费排盘 →</Link>
+          <Link href="/bugua" className="hero-cta">{t('home.cta')}</Link>
         }
         belowMessages={
           <div className="home-chat-foot">
@@ -256,8 +258,8 @@ export default function HomePage() {
             ) : null}
             <div className="ai-suggestions">
               {SUGGESTIONS.map((s) => (
-                <div key={s} className="ai-suggestion-chip" onClick={() => chat.send(s)}>
-                  {s}
+                <div key={s} className="ai-suggestion-chip" onClick={() => chat.send(t(s))}>
+                  {t(s)}
                 </div>
               ))}
             </div>
@@ -287,10 +289,10 @@ export default function HomePage() {
         {FEATURES.map((f) => (
           <Link key={f.href} href={f.href} className={`feature-card${f.href === '/bugua' ? ' feature-card--hot' : ''}`}>
             <div className="feature-icon">
-              <img src={f.iconSrc} className="feature-icon-img" alt={f.name} />
+              <img src={f.iconSrc} className="feature-icon-img" alt={t(f.nameKey)} />
             </div>
-            <div className="feature-name">{f.name}</div>
-            <div className="feature-desc">{f.desc}</div>
+            <div className="feature-name">{t(f.nameKey)}</div>
+            <div className="feature-desc">{t(f.descKey)}</div>
           </Link>
         ))}
       </div>

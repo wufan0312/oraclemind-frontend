@@ -2,6 +2,7 @@
 
 import { storage, registerLegacy } from './storage';
 import { removeCloudItem, setCloudItem } from './cloudStore';
+import { pushTrajectory } from './trajectory';
 
 // 跨页占卜共享池：数字命理 / 塔罗 / 星座 在各自独立页面生成，
 // 综合运势（卜卦页 · 模块7）读取此池，将近期测算结果一并融合解读。
@@ -47,6 +48,8 @@ export function pushCrossReading(r: Omit<CrossReading, 'ts'>): void {
     const list = getCrossReadings().filter((x) => x.type !== r.type);
     list.push({ ...r, ts: Date.now() });
     setCloudItem(CROSS_KEY, JSON.stringify(list)); // P1-8：本地乐观 + 异步上云
+    // 同步追加进「命运轨迹」（只追加不去重，供时间线 + 月度复盘；竞品留存体系）
+    pushTrajectory({ type: r.type, label: r.label, summary: r.summary });
   } catch {
     /* 存储不可用（隐私模式等）则跳过 */
   }

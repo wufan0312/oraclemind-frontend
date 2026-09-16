@@ -231,7 +231,7 @@ export default function PaywallModal({
             {err && <div className="paywall-err">{err}</div>}
 
             <div className="paywall-note">
-              玄镜坚持基础功能永久免费，进阶内容自愿解锁；测算结果仅供娱乐参考，不构成决策依据。
+              玄镜坚持基础功能永久免费，进阶内容自愿解锁；付费仅为自愿支持创作，不影响任何免费测算与解读。所有结果仅供娱乐参考，不构成决策依据。
             </div>
           </>
         )}

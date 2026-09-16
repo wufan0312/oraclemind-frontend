@@ -4,6 +4,7 @@ import { VisitorProvider } from '@/components/visitor/VisitorProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import ToastContainer from '@/components/ui/Toast';
 import CacheSweeper from '@/components/system/CacheSweeper';
+import { I18nProvider } from '@/lib/i18n';
 
 // 全局样式（基础层，全路由共享）：设计令牌 → 基础/动画 → 布局 → 组件库
 // 模块级样式（bugua/tarot/horoscope/dream/numerology/ming/fengshui/healing/report/admin/login
@@ -17,6 +18,8 @@ import '@/styles/components.scss';
 // 组件库 DateTimePicker 的样式：被 bugua / horoscope / numerology / ming 多页共用，需全局加载
 // （2026-09-08 从 horoscope.scss 抽出，避免拆分后仅 horoscope 有样式的局部化问题）
 import '@/components/ui/DateTimePicker.scss';
+// BirthDatePicker 出生日期选择器：被 bugua / horoscope / numerology / ming 多页共用，需全局加载
+import '@/components/ui/BirthDatePicker.scss';
 // Cascader 级联选择器：被 horoscope / bugua 多页共用，需全局加载
 // （2026-09-10 从 horoscope.scss 抽出，避免仅 horoscope 有样式的局部化问题）
 import '@/components/ui/Cascader.scss';
@@ -29,11 +32,15 @@ import '@/components/ui/AIInterpretation.scss';
 import '@/styles/growth-card.scss';
 // 付费墙（PaywallModal / PremiumUnlockButton）被 tarot / horoscope 跨页共用，需全局加载
 import '@/styles/premium.scss';
+// 全站页脚（隐私政策 / 数据删除入口 / 18+ 与娱乐免责）与出生信息单独同意条
+import '@/styles/footer.scss';
+import '@/styles/lang-switch.scss';
+import '@/styles/birth-consent.scss';
 // 注：iconfont 基础类与尺寸工具类已合并进 components.scss 末尾，避免新增 scss 模块导致的 module resolve 缓存问题
 
 export const metadata: Metadata = {
-  title: '玄镜 OracleMind',
-  description: 'AI 驱动 · 多术数交叉验证 · 一站式命运探索'
+  title: 'Xuanjing · AI Cultural Experience',
+  description: 'AI-powered multi-system cultural experience — Bazi, Zi Wei, Tarot, astrology, numerology and fengshui.'
 };
 
 /**
@@ -55,7 +62,7 @@ const ICONFONT_CDN = (process.env.NEXT_PUBLIC_ICONFONT_CDN ?? '').trim() || DEFA
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-CN">
+    <html lang="en">
       <head>
         {/* iconfont font-class：有 CDN 才注入，避免 404 请求占位地址 */}
         {ICONFONT_CDN && <link rel="stylesheet" href={ICONFONT_CDN} crossOrigin="anonymous" />}
@@ -63,10 +70,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AuthProvider>
           <VisitorProvider>
-            <AppShell>{children}</AppShell>
-            <ToastContainer />
-            {/* 启动后清扫本地缓存（P1-3）：清过期 + 超限淘汰，不渲染任何 UI */}
-            <CacheSweeper />
+            <I18nProvider>
+              <AppShell>{children}</AppShell>
+              <ToastContainer />
+              {/* 启动后清扫本地缓存（P1-3）：清过期 + 超限淘汰，不渲染任何 UI */}
+              <CacheSweeper />
+            </I18nProvider>
           </VisitorProvider>
         </AuthProvider>
       </body>

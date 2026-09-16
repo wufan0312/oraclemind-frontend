@@ -61,6 +61,8 @@ export const CLOUD_KEYS: readonly string[] = [
   'om_growth',
   'om_notifications',
   'om_premium_unlocks',
+  // 命运轨迹（用户成长留存：时间线 + 月度复盘的数据源）
+  'om_trajectory',
 ];
 
 /**

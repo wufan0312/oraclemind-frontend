@@ -10,7 +10,8 @@ import Card from '@/components/ui/Card';
 import OmLoading from '@/components/ui/OmLoading';
 import CrossPageLink from '@/components/ui/CrossPageLink';
 import SectionIcon from '@/components/ui/SectionIcon';
-import { DatePicker, TimePicker } from '@/components/ui/DateTimePicker';
+import { TimePicker } from '@/components/ui/DateTimePicker';
+import { BirthDatePicker } from '@/components/ui/BirthDatePicker';
 import Cascader from '@/components/ui/Cascader';
 import Select from '@/components/ui/Select';
 import { StreamingText } from '@/components/ui/StreamingText';
@@ -979,8 +980,12 @@ export default function HoroscopePage() {
       <Card className="natal-combined-card">
           <div className="birth-form antd-form">
             <div className="birth-field">
-              <label>出生日期</label>
-              <DatePicker value={birthDate} onChange={onBirthDateChange} placeholder="请选择出生日期" />
+              <BirthDatePicker
+                value={{ date: birthDate, mode: 'solar' }}
+                onChange={(v) => onBirthDateChange(v.date)}
+                label=""
+                placeholder="请选择出生日期"
+              />
             </div>
             <div className="birth-field">
               <div className="label-box">
@@ -1736,7 +1741,7 @@ export default function HoroscopePage() {
           <div className="syn-person">
             <div className="syn-person-label">B · TA</div>
             <div className="syn-picker-group">
-              <DatePicker value={synDate2} onChange={setSynDate2} placeholder="出生日期" />
+              <BirthDatePicker value={{ date: synDate2, mode: 'solar' }} onChange={(v) => setSynDate2(v.date)} label="" placeholder="出生日期" />
               <TimePicker value={synTime2} onChange={setSynTime2} placeholder="出生时间" disabled={synUnknownTime2} />
               <Cascader
                 value={[synProvince2, synCity2]}

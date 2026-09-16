@@ -5,22 +5,25 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { unreadCount } from '@/lib/notifications';
+import { useI18n } from '@/lib/i18n';
+import LanguageSwitch from './LanguageSwitch';
 
 export interface NavItem {
   href: string;
   label: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: '首页' },
-  { href: '/bugua', label: '卜卦' },
-  { href: '/tarot', label: '塔罗' },
-  { href: '/horoscope', label: '星座' },
-  { href: '/numerology', label: '数字密码' },
-  { href: '/ming', label: '测字·起名·合婚' },
-  { href: '/dream', label: '周公解梦' },
-  { href: '/fengshui', label: '风水' },
-  { href: '/healing', label: '疗愈' }
+const NAV_ITEMS: { href: string; key: string }[] = [
+  { href: '/', key: 'nav.home' },
+  { href: '/bugua', key: 'nav.bugua' },
+  { href: '/tarot', key: 'nav.tarot' },
+  { href: '/horoscope', key: 'nav.horoscope' },
+  { href: '/numerology', key: 'nav.numerology' },
+  { href: '/ming', key: 'nav.ming' },
+  { href: '/dream', key: 'nav.dream' },
+  { href: '/fengshui', key: 'nav.fengshui' },
+  { href: '/healing', key: 'nav.healing' },
+  { href: '/trajectory', key: 'nav.trajectory' }
 ];
 
 /**
@@ -46,6 +49,7 @@ const NAV_ITEMS: NavItem[] = [
 export default function TopNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useI18n();
   const { user, isAuthed, ready, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -91,7 +95,7 @@ export default function TopNav() {
   return (
     <nav className="top-nav">
       <Link href="/" className="nav-logo">
-        <img src="/images/logo.png" alt="玄镜 OracleMind" className="logo-img" />
+        <img src="/images/logo.png" alt={t('footer.brand')} className="logo-img" />
       </Link>
       <div className="nav-links">
         {NAV_ITEMS.map((item) => (
@@ -100,20 +104,21 @@ export default function TopNav() {
             href={item.href}
             className={'nav-link' + (pathname === item.href ? ' active' : '')}
           >
-            {item.label}
+            {t(item.key)}
           </Link>
         ))}
       </div>
       {/* 右侧顺序（用户指定）：我的报告 → 开通会员 → 昵称/登录（铃铛已移除） */}
       <div className="nav-right">
+        <LanguageSwitch />
         <Link href="/report" className={'nav-btn nav-report-btn' + (pathname === '/report' ? ' active' : '')}>
-          📊 我的报告
+          {t('nav.report')}
         </Link>
-        <Link
+          <Link
           href="/member"
           className={'nav-btn btn-primary nav-member-btn' + (pathname === '/member' ? ' active' : '')}
         >
-          开通会员
+          {t('nav.member')}
         </Link>
         {ready && isAuthed && user ? (
           <div
@@ -145,12 +150,12 @@ export default function TopNav() {
             <div className="nav-user-dropdown" role="menu" aria-label="账号菜单">
               <Link href="/notifications" className="nav-user-item" role="menuitem">
                 <span className="nav-user-item-icon" aria-hidden="true">🔔</span>
-                消息通知
+                {t('nav.notifications')}
                 {unread > 0 && <span className="nav-user-item-count">{unread > 99 ? '99+' : unread}</span>}
               </Link>
               <Link href="/profile" className="nav-user-item" role="menuitem">
                 <span className="nav-user-item-icon" aria-hidden="true">👤</span>
-                个人中心
+                {t('nav.profile')}
               </Link>
               <button
                 type="button"
@@ -159,12 +164,12 @@ export default function TopNav() {
                 onClick={onLogout}
               >
                 <span className="nav-user-item-icon" aria-hidden="true">⏻</span>
-                退出登录
+                {t('nav.logout')}
               </button>
             </div>
           </div>
         ) : (
-          <Link href="/login" className="nav-btn btn-ghost">登录</Link>
+          <Link href="/login" className="nav-btn btn-ghost">{t('nav.login')}</Link>
         )}
       </div>
     </nav>

@@ -1,0 +1,57 @@
+// ===== 出生信息单独同意条（PIPL 敏感个人信息单独同意） =====
+.birth-consent {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  background: rgba(17, 24, 39, 0.94);
+  color: #fff;
+  padding: 12px 16px;
+}
+
+.birth-consent-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.birth-consent-text {
+  font-size: 13px;
+  line-height: 1.6;
+  flex: 1 1 320px;
+}
+
+.birth-consent-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.birth-consent-link {
+  color: #93c5fd;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.birth-consent-link:hover {
+  text-decoration: underline;
+}
+
+.birth-consent-btn {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.birth-consent-btn:hover {
+  background: #4f46e5;
+}
