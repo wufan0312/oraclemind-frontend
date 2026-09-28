@@ -1,0 +1,475 @@
+/* ============================================================================
+ * 玄镜 · 心理量表页（/scales + /scales/[slug]）—— 右轨 MVP
+ * 完全走全局暗色令牌（tokens.scss）：--bg-card / --border / --text-* / --primary，
+ * 卡片复用全局 .result-card，这里只补量表专属的介绍卡 / 作答流 / 结果条。
+ * ==========================================================================*/
+
+// ---- 页面容器 ----
+.scales-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+
+  // 锚点滚动留出固定头部高度，避免结果卡顶部被遮
+  .result-card {
+    scroll-margin-top: 72px;
+  }
+}
+
+// ---- 页头 ----
+.sc-page-head {
+  margin: 4px 0 10px;
+}
+
+.sc-page-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sc-page-subtitle {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.sc-page-intro {
+  margin: 4px 0 18px;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+
+.sc-page-footnote {
+  margin-top: 24px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+// ---- 列表卡片 ----
+.sc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sc-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: var(--border-active);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+}
+
+.sc-card-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sc-card-tagline {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--primary-light);
+  line-height: 1.6;
+}
+
+.sc-card-desc {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sc-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.sc-meta-dot {
+  opacity: 0.6;
+}
+
+.sc-card-action {
+  margin-top: 14px;
+}
+
+// ---- 介绍页 ----
+.sc-intro-card {
+  padding: 24px 20px;
+}
+
+.sc-title {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.sc-tagline {
+  margin: 8px 0 0;
+  font-size: 13.5px;
+  color: var(--primary-light);
+  line-height: 1.7;
+}
+
+.sc-desc {
+  margin: 14px 0 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+.sc-intro-meta {
+  margin-top: 14px;
+}
+
+.sc-principles {
+  margin: 16px 0 0;
+  padding-left: 18px;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  line-height: 1.9;
+
+  li + li {
+    margin-top: 4px;
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+}
+
+.sc-disclaimer {
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.sc-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.sc-back-link {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-decoration: none;
+  transition: var(--transition);
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}
+
+.sc-back-row {
+  margin-top: 16px;
+  text-align: center;
+}
+
+// ---- 作答页 ----
+.sc-quiz-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 4px 0 10px;
+}
+
+.sc-quiz-count {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+
+  strong {
+    color: var(--primary-light);
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.sc-quiz-progress-num {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-progress-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+
+.sc-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  transition: width 0.3s ease;
+}
+
+.sc-question-card {
+  margin-top: 18px;
+  padding: 26px 20px;
+}
+
+.sc-question-text {
+  margin: 0 0 20px;
+  font-size: 16.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.75;
+}
+
+.sc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sc-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 14.5px;
+  font-family: inherit;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-active);
+    color: var(--text-primary);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &.is-picked {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+}
+
+.sc-quiz-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+// ---- 结果页 ----
+.sc-result-head {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.sc-result-kicker {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--primary-light);
+}
+
+.sc-dim-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.sc-dim-card {
+  padding: 16px 18px;
+}
+
+.sc-dim-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.sc-dim-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sc-dim-score {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-dim-bar-track {
+  height: 6px;
+  margin-top: 10px;
+  border-radius: 3px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+
+.sc-dim-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  transition: width 0.6s ease;
+}
+
+.sc-dim-band {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--primary-light);
+  font-weight: 500;
+}
+
+.sc-dim-text {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.85;
+}
+
+.sc-summary-card {
+  margin-top: 14px;
+  padding: 18px 20px;
+}
+
+.sc-section-label {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sc-summary-text {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+// ---- AI 心理报告（结果页）----
+.sc-report-card {
+  margin-top: 14px;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--border));
+}
+
+.sc-report-hint {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+
+  strong {
+    color: var(--primary-light);
+    font-weight: 600;
+  }
+}
+
+.sc-report-price {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.sc-report-err {
+  margin: 0;
+  font-size: 13px;
+  color: #ff9a8b;
+  line-height: 1.8;
+}
+
+/* markdown 渲染容器（与 mdToHtml 输出对齐，全局令牌着色） */
+.sc-report-md {
+  margin-top: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.95;
+  word-break: break-word;
+
+  h1, h2, h3 {
+    color: var(--text-primary);
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 18px 0 10px;
+  }
+  h1 { font-size: 18px; }
+  h2 { font-size: 16.5px; }
+  h3 { font-size: 15px; }
+  h1:first-child, h2:first-child, h3:first-child { margin-top: 0; }
+
+  p { margin: 0 0 12px; }
+
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin: 4px 0; }
+
+  strong { color: var(--text-primary); font-weight: 600; }
+  em { font-style: normal; color: var(--primary-light); }
+
+  blockquote {
+    margin: 0 0 12px;
+    padding: 8px 12px;
+    border-left: 3px solid var(--primary);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    border-radius: 0 8px 8px 0;
+  }
+
+  code {
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--bg-card);
+    color: var(--primary-light);
+    font-size: 12.5px;
+  }
+}
+
+.sc-report-cursor {
+  display: inline-block;
+  margin-left: 1px;
+  color: var(--primary-light);
+  animation: sc-blink 1s steps(2, start) infinite;
+}
+@keyframes sc-blink {
+  to { opacity: 0; }
+}
+

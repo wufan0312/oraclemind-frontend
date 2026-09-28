@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Button from '@/components/ui/Button';
 import PaywallModal from './PaywallModal';
-import { isUnlocked, type PremiumItemId } from '@/lib/premium';
+import { isUnlocked, isItemPaused, type PremiumItemId } from '@/lib/premium';
 
 /**
  * 付费解锁入口按钮（内含付费墙弹窗）
@@ -31,6 +31,9 @@ export default function PremiumUnlockButton({
     window.addEventListener('om:premium-change', onChange);
     return () => window.removeEventListener('om:premium-change', onChange);
   }, [refresh]);
+
+  // 合规重定位：占卜类商品暂停销售，不渲染解锁入口
+  if (isItemPaused(item)) return null;
 
   return (
     <>

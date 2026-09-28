@@ -2,15 +2,19 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { unreadCount } from '@/lib/notifications';
 
 export interface NavItem {
   href: string;
   label: string;
+  children?: NavItem[];
 }
 
+// 2026-09-20 重构：经典·读经 / 静心冥想 从「自我觉察」下拉拆出为独立顶级导航项
+// （二者均已拆为独立模块页 /classics、/meditation，内容与疗愈存档互通）；
+// 测评 / 量表 仍留在「自我觉察」下拉内（本身即独立页面 /assessment、/scales）。
 const NAV_ITEMS: NavItem[] = [
   { href: '/', label: '首页' },
   { href: '/bugua', label: '卜卦' },
@@ -19,9 +23,38 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/numerology', label: '数字密码' },
   { href: '/ming', label: '测字·起名·合婚' },
   { href: '/dream', label: '周公解梦' },
-  { href: '/fengshui', label: '风水' },
+  {
+    href: '/self-awareness',
+    label: '自我觉察',
+    children: [
+      { href: '/assessment', label: '测评' },
+      { href: '/scales', label: '量表' },
+    ],
+  },
+  { href: '/classics', label: '经典 · 读经' },
+  { href: '/meditation', label: '静心冥想' },
   { href: '/healing', label: '疗愈' }
 ];
+
+// 判断某导航项（含下拉）是否为当前激活：自身或任一子项匹配 pathname
+function isNavActive(item: NavItem, pathname: string): boolean {
+  if (item.children) return item.children.some(c => pathname === c.href || pathname.startsWith(c.href + '/'));
+  return pathname === item.href || pathname.startsWith(item.href + '/');
+}
+
+/**
+ * 首页带问题跳转的承接目标（与首页 buildNavHref 同款行为）：
+ * - bugua：?autodiv=1 预填「所问之事」并自动起局
+ * - tarot：?autostart=1 预填问题并自动开牌
+ * - horoscope / numerology：仅 ?q= 顶部提示条承接
+ * 诉求存在 sessionStorage `om_home_lastq`（首页 page.tsx 写入）。
+ */
+const Q_TARGETS: Record<string, 'autodiv' | 'autostart' | null> = {
+  '/bugua': 'autodiv',
+  '/tarot': 'autostart',
+  '/horoscope': null,
+  '/numerology': null
+};
 
 /**
  * 顶部导航 —— 复刻原型 top-nav / nav-logo / nav-links / nav-report-btn
@@ -49,6 +82,8 @@ export default function TopNav() {
   const { user, isAuthed, ready, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  // 自我觉察下拉（hover 显示；移动端点击切换，open 态）
+  const [navDrop, setNavDrop] = useState<string | null>(null);
   // 未读消息数：铃铛已移除（用户 2026-09-10 要求），改在昵称右上角以数字徽章呈现
   const [unread, setUnread] = useState(0);
 
@@ -62,6 +97,7 @@ export default function TopNav() {
   // 路由变化后收起（点「个人中心」跳转后不留残影）
   useEffect(() => {
     setMenuOpen(false);
+    setNavDrop(null);
   }, [pathname]);
 
   // Esc 关闭 + 点击菜单外部关闭
@@ -88,21 +124,71 @@ export default function TopNav() {
     router.replace('/');
   };
 
+  // 仅在首页时，把用户说过的最后一句诉求带进承接目标页（点击时读 sessionStorage，避开 SSR 水合问题）
+  const onNavClick = (e: ReactMouseEvent<HTMLAnchorElement>, href: string) => {
+    if (pathname !== '/' || !(href in Q_TARGETS)) return;
+    let q = '';
+    try {
+      q = window.sessionStorage.getItem('om_home_lastq') || '';
+    } catch {
+      return;
+    }
+    if (!q) return;
+    e.preventDefault();
+    const trimmed = q.length > 60 ? `${q.slice(0, 60)}…` : q;
+    const params = new URLSearchParams({ q: trimmed });
+    const flag = Q_TARGETS[href];
+    if (flag) params.set(flag, '1');
+    router.push(`${href}?${params.toString()}`);
+  };
+
   return (
     <nav className="top-nav">
       <Link href="/" className="nav-logo">
         <img src="/images/logo.png" alt="玄镜 OracleMind" className="logo-img" />
       </Link>
       <div className="nav-links">
-        {NAV_ITEMS.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={'nav-link' + (pathname === item.href ? ' active' : '')}
-          >
-            {item.label}
-          </Link>
-        ))}
+        {NAV_ITEMS.map((item) =>
+          item.children ? (
+            <div
+              key={item.href}
+              className={'nav-dropdown-wrap' + (isNavActive(item, pathname) ? ' active' : '') + (navDrop === item.href ? ' open' : '')}
+              onMouseLeave={() => setNavDrop(null)}
+            >
+              <button
+                type="button"
+                className="nav-link nav-dropdown-trigger"
+                aria-haspopup="menu"
+                aria-expanded={navDrop === item.href}
+                onClick={() => setNavDrop((v) => (v === item.href ? null : item.href))}
+              >
+                {item.label}
+                <span className="nav-dropdown-caret" aria-hidden="true">▾</span>
+              </button>
+              <div className="nav-dropdown" role="menu" aria-label={item.label}>
+                {item.children.map((c) => (
+                  <Link
+                    key={c.href}
+                    href={c.href}
+                    className={'nav-dropdown-item' + (pathname === c.href ? ' active' : '')}
+                    role="menuitem"
+                  >
+                    {c.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={'nav-link' + (pathname === item.href ? ' active' : '')}
+              onClick={(e) => onNavClick(e, item.href)}
+            >
+              {item.label}
+            </Link>
+          )
+        )}
       </div>
       {/* 右侧顺序（用户指定）：我的报告 → 开通会员 → 昵称/登录（铃铛已移除） */}
       <div className="nav-right">

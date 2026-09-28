@@ -23,30 +23,37 @@ yarn-debug.log*
 yarn-error.log*
 
 # 本地私有覆盖（含密钥 / 个人地址，禁止提交）
-# 注意：.env*.local 在任何环境下都会被 Next 加载（production 构建也不例外），
-# 所以这里只能放「仅本人生效」的覆盖项；开发默认值请统一放 .env.development。
+# 注意�?.env*.local 在任何环境下都会�? Next 加载（production 构建也不例外），
+# 所以这里只能放「仅本人生效」的覆盖项；开发默认值请统一�? .env.development�?
 .env*.local
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
-# 本地验证与一次性脚本（不推仓库）
+# 本地验证与一次性脚本（不推仓库�?
 .verify/
 .scripts/
 
 # 临时构建垃圾目录
 .next_trash_*/
 # 注：dev 启动失败回滚时会留下形如 .next.old-1788957217 的目录（时间戳后缀），
-# 旧规则只覆盖 .next_trash_*/，漏掉了它，导致 GB 级残留被误纳入版本控制。
+# 旧规则只覆盖 .next_trash_*/，漏掉了它，导致 GB 级残留被误纳入版本控制�?
 .next.old-*/
 
 # ===== 环境变量 =====
-# 按环境分发的默认配置：随仓库提交，保证「克隆即用」。
-# 这两个文件只放非敏感的地址类配置（服务域名 / CDN / 站点地址），禁止写任何密钥。
-# 密钥一律走 Vercel 项目面板，或本地 .env / .env.local。
+# 按环境分发的默认配置：随仓库提交，保证「克隆即用」�?
+# 这两个文件只放非敏感的地址类配置（服务域名 / CDN / 站点地址），禁止写任何密钥�?
+# 密钥一律走 Vercel 项目面板，或本地 .env / .env.local�?
 !.env.development
 !.env.production
 !.env.example
 # .env 是个人本地兜底文件（可能含密钥），不提交
 .env
+
+# 仓库重建(2026-09-28)补充排除：本地归档与项目数据
+.archive/
+
+# �� .git �ı���Ŀ¼��������汾����
+.git.broken/
+

@@ -78,7 +78,7 @@ export const CARD_DIMENSIONS: Record<string, Record<DimensionKey, string>> = {
   // ---------- 宝剑（风 · 思维）----------
   '宝剑首牌': { love: '想清楚再开始，坦诚谈', career: '新思路，到了决策点', wealth: '靠点子赚钱', health: '头脑清醒，留意头部' },
   '宝剑二': { love: '僵持，回避做选择', career: '信息不足，暂缓推进', wealth: '账目未清，不宜动', health: '心理压力大，宜倾诉' },
-  '宝剑三': { love: '心碎，真相伤人', career: '坏消息，受到挫折', wealth: '破财又伤心', health: '留意心脏与情绪创伤' },
+  '宝剑三': { love: '心碎，真相伤人', career: '坏消息，受到挫折', wealth: '情绪影响判断，破财先稳心', health: '留意心脏与情绪创伤' },
   '宝剑四': { love: '冷静期，暂时分开', career: '休整，暂停推进', wealth: '停止支出，休养生息', health: '需要静养与睡眠' },
   '宝剑五': { love: '赢了争吵，输了关系', career: '零和博弈，得不偿失', wealth: '争利伤和气', health: '压力致头痛' },
   '宝剑六': { love: '渐行渐远，和平分开', career: '过渡期，换个环境', wealth: '缓慢改善', health: '转地疗养有利' },

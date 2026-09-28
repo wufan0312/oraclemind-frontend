@@ -81,7 +81,7 @@ export function xuanRespond(question: string): string {
     '道|老子|自然|无为': () =>
       '老子说「人法地，地法天，天法道，道法自然」——最高的秩序是不勉强。庄子教人「坐忘」：放下形骸与聪明，与大道同游。静坐时把「努力放松」也放下，不追求状态，不评判好坏，虚静自会到来。',
     '卜卦|排盘|八字|算命': () =>
-      '卜卦像是给心照一面镜子，看看当下的能量在说什么。你可以先去卜卦页试试，做完排盘再来找小玄，小玄会帮你把结果和心法结合起来看。点击导航栏的「卜卦」就可以啦～',
+      '卜卦像是给心照一面镜子，看看当下的能量在说什么。你可以先去卜卦页试试，生成专属的觉察档案后再来找小玄，小玄会帮你把结果和心法结合起来看。点击导航栏的「卜卦」就可以啦～',
     '梦|解梦': () =>
       '梦境是潜意识的语言。你可以去「周公解梦」页输入你的梦境，看看传统解梦和心理学双视角怎么说。做完再来找小玄聊聊，小玄陪你一起想。',
     '塔罗|牌|抽牌': () =>
@@ -91,7 +91,7 @@ export function xuanRespond(question: string): string {
     '数字|灵数|生日': () =>
       '生命灵数把出生日期所有数字逐位相加到个位，代表你的核心天赋。你可以去数字密码页试试，算完再来和小玄聊聊。',
     '风水|方位|布局': () =>
-      '风水是研究环境与人如何和谐共处。你可以去风水页看看九宫飞星和布局建议，做完再来和小玄聊。',
+      '环境会影响心情，但心安处即是归处。与其调整布局，不如先照顾好自己——心斋的呼吸与静心练习，随时随地都能让你安顿下来。',
     '你好|hi|hello|嗨': () =>
       '旅人你好呀～欢迎来到心斋。今天想聊什么？不急，慢慢来，小玄一直在。',
     '谢谢|感谢|thx': () =>
@@ -127,7 +127,7 @@ export const MIRROR_CARDS: MirrorCard[] = [
     icon: '☯️',
     title: '八字心镜',
     source: '日主戊土 · 火土偏旺',
-    data: '你的命格火土偏旺，为人踏实稳重，但也容易固执己见。2026年火势更旺，宜静不宜动，适合深耕专业领域。',
+    data: '你的五行火土偏旺，为人踏实稳重，但也容易固执己见。2026年火势更旺，宜静不宜动，适合深耕专业领域。',
     yangming: '心即理 — 你的固执，是真心还是惯性？下次遇到分歧，先问良知：这件事的本质是什么？',
     action: '今天试着对一个相反意见说「你说得也有道理」，不必同意，只是听见。'
   },
@@ -284,6 +284,144 @@ export const FULL_SUTRA: SutraLine[] = [
   }
 ];
 
+// ===== 经典文库（经典·读经页 · 可点选品读的经典合集）=====
+// 合规口径：经典作为「照见与体悟」的文本，注释统一落在觉察/当下/放下，不渲染神通吉凶。
+export type ScriptureTradition = '佛' | '道' | '儒' | '诗词';
+
+// 情境/情绪维度：经典文库不再只按"书"排，而是按"你今晚怎么了"排
+export type ScriptureSituation =
+  | '焦虑' | '失眠' | '失恋' | '事业' | '自我怀疑'
+  | '迷茫' | '孤独' | '执念' | '想要平静';
+
+export const SCRIPTURE_SITUATIONS: { key: ScriptureSituation; label: string; emoji: string }[] = [
+  { key: '焦虑', label: '焦虑', emoji: '🌪️' },
+  { key: '失眠', label: '失眠', emoji: '🌙' },
+  { key: '失恋', label: '失恋', emoji: '💔' },
+  { key: '事业', label: '事业卡住', emoji: '🧭' },
+  { key: '自我怀疑', label: '自我怀疑', emoji: '🪞' },
+  { key: '迷茫', label: '迷茫', emoji: '🌫️' },
+  { key: '孤独', label: '孤独', emoji: '🌑' },
+  { key: '执念', label: '放不下', emoji: '🔗' },
+  { key: '想要平静', label: '想平静', emoji: '🍃' },
+];
+
+export interface ScripturePassage {
+  text: string;
+  body: string;
+}
+
+export interface ScriptureItem {
+  id: string;
+  title: string;
+  tradition: ScriptureTradition;
+  source: string;
+  intro: string;
+  /** 该经典能照见的情绪/困境维度，用于"你今晚怎么了"筛选 */
+  situations: ScriptureSituation[];
+  passage: ScripturePassage[];
+}
+
+export const SCRIPTURE_LIBRARY: ScriptureItem[] = [
+  {
+    id: 'daode',
+    title: '道德经',
+    tradition: '道',
+    source: '老子',
+    intro: '道家根本经典。老子以「道」为万物本源，教人在喧嚣里回到虚静，不强求而自在。',
+    situations: ['焦虑', '执念', '想要平静', '自我怀疑'],
+    passage: [
+      { text: '致虚极，守静笃。万物并作，吾以观复。', body: '把心放到最空、最静的状态，看世间万物生发又归复。静不是不动，是看清来去的定力。' },
+      { text: '上善若水。水善利万物而不争，处众人之所恶，故几于道。', body: '最好的状态像水：滋养万物却不争抢，甘处低位。不争，反得自在——这是柔软的力量。' },
+      { text: '人法地，地法天，天法道，道法自然。', body: '人效法大地，大地效法天，天效法道，道只效法它本来的样子。最高的秩序，是不勉强。' },
+    ],
+  },
+  {
+    id: 'jingang',
+    title: '金刚经',
+    tradition: '佛',
+    source: '鸠摩罗什译',
+    intro: '般若经典之王。全经讲「应无所住而生其心」，教人放下对一切相的执着。',
+    situations: ['执念', '焦虑', '迷茫'],
+    passage: [
+      { text: '凡所有相，皆是虚妄。若见诸相非相，即见如来。', body: '你看见的一切形相都在变化、并不恒常。能看穿「相」背后的空性，便触及了真实。' },
+      { text: '一切有为法，如梦幻泡影，如露亦如电，应作如是观。', body: '所有因缘聚合的事，都像梦、像泡影、像露水闪电般短暂。这样去看，便不会被困在得失里。' },
+    ],
+  },
+  {
+    id: 'lunyu',
+    title: '论语',
+    tradition: '儒',
+    source: '孔子及弟子',
+    intro: '儒家言行录。孔子不说玄虚，只讲如何在日用之间把人做好、把心安顿。',
+    situations: ['事业', '迷茫', '自我怀疑', '想要平静'],
+    passage: [
+      { text: '学而时习之，不亦说乎？', body: '学了，又在日常里常常温习、实践，那份踏实与欢喜是装不出来的。' },
+      { text: '吾日三省吾身：为人谋而不忠乎？与朋友交而不信乎？传不习乎？', body: '每天回头问自己三件事：尽心了吗？守信了吗？所学的践行了吗？反省，是成长的起点。' },
+      { text: '知之为知之，不知为不知，是知也。', body: '知道就是知道，不知道就承认不知道——这份诚实本身已是智慧。' },
+    ],
+  },
+  {
+    id: 'tanjing',
+    title: '六祖坛经',
+    tradition: '佛',
+    source: '惠能',
+    intro: '中国禅宗根本经典，主张「即心即佛」，顿悟不假外求。',
+    situations: ['自我怀疑', '焦虑', '想要平静'],
+    passage: [
+      { text: '菩提本无树，明镜亦非台。本来无一物，何处惹尘埃。', body: '心本清净，又何须时时擦拭？烦恼多是自己拂上的尘。放下「我在修行」的念头，清净就现前了。' },
+      { text: '佛法在世间，不离世间觉。离世觅菩提，恰如求兔角。', body: '觉悟不在庙里，就在柴米油盐的当下。离开生活去找开悟，就像找兔子头上的角——本就无此物。' },
+    ],
+  },
+  {
+    id: 'zhuangzi',
+    title: '庄子',
+    tradition: '道',
+    source: '庄周',
+    intro: '道家的逍遥之书。庄子用寓言教人松开执念，与变化同游，活得舒展。',
+    situations: ['失恋', '执念', '想要平静', '孤独'],
+    passage: [
+      { text: '且夫水之积也不厚，则其负大舟也无力。', body: '水积得不够深，就托不起大船。厚积，方能载动人生的风浪。' },
+      { text: '泉涸，鱼相与处于陆，相呴以湿，相濡以沫，不如相忘于江湖。', body: '困顿时彼此吐沫相救固然动人，但不如各自回到江河、自在从容。有时放手，才是更深的成全。' },
+    ],
+  },
+  {
+    id: 'shijing',
+    title: '诗经',
+    tradition: '诗词',
+    source: '先秦歌谣',
+    intro: '中国最早的诗歌总集。三千年前的情与景，读来仍心头一热。',
+    situations: ['失恋', '孤独', '迷茫'],
+    passage: [
+      { text: '关关雎鸠，在河之洲。窈窕淑女，君子好逑。', body: '水鸟和鸣，引动少年心头最初的喜欢。美好的情感，本就如自然一样坦荡。' },
+      { text: '蒹葭苍苍，白露为霜。所谓伊人，在水一方。', body: '芦苇茫茫，伊人在水那一边。求而不得的距离里，藏着最温柔的怅惘。' },
+    ],
+  },
+  {
+    id: 'dingfengbo',
+    title: '定风波 · 苏轼',
+    tradition: '诗词',
+    source: '苏轼',
+    intro: '苏轼被贬黄州途中遇雨所作。一场突如其来的雨，被他走成了人生的注脚。',
+    situations: ['焦虑', '失恋', '迷茫', '事业'],
+    passage: [
+      { text: '莫听穿林打叶声，何妨吟啸且徐行。', body: '别管那穿林打叶的雨声，不妨一边吟唱一边慢慢走。外界的风雨，挡不住内心的从容。' },
+      { text: '回首向来萧瑟处，归去，也无风雨也无晴。', body: '回头看那阵风雨，走过去了才发现：既没有雨，也没有晴。起落皆是过眼，心平了天就晴了。' },
+    ],
+  },
+  {
+    id: 'yinjiu',
+    title: '饮酒 · 陶渊明',
+    tradition: '诗词',
+    source: '陶渊明',
+    intro: '陶渊明归隐后的闲适之作。在鸡犬相闻的村居里，他安顿下了一颗不躁的心。',
+    situations: ['焦虑', '想要平静', '孤独'],
+    passage: [
+      { text: '结庐在人境，而无车马喧。问君何能尔？心远地自偏。', body: '住在人群里，却听不到车马喧嚣。秘诀无他——心若疏远了纷扰，地方自然就安静了。' },
+      { text: '采菊东篱下，悠然见南山。', body: '在东篱下采菊，一抬头，南山就在那里。不刻意寻找，美好自会撞个满怀。' },
+    ],
+  },
+];
+
 // ===== 供养心斋 =====
 export interface Offering {
   id: string;
@@ -330,6 +468,10 @@ export interface HealingSave {
   chatCount: number;
   sutraOpened: boolean[];
   sutraRead: boolean;
+  /** 诵读足迹：已诵读日期（YYYY-MM-DD）列表，用于连续/累计天数统计 */
+  sutraDates?: string[];
+  /** 静坐足迹：已完成静坐/冥想日期（YYYY-MM-DD）列表，用于修行日历热力图 */
+  meditationDates?: string[];
   wudao: { text: string; src: string; time: string; likes?: number }[];
   moods: MoodEntry[];
 }
@@ -344,7 +486,7 @@ export function todayStr(): string {
 }
 
 export function defaultSave(): HealingSave {
-  return { date: todayStr(), xp: 0, quests: {}, chatCount: 0, sutraOpened: [], sutraRead: false, wudao: [], moods: [] };
+  return { date: todayStr(), xp: 0, quests: {}, chatCount: 0, sutraOpened: [], sutraRead: false, sutraDates: [], meditationDates: [], wudao: [], moods: [] };
 }
 
 export function loadSave(): HealingSave {
@@ -360,6 +502,8 @@ export function loadSave(): HealingSave {
       s.chatCount = p.chatCount || 0;
       s.sutraOpened = p.sutraOpened || [];
       s.sutraRead = p.sutraRead || false;
+      s.sutraDates = p.sutraDates || [];
+      s.meditationDates = p.meditationDates || [];
       if (p.date !== todayStr()) {
         s.quests = {};
         s.chatCount = 0;
@@ -381,4 +525,28 @@ export function persistSave(s: HealingSave): void {
   } catch (e) {
     /* ignore */
   }
+}
+
+// ===== 每日一偈（经典·读经页首屏）=====
+// 候选池：汇中心经 / 经典文库精华句 / 每日一悟，作为「取一句今日智慧」的来源。
+// 合规口径：仅作照见与体悟，不渲染吉凶神通、不作求签算命。
+export interface VerseItem {
+  text: string;
+  source: string;
+}
+
+export const DAILY_VERSE_POOL: VerseItem[] = [
+  ...HEALING_QUOTES.map(q => ({ text: q.text, source: q.source })),
+  ...SUTRA_LINES.map(s => ({ text: s.text, source: '般若波罗蜜多心经' })),
+  ...FULL_SUTRA.map(s => ({ text: s.text.replace(/\n/g, ' '), source: '般若波罗蜜多心经' })),
+  ...SCRIPTURE_LIBRARY.flatMap(s =>
+    s.passage.map(p => ({ text: p.text, source: `${s.title} · ${s.source}` }))
+  ),
+];
+
+// 按日期字符串生成稳定种子，保证「今天」的偈语全局一致（换一句则用随机）
+export function getDailyVerse(dateStr: string): VerseItem {
+  let h = 0;
+  for (let i = 0; i < dateStr.length; i++) h = (h * 31 + dateStr.charCodeAt(i)) >>> 0;
+  return DAILY_VERSE_POOL[h % DAILY_VERSE_POOL.length];
 }

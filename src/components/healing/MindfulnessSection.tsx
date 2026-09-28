@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SectionIcon from '@/components/ui/SectionIcon';
-import CrossPageLink from '@/components/ui/CrossPageLink';
 import {
   MEDITATION_SESSIONS, AMBIENT_OPTIONS, SLEEP_TIMER_OPTIONS,
+  MEDITATION_TIMER_OPTIONS, MINDFUL_PRACTICES,
   type MeditationSession,
 } from '@/data/healingMindfulness';
 import { startAmbient, type AmbientType, type AmbientHandle } from '@/lib/ambientAudio';
@@ -250,23 +250,36 @@ function SleepSoundscape() {
 }
 
 // ============================================================================
-// 情绪打卡 + 14 天趋势 + 跨页联动（一行三栏，置于供养心斋上方）
+// 情绪打卡 + 14 天趋势 + 心情记录（置于供养心斋上方）
 // ============================================================================
+function todayKey(): string {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+}
+
+function fmtMoodDate(key: string): string {
+  const parts = key.split('-');
+  return parts.length === 3 ? `${Number(parts[1])}月${Number(parts[2])}日` : key;
+}
+
 export function MoodQuickSection({ moods, onLog, onDone }: {
   moods: MoodEntry[];
   onLog: (e: MoodEntry) => void;
-  onDone: () => void;
+  onDone: (isFirstToday: boolean) => void;
 }) {
   const [picked, setPicked] = useState<number | null>(null);
   const [note, setNote] = useState('');
-  const [todayLogged, setTodayLogged] = useState(false);
 
-  // 今日是否已打卡
+  const todayEntry = moods.find(m => m.date === todayKey());
+  const todayLogged = !!todayEntry;
+
+  // 今日已记录时回填心情与备注，避免「打完卡就看不到」
   useEffect(() => {
-    const t = new Date();
-    const key = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
-    setTodayLogged(moods.some(m => m.date === key));
-  }, [moods]);
+    if (!todayEntry) return;
+    const idx = MOOD_OPTIONS.findIndex(o => o.score === todayEntry.score);
+    if (idx >= 0) setPicked(prev => (prev === null ? idx : prev));
+    setNote(prev => (prev ? prev : (todayEntry.note || '')));
+  }, [todayEntry?.date, todayEntry?.score, todayEntry?.note]);
 
   // 构建最近 14 天趋势（key/label 用各天自身的日期 d）
   const days: { date: string; label: string; entry?: MoodEntry }[] = [];
@@ -278,26 +291,34 @@ export function MoodQuickSection({ moods, onLog, onDone }: {
     days.push({ date: key, label: `${d.getMonth() + 1}/${d.getDate()}`, entry: moodByDate.get(key) });
   }
 
+  // 心情记录列表（新 → 旧，最多 8 条）
+  const recent = [...moods].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+
   const submit = () => {
     if (picked === null) return;
-    const t = new Date();
-    const key = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    const isFirst = !todayLogged;
     const opt = MOOD_OPTIONS[picked];
-    const entry: MoodEntry = { date: key, score: opt.score, mood: opt.label, emoji: opt.emoji, note: note.trim() || undefined };
+    const entry: MoodEntry = {
+      date: todayKey(),
+      score: opt.score,
+      mood: opt.label,
+      emoji: opt.emoji,
+      note: note.trim() || undefined,
+    };
     onLog(entry);
-    setTodayLogged(true);
-    setNote('');
-    setPicked(null);
-    onDone();
+    onDone(isFirst);
   };
 
   return (
     <div className="mood-quick-section">
-      <div className="healing-section-title"><SectionIcon name="heart" /> 此刻心绪 · 跨页联动</div>
+      <div className="healing-section-title"><SectionIcon name="heart" /> 此刻心绪</div>
       <div className="mood-quick-grid">
         {/* 此刻，你感觉怎么样？ */}
         <div className="mood-quick-card">
-          <div className="mood-today-title"><SectionIcon name="heart" /> 此刻，你感觉怎么样？</div>
+          <div className="mood-today-title">
+            <span className="mood-today-label"><SectionIcon name="heart" /> 此刻，你感觉怎么样？</span>
+            {todayLogged && <span className="mood-done-badge">✅ 今日已记录</span>}
+          </div>
           <div className="mood-btns-row">
             {MOOD_OPTIONS.map((o, i) => (
               <button key={o.label} className={'mood-btn' + (picked === i ? ' active' : '')} onClick={() => setPicked(i)}>
@@ -308,40 +329,70 @@ export function MoodQuickSection({ moods, onLog, onDone }: {
           </div>
           <textarea
             className="form-input field-pill mood-note"
-            placeholder="想写下点什么吗？（可选）"
+            placeholder="想写下点什么吗？（可选，写给今天的自己）"
             value={note}
             onChange={e => setNote(e.target.value)}
-            disabled={todayLogged}
           />
-          <button className="btn-submit mood-submit" onClick={submit} disabled={picked === null || todayLogged}>
-            {todayLogged ? '✅ 今日已打卡' : '🌈 记录此刻心情'}
+          <button className="btn-submit mood-submit" onClick={submit} disabled={picked === null}>
+            {todayLogged ? '📝 更新今日心情' : '🌈 记录此刻心情'}
           </button>
+          <div className="mood-note-hint">写下后可在下方「我的心情记录」里随时回看与修改</div>
         </div>
 
         {/* 近 14 天情绪走势 */}
         <div className="mood-quick-card">
-          <div className="mood-trend-title">近 14 天情绪走势</div>
+          <div className="mood-trend-head">
+            <span className="mood-trend-title">近 14 天情绪走势</span>
+            <span className="mood-trend-stat">{moods.length ? `已记录 ${moods.length} 天` : '还没有记录'}</span>
+          </div>
           <div className="mood-bars">
-            {days.map(d => {
-              const h = d.entry ? 20 + d.entry.score * 14 : 4;
-              return (
-                <div key={d.date} className="mood-bar-col" title={d.entry ? `${d.label} ${d.entry.emoji} ${d.entry.mood}` : d.label}>
-                  <div className="mood-bar" style={{ height: `${h}px` }}>{d.entry ? <span className="mood-bar-emoji">{d.entry.emoji}</span> : null}</div>
-                  <div className="mood-bar-label">{d.label}</div>
+            {days.map(d => (
+              <div
+                key={d.date}
+                className="mood-bar-col"
+                title={d.entry
+                  ? `${d.label} ${d.entry.emoji} ${d.entry.mood}${d.entry.note ? ' · ' + d.entry.note : ''}`
+                  : `${d.label} 未记录`}
+              >
+                <div
+                  className={'mood-bar s' + (d.entry ? d.entry.score : 0)}
+                  style={{ height: `${d.entry ? 26 + d.entry.score * 16 : 4}px` }}
+                >
+                  {d.entry ? <span className="mood-bar-emoji">{d.entry.emoji}</span> : null}
                 </div>
-              );
-            })}
+                <div className="mood-bar-label">{d.label}</div>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* 跨页联动 */}
-        <CrossPageLink
-          description="想看完整的数据和解读？综合报告汇集八字、紫微、六爻等多术数交叉验证结论。"
-          links={[
-            { icon: '☯️', label: '前往卜卦排盘', href: '/bugua' },
-            { icon: '📊', label: '查看综合报告', href: '/report', variant: 'primary' },
-          ]}
-        />
+      {/* 我的心情记录：打卡后回看处 */}
+      <div className="mood-log-card">
+        <div className="mood-trend-head">
+          <span className="mood-trend-title">我的心情记录</span>
+          {recent.length > 0 && <span className="mood-trend-stat">最近 {recent.length} 条</span>}
+        </div>
+        {recent.length === 0 ? (
+          <div className="mood-log-empty">还没有记录。选一个此刻的心情写下来，它就会出现在这里 🌱</div>
+        ) : (
+          <ul className="mood-log-list">
+            {recent.map(m => (
+              <li key={m.date} className="mood-log-item">
+                <span className="mood-log-emoji">{m.emoji}</span>
+                <div className="mood-log-body">
+                  <div className="mood-log-item-head">
+                    <span className="mood-log-date">{fmtMoodDate(m.date)}</span>
+                    <span className="mood-log-tag">{m.mood}</span>
+                  </div>
+                  {m.note
+                    ? <div className="mood-log-note">{m.note}</div>
+                    : <div className="mood-log-note mood-log-note-empty">这天没有写备注</div>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
@@ -395,6 +446,246 @@ export default function MindfulnessSection({ onSessionDone }: {
       ) : (
         <SleepSoundscape />
       )}
+    </div>
+  );
+}
+
+// ============================================================================
+// 小玄导读 · 冥想入门
+// ============================================================================
+export function MeditationIntro() {
+  return (
+    <div className="med-intro">
+      <div className="med-intro-icon">🌿</div>
+      <div className="med-intro-body">
+        <div className="med-intro-title">小玄导读 · 冥想不是放空，是回到此刻</div>
+        <div className="med-intro-text">
+          冥想不是让脑子变空白，也不是要你「修成什么」。它只是练习：
+          把飘走的注意力，一次次温柔地拉回当下——拉回呼吸，拉回身体，拉回此刻这一小方天地。
+          下面有引导冥想陪你走，也有自定的静坐计时和随手可做的小练习。挑一个，现在就开始。
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 静坐计时器 · 呼吸圆圈 + 时长预设 + 背景声（自定练习）
+// ============================================================================
+export function MeditationTimer({ onDone }: { onDone: () => void }) {
+  const [running, setRunning] = useState(false);
+  const [totalSec, setTotalSec] = useState(MEDITATION_TIMER_OPTIONS[1].sec);
+  const [elapsed, setElapsed] = useState(0);
+  const [ambient, setAmbient] = useState<AmbientType>('none');
+  const [vol, setVol] = useState(0.3);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const handle = useRef<AmbientHandle | null>(null);
+  const doneRef = useRef(false);
+
+  const stopAll = useCallback(() => {
+    if (timer.current) { clearInterval(timer.current); timer.current = null; }
+    if (handle.current) { handle.current.stop(); handle.current = null; }
+  }, []);
+
+  const finish = useCallback(() => {
+    stopAll();
+    setRunning(false);
+    if (!doneRef.current && totalSec > 0) {
+      doneRef.current = true;
+      onDone();
+    }
+  }, [stopAll, onDone, totalSec]);
+
+  const reset = useCallback(() => {
+    stopAll();
+    setRunning(false);
+    setElapsed(0);
+    doneRef.current = false;
+  }, [stopAll]);
+
+  const start = useCallback(() => {
+    if (running) return;
+    doneRef.current = false;
+    setRunning(true);
+    if (ambient !== 'none') handle.current = startAmbient(ambient, vol);
+    if (timer.current) clearInterval(timer.current);
+    timer.current = setInterval(() => {
+      setElapsed(prev => {
+        const n = prev + 1;
+        if (totalSec > 0 && n >= totalSec) { finish(); return totalSec; }
+        return n;
+      });
+    }, 1000);
+  }, [running, ambient, vol, totalSec, finish]);
+
+  const pause = useCallback(() => {
+    setRunning(false);
+    if (timer.current) { clearInterval(timer.current); timer.current = null; }
+    if (handle.current) { handle.current.stop(); handle.current = null; }
+  }, []);
+
+  useEffect(() => () => stopAll(), [stopAll]);
+
+  useEffect(() => {
+    if (running && handle.current) handle.current.setVolume(vol);
+  }, [vol, running]);
+
+  const pct = totalSec > 0 ? Math.min(100, Math.round((elapsed / totalSec) * 100)) : 0;
+  const remain = Math.max(0, totalSec - elapsed);
+  const finished = totalSec > 0 && elapsed >= totalSec;
+
+  return (
+    <div className="med-timer" id="meditation-timer">
+      <div className="healing-section-title"><SectionIcon name="clock" /> 静坐计时 · 自定练习</div>
+      <div className="med-timer-body">
+        <div className="med-timer-circle-wrap">
+          <div className={'med-timer-circle' + (running ? ' running' : '')} style={{ background: `conic-gradient(var(--accent-gold) ${pct}%, rgba(212,168,83,0.12) 0)` }}>
+            <div className="med-timer-inner">
+              <div className="med-timer-time">{totalSec > 0 ? fmt(remain) : fmt(elapsed)}</div>
+              <div className="med-timer-phase">{running ? '跟随圆圈，呼吸' : (finished ? '🎉 练习完成' : '准备好就开始')}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="med-timer-side">
+          <div className="med-timer-row">
+            <span className="med-timer-label">时长</span>
+            <div className="med-timer-opts">
+              {MEDITATION_TIMER_OPTIONS.map((o) => (
+                <button key={o.label} className={'med-timer-opt' + (totalSec === o.sec ? ' active' : '')} onClick={() => { setTotalSec(o.sec); if (running) reset(); }}>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="med-timer-row">
+            <span className="med-timer-label">背景声</span>
+            <div className="med-timer-opts">
+              <button className={'med-timer-opt' + (ambient === 'none' ? ' active' : '')} onClick={() => setAmbient('none')}>静默</button>
+              {AMBIENT_OPTIONS.map(o => (
+                <button key={o.type} className={'med-timer-opt' + (ambient === o.type ? ' active' : '')} onClick={() => setAmbient(o.type)}>{o.emoji} {o.label}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="med-timer-vol">
+            <span>🔈</span>
+            <input type="range" min={0} max={1} step={0.05} value={vol} onChange={e => setVol(parseFloat(e.target.value))} />
+          </div>
+
+          <div className="med-timer-controls">
+            {!running ? (
+              <button className="btn-submit med-timer-play" onClick={start}>▶ 开始静坐</button>
+            ) : (
+              <button className="nav-btn btn-ghost" onClick={pause}>⏸ 暂停</button>
+            )}
+            <button className="nav-btn btn-ghost" onClick={reset}>↺ 重置</button>
+          </div>
+          <div className="med-timer-hint">计时结束会自动记一次静坐。背景声为实时合成，无需联网。</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 正念小练习 · 速览卡
+// ============================================================================
+export function MindfulPractices() {
+  return (
+    <div className="med-practices">
+      <div className="healing-section-title"><SectionIcon name="sparkles" /> 正念小练习 · 随手可做</div>
+      <div className="med-practices-grid">
+        {MINDFUL_PRACTICES.map(p => (
+          <div key={p.id} className="med-practice-card">
+            <div className="med-practice-head">
+              <span className="med-practice-emoji">{p.emoji}</span>
+              <div>
+                <div className="med-practice-title">{p.title}</div>
+                <div className="med-practice-meta">约 {p.minutes} 分钟</div>
+              </div>
+            </div>
+            <div className="med-practice-desc">{p.desc}</div>
+            <ol className="med-practice-steps">
+              {p.steps.map((s, i) => <li key={i}>{s}</li>)}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// 呼吸光球首屏 · 一分钟回到当下（冥想页入场视觉钩子）
+// 进入即见随呼吸缩放的光球；点「开始」进入 60 秒引导（吸 4 · 停 4 · 呼 6 循环），
+// 完成记一次静坐（breath 任务）。纯 CSS 动画 + 文字节律提示，无额外依赖。
+// ============================================================================
+export function BreathIntro({ onDone }: { onDone: () => void }) {
+  const [running, setRunning] = useState(false);
+  const [phase, setPhase] = useState<'idle' | 'in' | 'hold' | 'out'>('idle');
+  const [remain, setRemain] = useState(60);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const doneRef = useRef(false);
+
+  const PERIOD = 14; // 吸 4 · 停 4 · 呼 6
+
+  const stop = useCallback(() => {
+    if (timer.current) { clearInterval(timer.current); timer.current = null; }
+    setRunning(false);
+    setPhase('idle');
+  }, []);
+
+  useEffect(() => () => { if (timer.current) clearInterval(timer.current); }, []);
+
+  const start = useCallback(() => {
+    if (running) return;
+    doneRef.current = false;
+    setRunning(true);
+    setRemain(60);
+    setPhase('in');
+    let elapsed = 0;
+    if (timer.current) clearInterval(timer.current);
+    timer.current = setInterval(() => {
+      elapsed += 1;
+      const r = 60 - elapsed;
+      setRemain(r > 0 ? r : 0);
+      const pos = elapsed % PERIOD;
+      const ph: 'in' | 'hold' | 'out' = pos < 4 ? 'in' : pos < 8 ? 'hold' : 'out';
+      setPhase(ph);
+      if (elapsed >= 60) {
+        if (timer.current) { clearInterval(timer.current); timer.current = null; }
+        setRunning(false);
+        setPhase('idle');
+        if (!doneRef.current) { doneRef.current = true; onDone(); }
+      }
+    }, 1000);
+  }, [running, onDone]);
+
+  const phaseText =
+    phase === 'in' ? '缓缓吸气…' : phase === 'hold' ? '轻轻屏息…' : phase === 'out' ? '慢慢呼气…' : '跟随光球，呼吸';
+  const finished = !running && remain === 0;
+
+  return (
+    <div className="breath-intro">
+      <div className="breath-intro-title">一分钟，回到当下</div>
+      <div className="breath-orb-wrap">
+        <div className={'breath-orb' + (running ? ' running ' + phase : '')}>
+          <div className="breath-orb-core" />
+          <div className="breath-orb-ring" />
+        </div>
+      </div>
+      <div className="breath-phase">{finished ? '🎉 一分钟完成，此刻更安住了' : phaseText}</div>
+      {running && <div className="breath-count">剩余 {remain}s</div>}
+      <div className="breath-controls">
+        {!running ? (
+          <button className="btn-submit breath-start" onClick={start}>🌬️ 开始 1 分钟呼吸</button>
+        ) : (
+          <button className="nav-btn btn-ghost" onClick={stop}>⏹ 结束</button>
+        )}
+      </div>
+      <div className="breath-hint">吸气 4 秒 · 屏息 4 秒 · 呼气 6 秒，光球会带你走。完成即记一次静坐。</div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import '@/styles/home.scss';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { requestHomeAgentStream, type ChatHistoryEntry, type HomeAgentCta } from '@/lib/api';
 import { loadHomeChat, saveHomeChat, clearHomeChat } from '@/lib/homeChatStore';
@@ -17,17 +17,18 @@ const SUGGESTIONS = [
   '💕 我和TA适合在一起吗？',
   '🌙 最近总是失眠做噩梦',
   '🚀 事业转型时机分析',
-  '🔥 我的命格五行缺什么？'
+  '🔥 我的五行缺什么？'
 ];
 
 const FEATURES = [
-  { href: '/bugua', iconSrc: '/images/nav-icons/bagua.svg', name: '卜卦', desc: '排盘·多术数推演 · 点击开始' },
+  { href: '/bugua', iconSrc: '/images/nav-icons/bagua.svg', name: '卜卦', desc: '多术数觉察档案 · 点击开始' },
   { href: '/ming', iconSrc: '/images/nav-icons/ming.svg', name: '测字起名', desc: '测字·五格·起名·合婚' },
   { href: '/tarot', iconSrc: '/images/nav-icons/tarot.svg', name: '塔罗', desc: '5种牌阵·AI情境解读' },
   { href: '/horoscope', iconSrc: '/images/nav-icons/horoscope.svg', name: '星座', desc: '本命盘·运势·配对' },
   { href: '/numerology', iconSrc: '/images/nav-icons/numerology.svg', name: '数字密码', desc: '生命灵数·九宫格·流年' },
-  { href: '/dream', iconSrc: '/images/nav-icons/dream.svg', name: '周公解梦', desc: '梦境解析·吉凶预兆' },
-  { href: '/fengshui', iconSrc: '/images/nav-icons/fengshui.svg', name: '风水', desc: '家居·八字喜忌·方位' }
+  { href: '/dream', iconSrc: '/images/nav-icons/dream.svg', name: '周公解梦', desc: '梦境解析·心灵洞察' },
+  { href: '/assessment', iconSrc: '/images/nav-icons/assessment.svg', name: '复原力测评', desc: '自我觉察·压力与资源·与生辰无关' },
+  { href: '/scales', iconSrc: '/images/nav-icons/scales.svg', name: '心理量表', desc: '经典量表·多维自我评估·成长导向' }
 ];
 
 /**
@@ -91,7 +92,7 @@ const HOME_WELCOME: ChatMessage = {
   id: WELCOME_ID,
   role: 'assistant',
   content:
-    '可以问我事业、感情、财运、健康等问题；\n涉及八字、紫微、塔罗等完整命盘时，我会引导你去卜卦页深入分析。',
+    '可以问我事业、感情、成长、状态调整等问题；\n想深入了解自己时，我会引导你去对应模块生成专属的觉察档案。',
   welcome: true,
 };
 
@@ -216,23 +217,63 @@ export default function HomePage() {
 
   const isLast = (id: string) => messages.length > 0 && messages[messages.length - 1].id === id;
 
+  /** 用户在首页说过的最后一句诉求（跳过「随便看看」这类无实质诉求） */
+  const lastUserQ = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role === 'user' && m.content && m.content.trim()) {
+        const t = m.content.trim();
+        // 只排除明确「随便逛逛」的浏览意图；「不知道该不该换工作」这类仍是真诉求
+        if (t.length >= 2 && !/随便看看|随便逛逛|只是看看|先看看|随便转转/.test(t)) return t;
+        return '';
+      }
+    }
+    return '';
+  }, [messages]);
+
+  /**
+   * 宫格 / 头部入口跳转：首页已说过困扰时，把问题带进目标页（与 AI CTA 同款行为）。
+   * - bugua：?autodiv=1&q= 预填「所问之事」并自动起局
+   * - tarot：?autostart=1&q= 预填问题并自动开牌
+   * - horoscope / numerology：?q= 顶部提示条承接
+   */
+  const buildNavHref = (href: string): string => {
+    if (!lastUserQ) return href;
+    if (!['/bugua', '/tarot', '/horoscope', '/numerology'].includes(href)) return href;
+    // 超长诉求截断：目标页输入框只承接「一句话困扰」，避免整段对话塞进 URL
+    const q = lastUserQ.length > 60 ? `${lastUserQ.slice(0, 60)}…` : lastUserQ;
+    const params = new URLSearchParams({ q });
+    if (href === '/bugua') params.set('autodiv', '1');
+    if (href === '/tarot') params.set('autostart', '1');
+    return `${href}?${params.toString()}`;
+  };
+
+  // 顶部导航（TopNav）是独立组件拿不到 lastUserQ state，持久化到 sessionStorage 供其点击时读取；
+  // 诉求为空（清空对话/只说了闲逛意图）时同步移除，避免带旧参。
+  useEffect(() => {
+    try {
+      if (lastUserQ) window.sessionStorage.setItem('om_home_lastq', lastUserQ);
+      else window.sessionStorage.removeItem('om_home_lastq');
+    } catch { /* ignore */ }
+  }, [lastUserQ]);
+
   return (
     <div className="page active" id="page-home">
       <div className="hero-section">
-        <div className="hero-badge">✨ AI 驱动 · 多术数交叉验证 · 一站式命运探索</div>
+        <div className="hero-badge">✨ AI 驱动 · 多维度自我觉察 · 一站式认识自己</div>
         <h1 className="hero-title">
           <span className="gradient-text">探索未知的自己，从玄镜开始</span>
         </h1>
         <div className="hero-subtitle">
-          <p>跨越东西方千年智慧，融汇八字、紫微、塔罗、星座、数字命理与风水之精髓</p>
-          <p className="hero-subtitle-sub">AI 为您量身推演专属命理方案，让每一步抉择皆有迹可循。</p>
+          <p>跨越东西方千年智慧，融汇八字、紫微、塔罗、星座与数字密码之精髓</p>
+          <p className="hero-subtitle-sub">AI 为您量身推演专属自我觉察方案，让每一步抉择皆有迹可循。</p>
         </div>
       </div>
 
       {/* AI 对话面板（首页通用命理助手）—— 统一渲染壳 AiChatWindow */}
       <AiChatWindow
         className="home-chat"
-        title="小玄 · 通用命理助手"
+        title="小玄 · 通用觉察助手"
         status="在线 · 事业/感情/财运/健康都能聊"
         messages={messages}
         input={chat.input}
@@ -243,7 +284,7 @@ export default function HomePage() {
         onClear={clearChat}
         scrollRef={chat.scrollRef}
         headerExtra={
-          <Link href="/bugua" className="hero-cta">开始免费排盘 →</Link>
+          <Link href={buildNavHref('/bugua')} className="hero-cta">免费生成我的觉察档案 →</Link>
         }
         belowMessages={
           <div className="home-chat-foot">
@@ -285,7 +326,7 @@ export default function HomePage() {
       {/* 功能入口 6 宫格 */}
       <div className="feature-grid">
         {FEATURES.map((f) => (
-          <Link key={f.href} href={f.href} className={`feature-card${f.href === '/bugua' ? ' feature-card--hot' : ''}`}>
+          <Link key={f.href} href={buildNavHref(f.href)} className={`feature-card${f.href === '/bugua' ? ' feature-card--hot' : ''}`}>
             <div className="feature-icon">
               <img src={f.iconSrc} className="feature-icon-img" alt={f.name} />
             </div>

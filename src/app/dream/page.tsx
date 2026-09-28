@@ -56,7 +56,7 @@ const DREAM_FACTS = [
   { icon: '📈', text: <>梦多集中在 REM 期，一夜会经历 <strong>4~5 个周期</strong>，越靠近清晨梦越清晰</> }
 ];
 
-/** 梦境符号速查：点击常见意象，即时查看一句解读（纯前端，玄学口吻） */
+/** 梦境符号速查：点击常见意象，即时查看一句解读（纯前端，意象解读口吻） */
 const DREAM_SYMBOLS: Array<{ icon: string; name: string; mean: string }> = [
   { icon: '🦷', name: '掉牙', mean: '多与健康焦虑、失控感或重要关系变动有关，提醒你关注身体与边界。' },
   { icon: '🕊️', name: '飞翔', mean: '象征渴望自由与突破，近期可能有新机会，或想摆脱某种束缚。' },
@@ -139,7 +139,7 @@ const PERSPECTIVES: Array<{
   { key: 'jung',      label: '荣格原型心理学', short: '荣格',   hint: '原型/阴影/补偿/个体化', badge: '🧠' },
   { key: 'freud',     label: '弗洛伊德精神分析', short: '弗洛伊德', hint: '显梦→隐梦/愿望满足/童年溯源', badge: '💭' },
   { key: 'cognitive', label: '认知行为 (CBT)', short: '认知',   hint: '日间线索/认知偏差/应对练习', badge: '🧩' },
-  { key: 'fortune',   label: '东方运势命理',   short: '命理',   hint: '周公传统释义/五行取象/宜忌', badge: '🎋' }
+  { key: 'fortune',   label: '东方运势视角',   short: '运势',   hint: '周公传统释义/五行取象/宜忌', badge: '🎋' }
 ];
 const DEFAULT_PERSPECTIVE = '__default__';
 type PerspectiveKey = DreamPerspective | typeof DEFAULT_PERSPECTIVE;
@@ -1497,11 +1497,12 @@ export default function DreamPage() {
 
         {/* 2. 跨页联动 */}
         <CrossPageLink
+          title="继续深挖"
           description={visitorBirth
-            ? <>已记录你的生辰（{visitorBirth.date} {visitorBirth.time}），将以八字 + 紫微 + 六爻多角度印证此梦寓意，点击即自动排盘。</>
+            ? <>已记录你的生辰（{visitorBirth.date} {visitorBirth.time}），将以八字 + 紫微 + 六爻多角度印证此梦寓意，点击即自动生成觉察档案。</>
             : '结合你的生辰，AI 从八字 + 紫微 + 六爻多角度交叉印证梦境寓意；首次填写后跨页自动复用。'}
           links={[
-            { icon: '☯️', label: visitorBirth ? '结合生辰深解此梦' : '前往卜卦排盘', href: `/bugua?autodiv=1&q=${encodeURIComponent(keyword.trim() || '梦境解读')}` },
+            { icon: '☯️', label: visitorBirth ? '结合生辰深解此梦' : '前往卜卦页深入解读', href: `/bugua?autodiv=1&q=${encodeURIComponent(keyword.trim() || '梦境解读')}` },
             { icon: '📋', label: '生成综合报告', href: '/report', variant: 'primary' },
           ]}
         />
@@ -1692,7 +1693,7 @@ export default function DreamPage() {
           <div style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7, marginBottom: '20px' }}>
             {vipModalSrc === 'expert' ? (
               <>
-                持证心理咨询师 + 传统命理专家双重背书<br />
+                持证心理咨询师 + 传统文化顾问双重背书<br />
                 语音/文字沟通，解读深度是 AI 的 3 倍以上<br />
                 <span style={{ color: '#fbbf24' }}>平均响应 30 分钟内 · 支持反复追问</span>
               </>

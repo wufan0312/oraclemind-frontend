@@ -420,7 +420,7 @@ export function analyzeHehun(male: BaziAPIResult, female: BaziAPIResult): HehunR
   if (total >= 85) concl = '二人生辰气场高度契合，多为天赐良缘，宜珍惜相守。';
   else if (total >= 70) concl = '彼此适配度佳，性格与气运互补，婚后可稳中向好。';
   else if (total >= 55) concl = '总体相合，偶有摩擦属常态，多沟通、多包容即可长久。';
-  else if (total >= 40) concl = '存在明显冲克，需更多耐心经营，亦可借风水、择吉等方式调和。';
+  else if (total >= 40) concl = '存在一些观念或节奏上的差异，需要更多耐心经营，多沟通、多换位思考即可逐渐磨合。';
   else concl = '冲克较多，建议理性看待、慎重建构关系，莫以命论定一切。';
   sentences.push(concl);
 

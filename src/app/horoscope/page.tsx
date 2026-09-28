@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import OmLoading from '@/components/ui/OmLoading';
-import CrossPageLink from '@/components/ui/CrossPageLink';
 import SectionIcon from '@/components/ui/SectionIcon';
 import { DatePicker, TimePicker } from '@/components/ui/DateTimePicker';
 import BirthDatePicker from '@/components/ui/BirthDatePicker';
@@ -797,7 +796,7 @@ export default function HoroscopePage() {
   const reportSections = useMemo(() => {
     if (!report) return [];
     return [
-      { title: '整体命格', text: report.overview },
+      { title: '整体特质', text: report.overview },
       { title: '性格与天赋', text: report.personality },
       { title: '💕 情感与亲密关系', text: report.love },
       { title: '💼 事业与财富', text: report.career },
@@ -1908,14 +1907,6 @@ export default function HoroscopePage() {
       </section>
       </div>
       )}
-      {/* 跨页联动 CTA */}
-      <CrossPageLink
-        description="星盘看先天性格与潜能，八字看后天运势节律，两套系统互相印证，结论更立体。"
-        links={[
-          { icon: '☯️', label: '去卜卦页排八字', href: '/bugua' },
-          { icon: '📄', label: '生成综合报告', href: '/report', variant: 'primary' },
-        ]}
-      />
     </div>
   );
 }

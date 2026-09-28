@@ -75,7 +75,7 @@ export const SUMMARY_VERIFY: { label: string; pct: number; color: string; bg: st
 /** 综合卡片：AI 不可用时的本地兜底模板 */
 export const SUMMARY_CARDS: { icon?: string; name: string; score?: string; scoreColor?: string; desc?: string }[] = [
   { icon: '📈', name: '近期趋势', score: '→ 平稳', scoreColor: 'var(--accent-gold)', desc: '当前处于蓄力期，宜深耕积累，不宜贸然变动。' },
-  { icon: '🎯', name: '关键决策期', score: '待定', scoreColor: 'var(--primary-light)', desc: '需结合更多排盘信息确定最佳行动窗口期。' },
+  { icon: '🎯', name: '关键决策期', score: '待定', scoreColor: 'var(--primary-light)', desc: '需结合更多维度信息确定最佳行动窗口期。' },
   { icon: '⚠️', name: '风险提示', score: '中', scoreColor: '#ff6b6b', desc: '注意情绪管理，避免冲动决策。' },
   { icon: '💎', name: '天赋优势', score: '待发掘', scoreColor: 'var(--accent-green)', desc: '结合命盘格局，发掘自身独特天赋。' },
 ];

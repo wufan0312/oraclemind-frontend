@@ -86,7 +86,7 @@ export function buildDreamFallback(k: string): DreamEntry {
     related: [],
     category: 'other',
     content: [
-      `<p style="margin-bottom:12px;"><strong style="color:var(--text-primary);">传统解梦视角：</strong>「${brief}」在解梦典籍中多有记载，其象征意义与具体场景、细节密切相关，需结合梦境前后的情绪来判断吉凶。</p>`,
+      `<p style="margin-bottom:12px;"><strong style="color:var(--text-primary);">传统解梦视角：</strong>「${brief}」在解梦典籍中多有记载，其象征意义与具体场景、细节密切相关，需结合梦境前后的情绪来理解它想提醒你什么。</p>`,
       `<p style="margin-bottom:12px;"><strong style="color:var(--text-primary);">心理分析视角：</strong>梦境细节往往映射着近期现实生活的压力或渴望。试着回想梦里的感受——那比情节本身更接近答案。</p>`,
       `<p><strong style="color:var(--text-primary);">AI 建议：</strong>输入更具体的梦境细节（如：在哪、和谁、什么感受），或在「近期背景」一栏补充你的近况，AI 将为你生成更精准的个性化解读。</p>`
     ].join('')
@@ -144,7 +144,7 @@ export function buildDreamFallback(k: string): DreamEntry {
     related: ['梦见抓鱼', '梦见大鱼', '梦见鱼跃出水面'],
     category: 'animal',
     content: buildContent(
-      '鱼谐音「余」，主财：梦见鱼跃、抓到大鱼主财运上升，有进账之喜；鱼游浅水则提示机会尚需等待；梦见死鱼，防破财或计划受挫。',
+      '鱼谐音「余」，常被联想为富足有余：梦见鱼跃、抓到大鱼，多反映你对收获的期待；鱼游浅水则提示心中的机会感尚需酝酿；梦见死鱼，或反映你隐约担心某个计划落空。',
       '鱼在水中的自由游动，象征情绪的流动与潜意识的丰盈。梦见鱼，常代表你内心某个「有生命力」的想法正在成形。',
       '近期可留意投资与副业机会；若有搁置的赚钱计划，不妨重新评估，鱼跃龙门之时可能在酝酿中。'
     )
@@ -155,7 +155,7 @@ export function buildDreamFallback(k: string): DreamEntry {
     related: ['梦见猫抓老鼠', '梦见老鼠咬人', '梦见老鼠洞'],
     category: 'animal',
     content: buildContent(
-      '鼠主小人与损耗：梦见老鼠出没，传统认为防身边小人搬弄是非或财务上的小漏洞；猫捉鼠则主有人替你挡灾，化险为夷。',
+      '鼠在传统解梦中小主人公的顾虑与损耗感：梦见老鼠出没，多反映你担心身边的是非或忽略的小问题；梦见猫捉鼠，则像在告诉你「有人和你一起面对」，问题并没有你想的那么可怕。',
       '老鼠躲躲藏藏的习性，常映射你自己「不敢面对」的小问题——那些被忽略的细节，正在暗处一点点消耗你。',
       '盘点近期的开销与承诺，堵住「小漏洞」；遇到暗中使坏的人，不必正面冲突，用事实说话即可。'
     )
@@ -178,7 +178,7 @@ export function buildDreamFallback(k: string): DreamEntry {
     related: ['梦见洪水', '梦见溺水', '梦见下雨'],
     category: 'nature',
     content: buildContent(
-      '水主财：清水、涨潮主财运上升，浊水、落潮则防破财。梦见渡河顺利主事业过坎，涉水受阻提示项目推进有阻碍。',
+      '水在传统解梦里常与「财」和情绪相连：清水、涨潮让人联想到进账与充盈，浊水、落潮则像在提醒你留意消耗。梦见渡河顺利，象征你正跨过一个坎；涉水受阻，则反映你感到推进有阻力。',
       '水是情绪的容器——平静清澈的水代表内心安定，汹涌浑浊的水则提示近期情绪起伏较大，需要被看见和疏解。',
       '若梦见清水，可留意近期的投资与机会；若梦见浊水，试试运动、倾诉或写日记把情绪「放出去」，别让它堵在心里。'
     )
@@ -598,11 +598,11 @@ export function buildDreamFallback(k: string): DreamEntry {
   },
   '梦见丢钱': {
     title: '💸 梦见丢钱 — 解梦结果',
-    tags: [{ text: '⚠️ 破财预警', cls: 'tag-warn' }, { text: '重新审视', cls: 'tag-good' }],
+    tags: [{ text: '价值焦虑', cls: 'tag-warn' }, { text: '重新审视', cls: 'tag-good' }],
     related: ['梦见钱被偷', '梦见钱包丢了', '梦见找钱'],
     category: 'object',
     content: buildContent(
-      '丢钱主「财损」：传统解梦认为近期防破财、防投资失误，或有意料外的开销；找回钱则主虚惊一场、有惊无险。',
+      '丢钱在传统解梦里被称为「财损」之兆，更贴切的理解是：它映照你近期的「价值焦虑」——担心付出没有回应，或对掌控感变弱感到不安；梦见找回钱，则像一次虚惊后的释然。',
       '丢钱梦常对应「价值焦虑」——害怕失去的不仅是钱，还有稳定感、掌控感，或某段投入了太多却看不到回报的事。',
       '给近期财务做个检查：不必要的支出、风险过高的项目，及时止损；同时问问自己，是否在某件事上「投入产出失衡」。'
     )

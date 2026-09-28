@@ -11,6 +11,7 @@ import {
   PAY_QR_STEPS,
   planOf,
   isUnlocked,
+  isItemPaused,
   recordUnlock,
   type PremiumItemId,
 } from '@/lib/premium';
@@ -45,6 +46,8 @@ export default function PaywallModal({
   const polling = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const plan = planOf(selected);
+  // 合规重定位：占卜类商品暂停销售，付费墙不再提供下单
+  const paused = isItemPaused(item);
 
   useEffect(() => {
     if (open) {
@@ -143,10 +146,14 @@ export default function PaywallModal({
             <div className="paywall-unlocked-text">已解锁「{plan.name}」，可直接查看完整内容</div>
             <button className="paywall-btn primary" onClick={onClose}>好的</button>
           </div>
+        ) : paused ? (
+          <div className="paywall-paused">
+            该套餐已暂停销售，全部基础功能永久免费可用 🙏
+          </div>
         ) : (
           <>
             <div className="paywall-plans">
-              {PREMIUM_PLANS.map((p) => (
+              {PREMIUM_PLANS.filter((p) => !isItemPaused(p.id)).map((p) => (
                 <button
                   key={p.id}
                   className={'paywall-plan' + (p.id === selected ? ' active' : '')}

@@ -21,7 +21,13 @@
 
 import { setCloudItem } from '@/lib/cloudStore';
 
-export type PremiumItemId = 'tarot_deep' | 'astro_full' | 'all_access' | 'xinzhai_member' | 'dream_member';
+export type PremiumItemId =
+  | 'tarot_deep'
+  | 'astro_full'
+  | 'all_access'
+  | 'xinzhai_member'
+  | 'dream_member'
+  | 'resilience_assess';
 
 export interface PremiumPlan {
   id: PremiumItemId;
@@ -93,11 +99,32 @@ export const PREMIUM_PLANS: PremiumPlan[] = [
       '优先体验专家人工解读',
     ],
   },
+  {
+    // 合规付费（2026-09-18）：唯一在售的「新方向」商品——完全脱离生辰命盘，
+    // 基于自评问卷出自我觉察报告，不给诊断、不算吉凶。不计入 PAUSED_ITEMS。
+    id: 'resilience_assess',
+    name: '复原力测评报告',
+    icon: '🌱',
+    priceYuan: 9.9,
+    tagline: '单份 · 基于你此刻的自评（与生辰命盘无关）',
+    perks: [
+      '四维自我觉察报告（事业 / 关系 / 家庭 / 自我）',
+      '压力—资源平衡快照 + 本周可做的三个微行动',
+      '不给诊断、不算吉凶；报告可导出留存',
+    ],
+  },
 ];
+
+/** 合规重定位（2026-09-17）：以下占卜类商品暂停销售，切断「获利引流」合规要件；
+ *  保留 xinzhai_member / dream_member（疗愈·解梦，属自我觉察方向）。 */
+export const PAUSED_ITEMS: PremiumItemId[] = ['tarot_deep', 'astro_full', 'all_access'];
+export function isItemPaused(item: PremiumItemId): boolean {
+  return (PAUSED_ITEMS as readonly string[]).includes(item);
+}
 
 /** 免费已包含的能力（付费墙必须写清楚，避免用户误以为基础功能要钱） */
 export const FREE_PERKS: string[] = [
-  '全部基础占卜与 AI 解读（卜卦 / 塔罗 / 星座 / 数字 / 解梦 / 风水 / 疗愈）',
+  '全部基础自我觉察工具与 AI 解读（卜卦 / 塔罗 / 星座 / 数字 / 解梦 / 疗愈）',
   '完整牌阵、每日塔罗、塔罗日记与牌义学习',
   '梦境日记、清醒梦引导、修行成长与签到',
   '报告保存、导出与跨设备同步',

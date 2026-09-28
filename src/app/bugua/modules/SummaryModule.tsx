@@ -37,14 +37,14 @@ const ADVICE_ICON_MAP: Record<string, string> = {
 /** 术数模块中文名（分歧卡片里把 bazi/ziwei 这类原始 key 翻译成人话） */
 const MODULE_CN: Record<string, string> = {
   bazi: '八字', wuxing: '五行能量', ziwei: '紫微斗数', liuyao: '六爻', meihua: '梅花易数',
-  qimen: '奇门遁甲', liuren: '大六壬', taiyi: '太乙神数', numerology: '数字命理',
+  qimen: '奇门遁甲', liuren: '大六壬', taiyi: '太乙神数', numerology: '数字密码',
   tarot: '塔罗', horoscope: '星座',
 };
 
 /** 术数识别关键词（用于从分维依据文本中提取被提及的术数，驱动维度钻取） */
 const MODULE_KEYWORDS = ['八字', '紫微', '六爻', '梅花', '奇门', '大六壬', '太乙', '五行', '数字', '塔罗', '星座'];
 
-/** 五行 → 实用属性映射（河洛数理 + 玄学常识，用于「实用宜忌」卡片，纯前端计算） */
+/** 五行 → 实用属性映射（河洛数理 + 传统常识，用于「实用宜忌」卡片，纯前端计算） */
 const WUXING_ATTRS: Record<string, { dir: string; color: string; nums: string; trade: string }> = {
   木: { dir: '东方', color: '青绿', nums: '3、8', trade: '文教、园艺、创意' },
   火: { dir: '南方', color: '红紫', nums: '2、7', trade: '文化、餐饮、传媒' },
@@ -62,7 +62,7 @@ type CrossRow = { name: string; icon: string; points: string[]; summary?: string
 type InterpMap = Partial<Record<ModuleKey, InterpretResponse | 'loading' | 'error' | null>>;
 
 const CROSS_ORDER: { key: string; chip: string; name: string; icon: string; interpKey: ModuleKey | 'bazi' }[] = [
-  { key: 'bazi', chip: '八字', name: '八字命理', icon: 'compass', interpKey: 'bazi' },
+  { key: 'bazi', chip: '八字', name: '八字四柱', icon: 'compass', interpKey: 'bazi' },
   { key: 'wuxing', chip: '五行能量', name: '五行能量', icon: 'pentagon', interpKey: 'bazi' },
   { key: 'ziwei', chip: '紫微斗数', name: '紫微斗数', icon: 'crown', interpKey: 'ziwei' },
   { key: 'liuyao', chip: '六爻', name: '六爻起卦', icon: 'hexagram', interpKey: 'liuyao' },
@@ -454,7 +454,7 @@ export function SummaryModule({
             <SectionIcon name="layers" /> 各术数核心结论对照
           </div>
           <div className="summary-intro">
-            以下为各术数排盘提取的关键结论，横向对照可快速把握命局主线
+            以下为各维度解读提取的关键结论，横向对照可快速把握整体主线
           </div>
           <div className="summary-cross-grid">
             {crossRows.map((r) => (

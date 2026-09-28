@@ -80,6 +80,7 @@ import { LiuRenModule } from './modules/LiuRenModule';
 import { TaiyiModule } from './modules/TaiyiModule';
 import { SummaryModule, SummaryResonanceCard, SummaryInsightCards } from './modules/SummaryModule';
 import LightFollowUp from '@/components/ai-chat/LightFollowUp';
+import EmotionBridge from '@/components/healing/EmotionBridge';
 import { mdToHtml } from '@/lib/markdown';
 import { printDocument } from '@/lib/print';
 import {
@@ -96,7 +97,7 @@ import {
 /* ============================= 常量数据（从原型 bugua.html 提取） ============================= */
 
 const MODULE_TABS = [
-  { id: 'mod-bazi', label: '八字命理', icon: 'bazi' },
+  { id: 'mod-bazi', label: '八字四柱', icon: 'bazi' },
   { id: 'mod-wuxing', label: '五行能量', icon: 'wuxing' },
   { id: 'mod-ziwei', label: '紫微斗数', icon: 'ziwei' },
   { id: 'mod-liuyao', label: '六爻起卦', icon: 'liuyao' },
@@ -1311,7 +1312,7 @@ export default function BuguaPage() {
   /** 生成结果卡海报：复用 AI 服务 /api/v1/poster（与解梦页同款），导出当前结果图片 */
   const handlePoster = async () => {
     const tab = MODULE_TABS.find((t) => t.id === activeModule);
-    const keyword = tab?.label || '命理结果';
+    const keyword = tab?.label || '解读结果';
     let text = '';
     if (activeModule === 'mod-summary') {
       const s = summaryState && summaryState !== 'loading' && summaryState !== 'error' ? summaryState : null;
@@ -1329,13 +1330,13 @@ export default function BuguaPage() {
     setPosterLoading(true);
     setPosterResult(null);
     try {
-      const r = await requestPoster(keyword, text || `探索${keyword}的命理全景`);
+      const r = await requestPoster(keyword, text || `探索${keyword}的多维视角`);
       setPosterResult(r);
       // 分享存档：首次生成直接落库；重新生成则覆盖（后端按 user+module upsert）
       void share.persist({ title: keyword, shareText: r.shareText, imageUrl: r.imageUrl, imagePrompt: r.imagePrompt });
     } catch (err: any) {
       const fallback: PosterResult = {
-        shareText: `「${keyword}」—— 知命改运，顺势而为。`,
+        shareText: `「${keyword}」—— 认识自己，顺势而为。`,
         imagePrompt: '',
         imageUrl: null,
         imageError: err?.message || '生成失败',
@@ -1363,7 +1364,7 @@ export default function BuguaPage() {
   /** 导出 AI 生成的海报为 PDF（图片内嵌，用户另存为 PDF） */
   const handleDownloadPoster = async () => {
     if (!posterResult?.imageUrl) return;
-    const title = `玄镜排盘海报 · ${MODULE_TABS.find((t) => t.id === activeModule)?.label ?? '命理结果'}`;
+    const title = `玄镜解读海报 · ${MODULE_TABS.find((t) => t.id === activeModule)?.label ?? '解读结果'}`;
     printDocument({ title, html: `<img src="${posterResult.imageUrl}" alt="${title}" />` });
   };
 
@@ -1402,8 +1403,8 @@ export default function BuguaPage() {
       {/* 页面头部 */}
       <div className="page-header">
         <div>
-          <div className="page-title">☯️ 多术数排盘</div>
-          <div className="page-subtitle">八字 · 五行 · 紫微 · 六爻 · 梅花 · 奇门 · 综合运势 — 命理全景</div>
+          <div className="page-title">☯️ 多维度觉察档案</div>
+          <div className="page-subtitle">八字 · 五行 · 紫微 · 六爻 · 梅花 · 奇门 · 综合运势 — 多维交叉视角</div>
         </div>
       </div>
 
@@ -2004,14 +2005,14 @@ export default function BuguaPage() {
                     <div className="side-ai-title">小玄陪你看看这张命盘</div>
                     <div className="side-ai-subtitle">
                       {interp === 'loading'
-                        ? '小玄在认真梳理你的命局，别急，慢慢来…'
+                        ? '小玄在认真整合各方视角，别急，慢慢来…'
                         : ai.subtitle}
                     </div>
                   </div>
                 </div>
                 <div className="ai-interp-text">
                   {interp === 'loading' ? (
-                    <OmLoading label="小玄在认真梳理你的命局…" mode="inline" />
+                    <OmLoading label="小玄在认真整合各方视角…" mode="inline" />
                   ) : interp && interp !== 'error' ? (
                     <>
                       <div dangerouslySetInnerHTML={{ __html: mdToHtml(stripInterpDisclaimer(interp.text)) }} />
@@ -2073,8 +2074,7 @@ export default function BuguaPage() {
               <CrossPageLink
                 links={[
                   { icon: '🃏', label: '用塔罗补充验证', href: '/tarot' },
-                  { icon: '🔢', label: '看看数字命理', href: '/numerology' },
-                  { icon: '🏠', label: '风水布局建议', href: '/fengshui' },
+                  { icon: '🔢', label: '看看数字密码', href: '/numerology' },
                   { icon: '🌿', label: '情绪需要疗愈？', href: '/healing' },
                   { icon: '📋', label: '查看综合报告', href: '/report', variant: 'primary' },
                 ]}
@@ -2093,6 +2093,9 @@ export default function BuguaPage() {
         </div>
       )}
 
+      {/* P0 漏斗：排盘解读完成后，把"刚说出口的困扰"接到情绪打卡 + 复原力测评 */}
+      <EmotionBridge source="bugua" visible={divined} question={question} />
+
       {/* 深度报告付费弹窗 */}
       <Modal
         open={deepOpen}
@@ -2103,7 +2106,7 @@ export default function BuguaPage() {
         hint="支持微信/支付宝 · 7天无理由退款"
       >
         解锁后你将获得：
-        <br />• 30页+完整命理深度分析
+        <br />• 30页+完整深度分析
         <br />• 流年逐月运势详解
         <br />• 真人专家1v1答疑（30分钟）
         <br />• 专属疗愈方案推荐
@@ -2133,7 +2136,7 @@ export default function BuguaPage() {
           <ShareLoginGate context="保存 / 分享结果" />
         ) : (
           <>
-            选择分享方式，让好友也来探索自己的命运密码
+            选择分享方式，让好友也来探索自己的成长密码
             <div className="share-options">
               <div className="share-option"><div className="share-icon">💬</div><div className="share-label">微信好友</div></div>
               <div className="share-option"><div className="share-icon">📱</div><div className="share-label">朋友圈</div></div>

@@ -1609,13 +1609,12 @@
 }
 
 // ===== 行内样式迁移层（style → class）=====
-// 情绪打卡按钮行
+// 情绪打卡按钮行（5 档一行均分，避免换行显乱）
 .mood-btns-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
-  justify-content: center;
   margin-bottom: 14px;
-  flex-wrap: wrap;
 }
 
 // 情绪按钮
@@ -1623,10 +1622,10 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 12px 10px;
+  padding: 12px 6px;
   cursor: pointer;
   transition: var(--transition);
-  min-width: 72px;
+  min-width: 0;
   text-align: center;
 
   &:hover {
@@ -1882,6 +1881,264 @@
   width: 100%;
   padding: 10px;
   font-size: 13px;
+}
+
+// ===== 经典·读经 改版 · 新增组件样式 =====
+// 明天见钩子
+.daily-verse-tomorrow {
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  letter-spacing: 0.5px;
+}
+
+// 修行进度条（本页可见的奖励回路）
+.classics-progress {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin-bottom: 26px;
+}
+
+.cp-realm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.cp-realm-icon {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.cp-realm-info {
+  min-width: 0;
+}
+
+.cp-realm-name {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--accent-gold), #ffe9b0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cp-realm-verse {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cp-xp {
+  flex: 1;
+  min-width: 0;
+}
+
+.cp-xp-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.cp-xp-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cp-xp-pct {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--accent-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.cp-xp-bar {
+  height: 8px;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cp-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c8a05a, var(--accent-gold), #ffd98a);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.cp-xp-next {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.cp-streak {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  padding-left: 18px;
+  border-left: 1px dashed var(--border);
+}
+
+.cp-streak-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cp-streak-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+// 你今晚怎么了 · 情境选择器
+.situation-bar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 28px;
+}
+
+.situation-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+
+.situation-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.situation-chip {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+
+  &:hover {
+    border-color: rgba(212, 168, 83, 0.45);
+    color: var(--accent-gold);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, rgba(212, 168, 83, 0.18), rgba(124, 92, 255, 0.1));
+    border-color: rgba(212, 168, 83, 0.7);
+    color: var(--accent-gold);
+    font-weight: 600;
+  }
+}
+
+.situation-hint {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  letter-spacing: 0.5px;
+}
+
+// 我的觉察日记 · 诚实的个人记录回声
+.wudao-diary-echo {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  background: rgba(212, 168, 83, 0.06);
+  border: 1px dashed rgba(212, 168, 83, 0.3);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 14px 0 4px;
+}
+
+// 小玄陪聊入口 · 把孤立阅读器接回对话生态
+.xuan-chat-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+  padding: 18px 22px;
+  background:
+    radial-gradient(ellipse at 0% 50%, rgba(124, 92, 255, 0.1), transparent 60%),
+    var(--bg-panel);
+  border: 1px dashed rgba(212, 168, 83, 0.4);
+  border-radius: 18px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(212, 168, 83, 0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(212, 168, 83, 0.12);
+
+    .xuan-chat-cta-arrow {
+      transform: translateX(4px);
+      color: var(--accent-gold);
+    }
+  }
+}
+
+.xuan-chat-cta-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.xuan-chat-cta-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.xuan-chat-cta-arrow {
+  font-size: 22px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+@media (max-width: 760px) {
+  .classics-progress {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .cp-xp {
+    order: 3;
+    flex: 1 1 100%;
+  }
+
+  .cp-streak {
+    padding-left: 0;
+    border-left: none;
+  }
 }
 
 // ===== 静心冥想 · 助眠 · 情绪打卡 =====
@@ -2258,14 +2515,14 @@
   color: #10202a;
 }
 
-// 情绪打卡 + 跨页联动 · 一行三栏（置于供养心斋上方）
+// 情绪打卡 + 14 天趋势 + 心情记录（置于供养心斋上方）
 .mood-quick-section {
   margin-bottom: 32px;
 }
 
 .mood-quick-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1.12fr 1fr;
   gap: 20px;
   align-items: stretch;
 }
@@ -2280,7 +2537,7 @@
   min-height: 0;
 }
 
-// 趋势柱状图在卡片内沉底对齐，使三栏视觉等高
+// 趋势柱状图在卡片内沉底对齐，使两栏视觉等高
 .mood-quick-card .mood-bars {
   margin-top: auto;
 }
@@ -2291,7 +2548,25 @@
   margin-bottom: 14px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mood-today-label {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
+}
+
+.mood-done-badge {
+  font-size: 11.5px;
+  color: var(--accent-gold);
+  background: rgba(212, 168, 83, 0.12);
+  border: 1px solid rgba(212, 168, 83, 0.3);
+  border-radius: 999px;
+  padding: 2px 10px;
+  white-space: nowrap;
 }
 
 .mood-note {
@@ -2323,10 +2598,30 @@
   width: 100%;
 }
 
+.mood-note-hint {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.mood-trend-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
 .mood-trend-title {
   font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 16px;
+}
+
+.mood-trend-stat {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .mood-bars {
@@ -2351,13 +2646,23 @@
   width: 100%;
   max-width: 26px;
   border-radius: 6px 6px 3px 3px;
-  background: linear-gradient(180deg, rgba(212, 168, 83, 0.7), rgba(124, 92, 255, 0.5));
+  background: rgba(255, 255, 255, 0.07);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 2px;
   min-height: 4px;
   transition: height 0.3s ease;
+
+  // 未记录日期的基线刻度
+  &.s0 { background: rgba(255, 255, 255, 0.1); }
+
+  // 按心情分档着色：偏低柔和冷色 → 偏高温暖金色
+  &.s1 { background: linear-gradient(180deg, rgba(120, 146, 198, 0.85), rgba(96, 116, 168, 0.4)); }
+  &.s2 { background: linear-gradient(180deg, rgba(152, 128, 208, 0.85), rgba(120, 100, 178, 0.4)); }
+  &.s3 { background: linear-gradient(180deg, rgba(176, 176, 190, 0.8), rgba(140, 140, 158, 0.35)); }
+  &.s4 { background: linear-gradient(180deg, rgba(104, 196, 196, 0.85), rgba(80, 160, 164, 0.4)); }
+  &.s5 { background: linear-gradient(180deg, rgba(212, 168, 83, 0.9), rgba(212, 168, 83, 0.45)); }
 }
 
 .mood-bar-emoji {
@@ -2370,6 +2675,83 @@
   color: var(--text-muted);
   margin-top: 6px;
   white-space: nowrap;
+}
+
+// 我的心情记录（打卡回看区）
+.mood-log-card {
+  margin-top: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+}
+
+.mood-log-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 14px 0 6px;
+  text-align: center;
+}
+
+.mood-log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mood-log-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.mood-log-emoji {
+  font-size: 22px;
+  line-height: 1.1;
+  flex-shrink: 0;
+}
+
+.mood-log-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.mood-log-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mood-log-date {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.mood-log-tag {
+  font-size: 11px;
+  color: var(--accent-gold);
+  background: rgba(212, 168, 83, 0.1);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.mood-log-note {
+  font-size: 12.5px;
+  color: var(--text-primary);
+  line-height: 1.55;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.mood-log-note-empty {
+  color: var(--text-muted);
 }
 
 // 响应式
@@ -2390,6 +2772,14 @@
   .mood-quick-grid {
     grid-template-columns: 1fr;
   }
+
+  .mood-log-list {
+    grid-template-columns: 1fr;
+  }
+
+  .mood-btns-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -2400,4 +2790,795 @@
   .meditate-controls {
     flex-wrap: wrap;
   }
+}
+
+// ============================================================================
+// 经典·读经 · 小玄导读 / 经典文库 / 诵读足迹
+// ============================================================================
+.sutra-guide, .med-intro {
+  display: flex;
+  gap: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin-bottom: 22px;
+}
+
+.sutra-guide-icon, .med-intro-icon {
+  font-size: 32px;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.sutra-guide-title, .med-intro-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.sutra-guide-text, .med-intro-text {
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.scripture-library {
+  margin-bottom: 24px;
+}
+
+.scripture-library-title {
+  margin-bottom: 14px;
+}
+
+.scripture-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.scripture-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(212, 168, 83, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    border-color: rgba(212, 168, 83, 0.7);
+    background: linear-gradient(160deg, rgba(212, 168, 83, 0.12), var(--bg-card) 60%);
+    box-shadow: 0 6px 22px rgba(212, 168, 83, 0.12);
+  }
+}
+
+.scripture-tag {
+  display: inline-block;
+  font-size: 11px;
+  color: #fff;
+  border-radius: 8px;
+  padding: 2px 9px;
+  margin-bottom: 10px;
+}
+
+.scripture-tag.t-佛 { background: linear-gradient(135deg, #c08457, #8a5a1f); }
+.scripture-tag.t-道 { background: linear-gradient(135deg, #6f9b76, #3f6b52); }
+.scripture-tag.t-儒 { background: linear-gradient(135deg, #5b7fb0, #36507a); }
+.scripture-tag.t-诗词 { background: linear-gradient(135deg, #b06f9b, #7a3f6b); }
+
+.scripture-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.scripture-card-source {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.scripture-card-intro {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.scripture-reader {
+  margin-top: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 22px;
+}
+
+.scripture-reader-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.scripture-reader-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.scripture-reader-source {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+// 诵读足迹
+.sutra-footprint {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 14px 0;
+  padding: 14px 16px;
+  background: rgba(124, 92, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.footprint-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footprint-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  line-height: 1.1;
+}
+
+.footprint-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.footprint-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+// ============================================================================
+// 静心冥想 · 静坐计时器 / 正念小练习
+// ============================================================================
+.med-timer {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin-bottom: 24px;
+}
+
+.med-timer-body {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.med-timer-circle-wrap {
+  flex-shrink: 0;
+}
+
+.med-timer-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s ease;
+}
+
+.med-timer-circle.running .med-timer-inner {
+  animation: medBreathe 8s ease-in-out infinite;
+}
+
+.med-timer-inner {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.med-timer-time {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.med-timer-phase {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+@keyframes medBreathe {
+  0%, 100% { transform: scale(0.86); }
+  50% { transform: scale(1.06); }
+}
+
+.med-timer-side {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.med-timer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.med-timer-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.med-timer-opts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.med-timer-opt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover { border-color: rgba(212, 168, 83, 0.4); }
+
+  &.active {
+    color: var(--bg-panel);
+    background: linear-gradient(135deg, var(--accent-gold), #ffe9b0);
+    border-color: transparent;
+    font-weight: 600;
+  }
+}
+
+.med-timer-vol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+
+  input { flex: 1; accent-color: var(--accent-gold); }
+}
+
+.med-timer-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.med-timer-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.med-practices {
+  margin-bottom: 8px;
+}
+
+.med-practices-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.med-practice-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(212, 168, 83, 0.4);
+    transform: translateY(-2px);
+  }
+}
+
+.med-practice-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.med-practice-emoji {
+  font-size: 24px;
+}
+
+.med-practice-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.med-practice-meta {
+  font-size: 11px;
+  color: var(--accent-gold);
+  margin-top: 2px;
+}
+
+.med-practice-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.med-practice-steps {
+  margin: 0;
+  padding-left: 18px;
+
+  li {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+
+    &::marker { color: var(--accent-gold); }
+  }
+}
+
+// ============================================================================
+// 经典·读经 / 冥想 · 响应式
+// ============================================================================
+@media (max-width: 900px) {
+  .scripture-grid { grid-template-columns: repeat(2, 1fr); }
+  .med-practices-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .scripture-grid { grid-template-columns: 1fr; }
+  .med-practices-grid { grid-template-columns: 1fr; }
+  .med-timer-body { flex-direction: column; }
+  .med-timer-circle { width: 150px; height: 150px; }
+  .med-timer-inner { width: 116px; height: 116px; }
+}
+
+// ============================================================================
+// 亮点一 · 每日一偈（翻牌卡）
+// ============================================================================
+.daily-verse {
+  background: linear-gradient(160deg, rgba(212, 168, 83, 0.10), var(--bg-panel) 70%);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 24px 22px;
+  margin-bottom: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(212, 168, 83, 0.16), transparent 60%);
+    pointer-events: none;
+  }
+}
+
+.daily-verse-label {
+  font-size: 13px;
+  color: var(--accent-gold);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.daily-verse-card {
+  position: relative;
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: transform 0.42s cubic-bezier(.4, 0, .2, 1), opacity 0.42s ease;
+  transform-style: preserve-3d;
+
+  &.flipping {
+    transform: rotateX(90deg);
+    opacity: 0;
+  }
+}
+
+.daily-verse-text {
+  font-size: 19px;
+  line-height: 1.9;
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.daily-verse-source {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.daily-verse-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.daily-verse-btn {
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(212, 168, 83, 0.5);
+    color: var(--accent-gold);
+  }
+}
+
+// ============================================================================
+// 亮点二 · 经文听读按钮
+// ============================================================================
+.sutra-featured-actions {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+
+.sutra-listen-btn {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(212, 168, 83, 0.5);
+    color: var(--accent-gold);
+  }
+}
+
+.sutra-line-listen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-muted);
+  vertical-align: middle;
+  transition: var(--transition);
+
+  &:hover {
+    border-color: rgba(212, 168, 83, 0.5);
+    color: var(--accent-gold);
+  }
+}
+
+// ============================================================================
+// 亮点四 · 修行日历热力图
+// ============================================================================
+.cultivation-calendar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 16px 0 4px;
+}
+
+.cc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cc-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cc-stat {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+
+  b {
+    color: var(--accent-gold);
+    font-size: 15px;
+    margin-right: 3px;
+  }
+}
+
+.cc-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.cc-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  &.active {
+    background: linear-gradient(135deg, var(--accent-gold), #ffe9b0);
+    border-color: transparent;
+    box-shadow: 0 0 8px rgba(212, 168, 83, 0.4);
+  }
+
+  &.future {
+    opacity: 0.35;
+  }
+}
+
+.cc-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.cc-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cc-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, var(--accent-gold), #ffe9b0);
+  display: inline-block;
+
+  &.off {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.cc-empty {
+  color: var(--accent-gold);
+}
+
+// 示例预览角标
+.cc-demo-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--accent-gold);
+  background: rgba(212, 168, 83, 0.12);
+  border: 1px solid rgba(212, 168, 83, 0.35);
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+// 空状态引导（无记录时）
+.cc-empty-state {
+  margin-top: 14px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.10), rgba(140, 110, 200, 0.08));
+  border: 1px dashed rgba(212, 168, 83, 0.35);
+  text-align: center;
+}
+
+.cc-empty-text {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+
+  b {
+    color: var(--accent-gold);
+    font-weight: 700;
+  }
+}
+
+.cc-start-btn {
+  margin-top: 12px;
+  padding: 9px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #2a1f08;
+  background: linear-gradient(135deg, var(--accent-gold), #ffe1a0);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(212, 168, 83, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(212, 168, 83, 0.42);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.cc-empty-hint {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--accent-gold);
+}
+
+// ============================================================================
+// 亮点三 · 呼吸光球首屏
+// ============================================================================
+.breath-intro {
+  text-align: center;
+  background: linear-gradient(160deg, rgba(124, 92, 255, 0.10), var(--bg-panel) 70%);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 30px 24px;
+  margin-bottom: 24px;
+}
+
+.breath-intro-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 22px;
+}
+
+.breath-orb-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 220px;
+}
+
+.breath-orb {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.breath-orb-core {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #c9b8ff, #7c5cff 70%);
+  box-shadow: 0 0 40px rgba(124, 92, 255, 0.5);
+  transition: transform 1.2s ease-in-out, box-shadow 1.2s ease-in-out;
+}
+
+.breath-orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(124, 92, 255, 0.4);
+  transition: transform 1.2s ease-in-out, opacity 1.2s ease-in-out;
+}
+
+// 呼吸节律与 JS（吸 4s / 停 4s / 呼 6s）对齐
+.breath-orb.running.in .breath-orb-core {
+  transform: scale(1.35);
+  box-shadow: 0 0 60px rgba(124, 92, 255, 0.7);
+}
+
+.breath-orb.running.hold .breath-orb-core {
+  transform: scale(1.35);
+}
+
+.breath-orb.running.out .breath-orb-core {
+  transform: scale(0.85);
+}
+
+.breath-orb.running.in .breath-orb-ring {
+  transform: scale(1.5);
+  opacity: 0.8;
+}
+
+.breath-orb.running.hold .breath-orb-ring {
+  transform: scale(1.5);
+  opacity: 0.5;
+}
+
+.breath-orb.running.out .breath-orb-ring {
+  transform: scale(1);
+  opacity: 0.25;
+}
+
+.breath-phase {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-top: 18px;
+  min-height: 22px;
+}
+
+.breath-count {
+  font-size: 13px;
+  color: var(--accent-gold);
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.breath-controls {
+  margin-top: 16px;
+}
+
+.breath-start {
+  font-size: 14px;
+  padding: 10px 22px;
+}
+
+.breath-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+@media (max-width: 560px) {
+  .cc-grid { gap: 4px; }
+  .breath-orb-wrap { height: 190px; }
+  .daily-verse-text { font-size: 17px; }
 }

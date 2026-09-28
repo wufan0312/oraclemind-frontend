@@ -30,7 +30,7 @@ const SEED_NOTIFICATIONS: Omit<AppNotification, 'read'>[] = [
     id: 'seed-welcome',
     type: 'system',
     title: '欢迎来到玄镜 OracleMind 👋',
-    body: 'AI 驱动的多术数交叉验证平台。卜卦、塔罗、星座、数字命理、解梦、风水、疗愈，一站式探索。',
+    body: 'AI 驱动的多术数交叉验证平台。卜卦、塔罗、星座、数字密码、解梦、疗愈，一站式探索。',
     time: new Date().toISOString(),
     link: '/',
   },
