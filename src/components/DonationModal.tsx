@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { createDonation, fetchDonation, type DonationOrder } from '@/lib/api';
-import { useApproval } from '@/hooks/useApproval';
 import type { Offering } from '@/data/healingData';
 
 const POLL_INTERVAL = 3000;
@@ -30,7 +29,6 @@ export default function DonationModal({
   const [loading, setLoading] = useState(false);
   const [customAmount, setCustomAmount] = useState(19.9);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { modal: approvalModal, withApproval } = useApproval();
 
   const stop = () => {
     if (pollRef.current) {
@@ -56,14 +54,8 @@ export default function DonationModal({
         visitorId,
       };
       if (offering.tier === '自定义') payload.amountFen = Math.round(customAmount * 100);
-      const o = await withApproval<DonationOrder>({
-        actionType: 'donation',
-        summary: `确认向玄镜随喜供养 ${priceLabel}`,
-        payload: { tier: offering.tier, amountFen: payload.amountFen },
-        doAction: (approvalId: number) => createDonation({ ...payload, approvalId }),
-      });
+      const o = await createDonation(payload);
       setOrder(o);
-      setLoading(false);
       if (o.status === 'paid') return;
       const started = Date.now();
       pollRef.current = setInterval(async () => {
@@ -94,8 +86,7 @@ export default function DonationModal({
   const priceLabel = offering.tier === '自定义' ? `¥${customAmount}` : offering.price;
 
   return (
-    <>
-      <Modal open={open} onClose={close} icon="🙏" title="随喜供养">
+    <Modal open={open} onClose={close} icon="🙏" title="随喜供养">
       {!order ? (
         <div className="report-donate">
           <div className="report-donate-amount">
@@ -159,8 +150,6 @@ export default function DonationModal({
           </div>
         </div>
       )}
-      </Modal>
-      {approvalModal}
-    </>
+    </Modal>
   );
 }

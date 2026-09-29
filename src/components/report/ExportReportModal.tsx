@@ -107,7 +107,7 @@ function exportTextPng(title: string, body: string): Promise<boolean> {
 export default function ExportReportModal({
   open,
   onClose,
-  title = '综合自我觉察报告',
+  title = '综合命运报告',
   markdown,
 }: ExportReportModalProps) {
   const pdfRef = useRef<HTMLDivElement | null>(null);

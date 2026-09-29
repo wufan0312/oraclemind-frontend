@@ -31,13 +31,11 @@ import '@/components/ui/AIInterpretation.scss';
 import '@/styles/growth-card.scss';
 // 付费墙（PaywallModal / PremiumUnlockButton）被 tarot / horoscope 跨页共用，需全局加载
 import '@/styles/premium.scss';
-// P0 漏斗「情绪桥」卡片：被 bugua / tarot 跨页共用，需全局加载
-import '@/styles/emotion-bridge.scss';
 // 注：iconfont 基础类与尺寸工具类已合并进 components.scss 末尾，避免新增 scss 模块导致的 module resolve 缓存问题
 
 export const metadata: Metadata = {
   title: '玄镜 OracleMind',
-  description: 'AI 驱动 · 多维度自我觉察 · 一站式认识自己'
+  description: 'AI 驱动 · 多术数交叉验证 · 一站式命运探索'
 };
 
 /**

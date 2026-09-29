@@ -69,7 +69,7 @@ function buildBaziHtml(ctx: AIContentCtx): string {
   const b = ctx.bazi;
   if (!b) {
     return P('八字排盘数据尚未生成，点击上方「开始排盘」查看专属解读。') +
-      P_LAST(`也可直接查看右侧「五行能量」与「用神喜忌」卡片，掌握基础五行结构。`);
+      P_LAST(`也可直接查看右侧「五行能量」与「用神喜忌」卡片，掌握基础命理结构。`);
   }
   const dm = b.dayMaster || '日主';
   const dmWx = b.dayMasterWuxing || '';
@@ -273,7 +273,7 @@ function buildSummaryHtml(ctx: AIContentCtx): string {
       ? `已根据你勾选的${B(sel.join('、'))}进行交叉分析，各术数结论互相印证，更具参考性。`
       : '多术数交叉验证后，结论更具参考性。';
   const p2 = ys.length ? `调候上以${B(ys.join('、'))}为喜，日常可针对性补足。` : '调候以平衡五行为第一要义。';
-  const p3 = '这是一个厚积薄发型的蓄力阶段——现在做的每一点积累，都会在关键节点兑现。建议：不要焦虑于当下的瓶颈，它是你跃迁前的蓄力期。';
+  const p3 = '这是一个厚积薄发型的命理阶段——现在做的每一点积累，都会在关键节点兑现。建议：不要焦虑于当下的瓶颈，它是你跃迁前的蓄力期。';
   return P(p1) + P(p2) + P_LAST(p3);
 }
 
@@ -311,7 +311,7 @@ function buildTaiyiHtml(ctx: AIContentCtx): string {
 
 /** 9 个术数模块的 AI 解读内容（全部动态渲染，不写死任何假数据） */
 export const moduleAIContent: Record<string, ModuleAIContent> = {
-  'mod-bazi': { subtitle: '八字四柱 · 同步解读', buildHtml: buildBaziHtml },
+  'mod-bazi': { subtitle: '八字命理 · 排盘同步解读', buildHtml: buildBaziHtml },
   'mod-wuxing': { subtitle: '五行能量 · 排盘同步解读', buildHtml: buildWuxingHtml },
   'mod-ziwei': { subtitle: '紫微斗数 · 排盘同步解读', buildHtml: buildZiweiHtml },
   'mod-liuyao': { subtitle: '六爻起卦 · 排盘同步解读', buildHtml: buildLiuyaoHtml },

@@ -1338,9 +1338,9 @@ function NamePanel({ active, history, onAdd, onRemove, onClearTab, onJump, onZid
 
           {/* 八字配合：填了生辰才展示，给出名字与命局补益结论 */}
           {baziWx && (
-            <MingSection idx="柒" title="八字配合 · 名字补益五行">
+            <MingSection idx="柒" title="八字配合 · 名字补益命局">
               <div className="ming-block ming-bazi-card">
-                <div className="ming-block-label">先天五行分布</div>
+                <div className="ming-block-label">命局五行分布</div>
                 <div className="ming-bazi-dist">
                   {FIVE_ELEMENTS.map((e) => (
                     <span key={e} className={'ming-bazi-item' + (baziWx.lacking.includes(e) ? ' lacking' : '')} style={{ color: ELEMENT_COLOR[e] }}>
@@ -1349,7 +1349,7 @@ function NamePanel({ active, history, onAdd, onRemove, onClearTab, onJump, onZid
                   ))}
                 </div>
                 <div className="ming-block-text">
-                  {baziWx.lacking.length > 0 ? `先天五行缺${baziWx.lacking.join('、')}。` : '先天五行俱全，无明显偏缺。'}
+                  {baziWx.lacking.length > 0 ? `命局缺${baziWx.lacking.join('、')}。` : '命局五行俱全，无明显偏缺。'}
                 </div>
               </div>
               <div className="ming-block">
@@ -1368,8 +1368,8 @@ function NamePanel({ active, history, onAdd, onRemove, onClearTab, onJump, onZid
                     const nameEls = [...res.given].map(elementOf);
                     const covered = baziWx.lacking.filter((e) => nameEls.includes(e));
                     return covered.length > 0
-                      ? <><span className="ming-badge" style={{ color: JI_COLOR['吉'] }}>宜</span> 此名含「{covered.join('、')}」，可补益先天五行所缺，名字与生辰相得益彰。</>
-                      : <><span className="ming-badge" style={{ color: JI_COLOR['半吉'] }}>平</span> 此名五行（{nameEls.join('、')}）先天本不缺，可作风格调和，整体无冲克。</>;
+                      ? <><span className="ming-badge" style={{ color: JI_COLOR['吉'] }}>宜</span> 此名含「{covered.join('、')}」，可补益命局所缺，名字与八字相得益彰。</>
+                      : <><span className="ming-badge" style={{ color: JI_COLOR['半吉'] }}>平</span> 此名五行（{nameEls.join('、')}）命局本不缺，可作风格调和，整体无冲克。</>;
                   })()}
                 </div>
               </div>
@@ -1727,7 +1727,7 @@ function HehunPanel({ active, history, onAdd, onRemove, onClearTab, onJump, seed
                 ))}
               </div>
               <div className="ming-block-text ming-lucky-note">
-                吉日取自建除十二神宜忌（嫁娶类）；风水模块已下线，择日引擎暂不再提供完整版。
+                吉日取自建除十二神宜忌（嫁娶类）；如需结合双方八字、避开冲日，可到风水页使用完整择日引擎。
               </div>
             </MingSection>
           )}
@@ -1735,7 +1735,10 @@ function HehunPanel({ active, history, onAdd, onRemove, onClearTab, onJump, seed
           {/* 跨模块联动：合完婚自然要挑日子——择日引擎在风水页 */}
           <div className="ming-jump-row">
             <span className="ming-jump-label">接着做：</span>
-            {/* 择日功能随风水模块合规下线（refactor/compliance-reposition），后续以独立日历工具提供 */}
+            {res.total < 70 && <span className="ming-jump-tip">冲克偏多，可选吉日调和</span>}
+            <a className={'ming-jump-btn' + (res.total < 70 ? ' emphasis' : '')} href="/fengshui">
+              去择吉日 · 风水页
+            </a>
             <button type="button" className="ming-jump-btn" onClick={() => onJump?.('qiming', { m: 'style' })}>
               顺便给孩子起名
             </button>
@@ -3424,7 +3427,7 @@ export default function MingPage() {
 
       <CrossPageLink
         links={[
-          { icon: '☯️', label: '前往卜卦页深入解读', href: '/bugua' },
+          { icon: '☯️', label: '前往卜卦排盘', href: '/bugua' },
           { icon: '📋', label: '生成综合报告', href: '/report', variant: 'primary' },
         ]}
       />

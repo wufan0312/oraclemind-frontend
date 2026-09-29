@@ -815,7 +815,7 @@ export function ZiweiModule({ data, status }: ModuleProps<ZiweiAPIResult>) {
 
       {/* 命格特质（整盘 AI 解读已合并至右侧「AI 实时解读」面板，避免重复调用与重复展示） */}
       <div className="result-card">
-        <div className="result-card-title"><SectionIcon name="user" /> 特质总览</div>
+        <div className="result-card-title"><SectionIcon name="user" /> 命格特质</div>
         <p className="ziwei-module-desc">十四主星在命盘各宫的坐守特质，由命宫主星组合定调你的先天气质与格局大小；整盘综合解读见右侧「小玄陪你看看这张命盘」。</p>
         <div className="ziwei-traits-grid">
           {traits.map((t) => (

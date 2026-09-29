@@ -292,7 +292,7 @@ export function WuxingModule({ data, status, birth }: ModuleProps<BaziAPIResult>
         </p>
         <div className="yongshen-grid">
           <div className="yongshen-card good">
-            <div className="yongshen-title good">✅ 喜用神（要扶持 · 对五行平衡有利）</div>
+            <div className="yongshen-title good">✅ 喜用神（要扶持 · 对命局有利）</div>
             <div className="yongshen-list">
               {xiRaw.map((raw) => {
                 const { wx, text } = explainYongshenItem(typeof raw === 'string' ? raw : String(raw ?? ''), 'xi');
@@ -437,7 +437,7 @@ export function WuxingModule({ data, status, birth }: ModuleProps<BaziAPIResult>
                 </summary>
                 <div className="wxref-body">
                   <div className="wxref-col">
-                    <div className="wxref-subtitle">五行角色</div>
+                    <div className="wxref-subtitle">命理角色</div>
                     <ul className="wxref-ul">
                       <li>季节：{r.season}</li>
                       <li>脏腑（中医）：{r.organ}</li>
@@ -467,7 +467,7 @@ export function WuxingModule({ data, status, birth }: ModuleProps<BaziAPIResult>
                           ? r.whyBoost
                           : st === '偏旺'
                             ? r.whyCalm
-                            : `当前此五行占比均衡，是整体格局里的稳定力量。注意当令季节养护即可（${r.season}）。`}
+                            : `当前此五行占比均衡，是命局里的稳定力量。注意当令季节养护即可（${r.season}）。`}
                     </div>
                   </div>
                   <div className="wxref-col wide">

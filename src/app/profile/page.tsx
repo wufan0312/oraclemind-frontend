@@ -12,17 +12,6 @@ import { resetOnboarded, markOnboarded } from '@/lib/onboarding';
 import RequireAuth from '@/components/auth/RequireAuth';
 import { fetchPremiumEntitlements } from '@/lib/api';
 import { loadUnlocks } from '@/lib/premium';
-import { mdToHtml, sanitizeAiText } from '@/lib/markdown';
-import Modal from '@/components/ui/Modal';
-import {
-  loadAssessmentRecords,
-  deleteAssessmentRecord,
-  clearAssessmentRecords,
-  type AssessmentRecord,
-} from '@/lib/assessmentStore';
-import {
-  RESILIENCE_QUESTIONS,
-} from '@/lib/prompts/resilienceAssessment';
 
 /**
  * 个人中心 —— 用户资料 / 修行境界（复用首页 GrowthCard）/ 占卜档案 / 数据与引导
@@ -45,13 +34,6 @@ function ProfileContent() {
   const [msg, setMsg] = useState<string | null>(null);
   // GrowthCard 挂载时自行 computeGrowth；清空成长数据后靠 key 强制重挂刷新
   const [growthKey, setGrowthKey] = useState(0);
-
-  // 复原力测评记录（PIPL 查看 / 删除权）
-  const [records, setRecords] = useState<AssessmentRecord[]>([]);
-  const [viewRec, setViewRec] = useState<AssessmentRecord | null>(null);
-  useEffect(() => {
-    setRecords(loadAssessmentRecords());
-  }, []);
 
   // 会员权益概览：本页是登录后页面，走 Cookie 鉴权（不传 visitorId）
   const [unlockCount, setUnlockCount] = useState<number | null>(null);
@@ -98,20 +80,6 @@ function ProfileContent() {
     flash('成长数据已清空');
   };
 
-  const onDeleteRecord = (id: string) => {
-    if (!window.confirm('确定删除这条测评记录？删除后不可恢复，且会从本机擦除你的自评内容。')) return;
-    deleteAssessmentRecord(id);
-    setRecords(loadAssessmentRecords());
-    flash('测评记录已删除');
-  };
-
-  const onClearRecords = () => {
-    if (!window.confirm('确定清空全部测评记录？将一并撤销你的测评单独同意。此操作不可恢复。')) return;
-    clearAssessmentRecords();
-    setRecords([]);
-    flash('已全部清空测评记录');
-  };
-
   return (
     <div className="page active profile-page">
       <div className="profile-head">
@@ -141,7 +109,7 @@ function ProfileContent() {
           ) : (
             <div className="profile-guest">
               <div className="profile-guest-text">当前为<strong>访客模式</strong>，记录仅保存在本机。</div>
-              <div className="profile-guest-hint">登录后可在多设备间同步解读记录与成长数据。</div>
+              <div className="profile-guest-hint">登录后可在多设备间同步占卜记录与成长数据。</div>
               <Link href="/login" className="profile-login-btn">去登录 / 注册 →</Link>
             </div>
           )}
@@ -210,48 +178,7 @@ function ProfileContent() {
           </div>
         </section>
 
-        {/* ⑤ 复原力测评记录（PIPL 查看 / 删除权） */}
-        <section className="profile-card profile-card--wide">
-          <div className="profile-card-title">🧪 复原力测评记录</div>
-          {records.length === 0 ? (
-            <div className="profile-empty">
-              还没有测评记录。完成一次复原力测评后，记录会保存在本机，可随时查看或删除。
-              <Link href="/assessment" className="profile-inline-link">去测评 →</Link>
-            </div>
-          ) : (
-            <>
-              <div className="profile-records">
-                {records.map((rec) => {
-                  const filled = Object.values(rec.answers).filter((v) => (v || '').trim().length > 0).length;
-                  const snippet = (rec.reportMarkdown || '').replace(/[#*>\-`]/g, '').replace(/\s+/g, ' ').trim().slice(0, 56);
-                  return (
-                    <div className="profile-record" key={rec.id}>
-                      <div className="profile-record-main">
-                        <div className="profile-record-date">
-                          {new Date(rec.createdAt).toLocaleString('zh-CN', { hour12: false })}
-                        </div>
-                        <div className="profile-record-meta">已答 {filled} 题</div>
-                        {snippet && <div className="profile-record-snippet">{snippet}…</div>}
-                      </div>
-                      <div className="profile-record-actions">
-                        <button className="profile-action-btn" onClick={() => setViewRec(rec)}>查看</button>
-                        <button className="profile-action-btn danger" onClick={() => onDeleteRecord(rec.id)}>删除</button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="profile-actions" style={{ marginTop: 12 }}>
-                <button className="profile-action-btn danger" onClick={onClearRecords}>清空全部测评记录</button>
-              </div>
-              <div className="profile-actions-hint">
-                测评自评属敏感个人信息，仅存于本机。删除即从设备擦除，平台不留存。
-              </div>
-            </>
-          )}
-        </section>
-
-        {/* ⑥ 数据与引导 */}
+        {/* ⑤ 数据与引导 */}
         <section className="profile-card profile-card--wide">
           <div className="profile-card-title">⚙️ 数据与引导</div>
           <div className="profile-actions">
@@ -264,34 +191,6 @@ function ProfileContent() {
           </div>
         </section>
       </div>
-
-      {/* 测评报告查看弹层 */}
-      <Modal open={!!viewRec} onClose={() => setViewRec(null)} title="复原力测评报告">
-        {viewRec && (
-          <div className="profile-rec-detail">
-            <div className="profile-rec-detail-meta">
-              生成于 {new Date(viewRec.createdAt).toLocaleString('zh-CN', { hour12: false })}
-            </div>
-            <div className="profile-rec-answers">
-              {RESILIENCE_QUESTIONS.map((q) => {
-                const a = (viewRec.answers[q.key] || '').trim();
-                if (!a) return null;
-                return (
-                  <div className="profile-rec-answer" key={q.key}>
-                    <div className="profile-rec-answer-q">{q.label}</div>
-                    <div className="profile-rec-answer-a">{a}</div>
-                  </div>
-                );
-              })}
-            </div>
-            <div
-              className="profile-rec-report"
-              dangerouslySetInnerHTML={{ __html: mdToHtml(sanitizeAiText(viewRec.reportMarkdown)) }}
-            />
-            {viewRec.disclaimer && <p className="profile-rec-disclaimer">{viewRec.disclaimer}</p>}
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }

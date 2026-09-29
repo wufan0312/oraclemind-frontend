@@ -152,7 +152,7 @@ export function BaziModule({ data, status, birth }: ModuleProps<BaziAPIResult> &
   return (
     <>
       <div className="result-card">
-        <div className="result-card-title"><SectionIcon name="sparkles" /> 八字四柱 · 格局总览 <ApiBadge status={status} /></div>
+        <div className="result-card-title"><SectionIcon name="sparkles" /> 八字四柱 · 命格总览 <ApiBadge status={status} /></div>
         <div className="bazi-pillars">
           {pillars.map((p) => (
             <div className="pillar" key={p.label}>
@@ -217,13 +217,13 @@ export function BaziModule({ data, status, birth }: ModuleProps<BaziAPIResult> &
 
         {/* 命理原文：完全由后端 /retrieve 检索增强返回（典籍原文），无前端兜底 */}
         <div className="bazi-raw">
-          <div className="bazi-raw-title">📜 典籍原文</div>
+          <div className="bazi-raw-title">📜 命理原文</div>
           {refs === null ? (
-            <div className="bazi-raw-loading">典籍原文生成中…</div>
+            <div className="bazi-raw-loading">命理原文生成中…</div>
           ) : refs.text ? (
             <div className="bazi-raw-text">{renderRefText(refs.text)}</div>
           ) : (
-            <div className="bazi-raw-empty">暂无典籍原文</div>
+            <div className="bazi-raw-empty">暂无命理原文</div>
           )}
         </div>
       </div>

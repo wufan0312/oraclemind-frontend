@@ -37,6 +37,7 @@ import PremiumUnlockButton from '@/components/premium/PremiumUnlockButton';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import OmLoading from '@/components/ui/OmLoading';
+import CrossPageLink from '@/components/ui/CrossPageLink';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
 import Modal from '@/components/ui/Modal';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -45,7 +46,6 @@ import Tag from '@/components/ui/Tag';
 import { useShare, shareOutToPoster } from '@/hooks/useShare';
 import ShareLoginGate from '@/components/share/ShareLoginGate';
 import LightFollowUp from '@/components/ai-chat/LightFollowUp';
-import EmotionBridge from '@/components/healing/EmotionBridge';
 
 /**
  * 合成分享海报为单张 PNG（图片 + 下方文案，合并到一张画布）。
@@ -1508,7 +1508,7 @@ export default function TarotPage() {
     let note = '';
     if (total) {
       if (ratio(counts.major) >= 0.5) {
-        note = `大阿卡纳 ${counts.major}/${total}：不是日常小事，是人生级的转折，外力强于个人选择。`;
+        note = `大阿卡纳 ${counts.major}/${total}：不是日常小事，是命运级的转折，外力强于个人选择。`;
       } else if (ratio(rev) >= 0.6) {
         note = `逆位 ${rev}/${total}：能量普遍受阻，先化解卡点再谈推进。`;
       } else {
@@ -2050,11 +2050,6 @@ export default function TarotPage() {
               )}
               </>
             )}
-
-            {/* P0 漏斗：牌阵解读完成后，把"刚说出口的困扰"接到情绪打卡 + 复原力测评 */}
-            {drawState === 'done' && aiStatus === 'done' && (
-              <EmotionBridge source="tarot" visible={drawState === 'done' && aiStatus === 'done'} question={question} />
-            )}
           </div>
         </div>
 
@@ -2241,7 +2236,7 @@ export default function TarotPage() {
               // 空态：保留 Card 框，仅展示提示。给用户"这里有占卜记录"的位置感，引导去起卦
               <div className="tarot-history-empty">
                 <div className="tarot-history-empty-icon" aria-hidden="true">🔮</div>
-                <div className="tarot-history-empty-text">暂无解读记录</div>
+                <div className="tarot-history-empty-text">暂无占卜记录</div>
                 <div className="tarot-history-empty-hint">起一卦，结果会自动留在这里</div>
               </div>
             )}
@@ -2436,6 +2431,14 @@ export default function TarotPage() {
             </div>
           </Card>
 
+          {/* 跨页联动 CTA */}
+          <CrossPageLink
+            description="塔罗看「当下能量与选择」，八字看「命局底色与流年」。两者结合，占卜更立体。"
+            links={[
+              { icon: '☯️', label: '去八字排盘', href: '/bugua' },
+              { icon: '📋', label: '综合报告', href: '/report', variant: 'primary' },
+            ]}
+          />
         </div>
 
         {/* 单张牌义详情 */}

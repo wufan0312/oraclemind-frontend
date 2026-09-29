@@ -21,7 +21,7 @@ export default function GlobalSearch() {
       <span className="global-search-icon">🔍</span>
       <input
         className="global-search-input"
-        placeholder="搜索功能或你的解读记录…"
+        placeholder="搜索功能或你的占卜记录…"
         value={q}
         onChange={(e) => setQ(e.target.value)}
         onKeyDown={(e) => {

@@ -4,6 +4,7 @@ import '@/styles/numerology.scss';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Solar } from 'lunar-typescript';
 import { solarToLunarParts } from '@/lib/lunar';
+import CrossPageLink from '@/components/ui/CrossPageLink';
 import SectionIcon from '@/components/ui/SectionIcon';
 // numerology 出生日期统一走 BirthDatePicker（内建公历/农历双模式）；旧 DatePicker 不再直接使用
 import BirthDatePicker from '@/components/ui/BirthDatePicker';
@@ -541,7 +542,7 @@ export default function NumerologyPage() {
     setResult(res);
     setDetailNum(res.lifePath);
     setCalcMode(m);
-    pushCrossReading({ type: 'numerology', label: '数字密码', summary: `生命灵数 ${res.lifePath} · ${res.data?.name ?? ''}（天赋：${res.data?.talent ?? ''}）` });
+    pushCrossReading({ type: 'numerology', label: '数字命理', summary: `生命灵数 ${res.lifePath} · ${res.data?.name ?? ''}（天赋：${res.data?.talent ?? ''}）` });
     if (!auto) {
       const lunar = solarToLunar(solarDate)!;
       persistResult(res, solarDate, { ly: lunar.ly, lm: lunar.lm, ld: lunar.ld });
@@ -571,7 +572,7 @@ export default function NumerologyPage() {
       setResult(res);
       setDetailNum(res.lifePath);
       setCalcMode('online');
-      pushCrossReading({ type: 'numerology', label: '数字密码', summary: `生命灵数 ${res.lifePath} · ${res.data?.name ?? ''}（天赋：${res.data?.talent ?? ''}）` });
+      pushCrossReading({ type: 'numerology', label: '数字命理', summary: `生命灵数 ${res.lifePath} · ${res.data?.name ?? ''}（天赋：${res.data?.talent ?? ''}）` });
       persistResult(res, s.solar, { ly: lunar.ly, lm: lunar.lm, ld: lunar.ld });
       persistSnapshot({ mode: 'natal', solarDate: s.solar, name: s.name, partnerDate: '', partnerName: '', result: res, partnerResult: null, synastry: null });
     } catch {
@@ -579,7 +580,7 @@ export default function NumerologyPage() {
       setResult(local);
       setDetailNum(local.lifePath);
       setCalcMode('local');
-      pushCrossReading({ type: 'numerology', label: '数字密码', summary: `生命灵数 ${local.lifePath} · ${local.data?.name ?? ''}` });
+      pushCrossReading({ type: 'numerology', label: '数字命理', summary: `生命灵数 ${local.lifePath} · ${local.data?.name ?? ''}` });
       persistResult(local, s.solar, { ly: lunar.ly, lm: lunar.lm, ld: lunar.ld });
       persistSnapshot({ mode: 'natal', solarDate: s.solar, name: s.name, partnerDate: '', partnerName: '', result: local, partnerResult: null, synastry: null });
     }
@@ -1024,7 +1025,7 @@ export default function NumerologyPage() {
               {error && <div className="form-error">⚠️ {error}</div>}
               {mode === 'natal' ? (
                 <button className="btn-submit" onClick={() => calculate()} disabled={calcMode === 'loading'}>
-                  {calcMode === 'loading' ? '🔮 生命灵数计算中…' : '🔢 计算生命灵数'}
+                  {calcMode === 'loading' ? '🔮 排盘计算中…' : '🔢 计算生命灵数'}
                 </button>
               ) : (
                 <button className="btn-submit" onClick={runSynastry} disabled={syncCalcMode === 'loading'}>
@@ -1066,7 +1067,7 @@ export default function NumerologyPage() {
           <>
         {restoredRec && (
           <div className="restored-bar">
-            <span>☁️ 已加载最近一次数字密码存档（来自云端）{restoredRec.at ? ` · ${new Date(restoredRec.at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}` : ''}</span>
+            <span>☁️ 已加载最近一次数字命理存档（来自云端）{restoredRec.at ? ` · ${new Date(restoredRec.at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}` : ''}</span>
             <button type="button" onClick={() => { setRestoredRec(null); calculate(); }}>↻ 重新计算</button>
           </div>
         )}
@@ -1682,6 +1683,15 @@ export default function NumerologyPage() {
           </div>
         </div>
 
+        {/* 跨页联动 CTA */}
+        <CrossPageLink
+          description="数字揭示的是「节奏」，八字揭示的是「格局」——两者互相印证，结论更立体。"
+          links={[
+            { icon: '✨', label: '星座 × 数字：守护星印证', href: '/horoscope' },
+            { icon: '☯️', label: '八字 × 数字：格局交叉', href: '/bugua' },
+            { icon: '📊', label: '生成综合报告', href: '/report', variant: 'primary' },
+          ]}
+        />
       </div>
 
       {/* 测算历史弹层（N2）：回放任意一次本地测算 / 删除单条 / 清空 */}
