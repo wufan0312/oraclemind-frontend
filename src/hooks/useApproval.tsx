@@ -126,7 +126,7 @@ export function useApproval(): UseApprovalResult {
               confirmText: params.confirmText ?? '确认执行',
             });
           })
-          .catch((e) => reject(e)),
+          .catch((e) => reject(e));
       }),
     [],
   );
