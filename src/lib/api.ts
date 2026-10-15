@@ -3494,3 +3494,79 @@ export async function requestStashDelete(key: string, visitorId?: string): Promi
   if (!res.ok) throw new Error(`上云删除失败：HTTP ${res.status}`);
 }
 
+/* ---------------- 审批 Gate（P1 Human-in-the-loop） ---------------- */
+
+/** 审批记录（与后端 ApprovalOut 对齐） */
+export interface ApprovalOut {
+  id: number;
+  actionType: string;
+  actorType: string;
+  actorId: string | null;
+  summary: string;
+  status: 'pending' | 'approved' | 'rejected' | 'expired';
+  consumed: boolean;
+  traceId: string | null;
+  decisionNote: string | null;
+  createdAt: string;
+  decidedAt: string | null;
+}
+
+/** 创建审批请求（高风险操作前） —— POST /api/v1/approvals */
+export async function createApproval(input: {
+  actionType: string;
+  summary: string;
+  payload?: Record<string, unknown>;
+  traceId?: string;
+}): Promise<ApprovalOut> {
+  const res = await fetch(`${API_BASE}/api/v1/approvals`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`创建审批失败：HTTP ${res.status}${detail ? ` ${detail.slice(0, 120)}` : ''}`);
+  }
+  return res.json();
+}
+
+/** 审批通过（人工确认） —— POST /api/v1/approvals/{id}/approve */
+export async function approveApproval(id: number, note?: string): Promise<ApprovalOut> {
+  const res = await fetch(`${API_BASE}/api/v1/approvals/${id}/approve`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ note: note ?? null }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`审批确认失败：HTTP ${res.status}${detail ? ` ${detail.slice(0, 120)}` : ''}`);
+  }
+  return res.json();
+}
+
+/** 审批拒绝 —— POST /api/v1/approvals/{id}/reject */
+export async function rejectApproval(id: number, note?: string): Promise<ApprovalOut> {
+  const res = await fetch(`${API_BASE}/api/v1/approvals/${id}/reject`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ note: note ?? null }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`审批拒绝失败：HTTP ${res.status}${detail ? ` ${detail.slice(0, 120)}` : ''}`);
+  }
+  return res.json();
+}
+
+/** 审批详情 —— GET /api/v1/approvals/{id} */
+export async function fetchApproval(id: number): Promise<ApprovalOut> {
+  const res = await fetch(`${API_BASE}/api/v1/approvals/${id}`, { credentials: 'include' });
+  if (!res.ok) {
+    throw new Error(`查询审批失败：HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
